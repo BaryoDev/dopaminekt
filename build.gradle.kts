@@ -19,23 +19,32 @@ fun sha256(file: File): String =
 fun fixtureFiles(): List<File> =
     specDir.walkTopDown().filter { it.isFile }.sortedBy { it.relativeTo(specDir).invariantSeparatorsPath }.toList()
 
-fun run(dir: File, vararg command: String): String {
-    val process = ProcessBuilder(*command).directory(dir).redirectErrorStream(true).start()
+fun run(dir: File, vararg command: String, cleanNpmEnv: Boolean = false): String {
+    val builder = ProcessBuilder(*command).directory(dir).redirectErrorStream(true)
+    if (cleanNpmEnv) builder.environment().keys.removeAll { it.startsWith("NPM_CONFIG_", ignoreCase = true) }
+    val process = builder.start()
     val output = process.inputStream.bufferedReader().readText()
     check(process.waitFor() == 0) { "${command.joinToString(" ")} failed:\n$output" }
     return output
 }
 
-// Needs network. Uses whatever registry npm is configured for.
+// Needs network. Always uses the public npm registry, ignores the user's npm config and runs no scripts.
 tasks.register("syncFixtures") {
     group = "dopaminekt"
     description = "Copies spec/ from the pinned dopaminejs npm tarball into spec/core and writes spec/CHECKSUMS."
     doLast {
         val tmp = File(temporaryDir, "pack").apply { deleteRecursively(); mkdirs() }
-        val out = run(tmp, "npm", "pack", "dopaminejs@$fixturePin", "--pack-destination", tmp.absolutePath)
+        val out = run(
+            tmp, "npm", "pack", "dopaminejs@$fixturePin",
+            "--registry=https://registry.npmjs.org/", "--userconfig=/dev/null", "--ignore-scripts",
+            "--pack-destination", tmp.absolutePath,
+            cleanNpmEnv = true,
+        )
         val tarball = File(tmp, out.trim().lines().last())
         check(tarball.isFile) { "npm pack did not produce a tarball: $out" }
-        run(tmp, "tar", "-xzf", tarball.absolutePath, "package/spec")
+        run(tmp, "tar", "-xzf", tarball.absolutePath, "package/spec", "package/package.json")
+        val packedVersion = Regex("\"version\"\\s*:\\s*\"([^\"]+)\"").find(File(tmp, "package/package.json").readText())?.groupValues?.get(1)
+        check(packedVersion == fixturePin) { "tarball is dopaminejs@$packedVersion, expected $fixturePin" }
         val packed = File(tmp, "package/spec")
         check(packed.isDirectory) { "dopaminejs@$fixturePin has no spec/ directory" }
         specDir.deleteRecursively()

@@ -23,7 +23,7 @@ The module depends on kotlinx-coroutines-core, kotlinx-serialization-json and ko
 
 The shared test fixtures come from the public [dopaminejs](https://www.npmjs.com/package/dopaminejs) npm package, pinned in `gradle/libs.versions.toml` (`dopaminejs`). They are committed in `spec/core/`, with a SHA-256 per file in `spec/CHECKSUMS`.
 
-- `./gradlew syncFixtures` runs `npm pack dopaminejs@<pin>` with whatever registry npm is set to, copies the package's `spec/` into `spec/core/` and rewrites `spec/CHECKSUMS`. It needs network and npm.
+- `./gradlew syncFixtures` runs `npm pack dopaminejs@<pin>` against the public npm registry (your npm config is ignored, no install scripts run), checks the tarball version equals the pin, copies the package's `spec/` into `spec/core/` and rewrites `spec/CHECKSUMS`. It needs network and npm.
 - `./gradlew verifyFixtures` runs offline and fails, naming the file, when `spec/core/` differs from `spec/CHECKSUMS`. `check` runs it.
 
 To move to a new dopaminejs version, change the pin, run `syncFixtures` and commit the result.
