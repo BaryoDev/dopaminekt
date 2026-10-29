@@ -919,6 +919,49 @@
                     }
                 }
             ]
+        },
+        {
+            "name": "reset starts a new player with no streak and one player_reset event",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "steps": [
+                {
+                    "op": "addXP",
+                    "amount": 30,
+                    "expect": {
+                        "player": {
+                            "xp": 30,
+                            "streak": {
+                                "current": 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "op": "reset",
+                    "expect": {
+                        "player": {
+                            "xp": 0,
+                            "level": 1,
+                            "streak": {
+                                "current": 0,
+                                "longest": 0
+                            }
+                        },
+                        "absent": [
+                            "streak.lastPlayDate"
+                        ],
+                        "achievements": [],
+                        "events": [
+                            {
+                                "event": "player_reset"
+                            }
+                        ]
+                    }
+                }
+            ]
         }
     ]
 }

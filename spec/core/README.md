@@ -61,8 +61,8 @@ UTC.
 
 - `builtinAchievements`: `false` removes the five built-ins (`first_game`,
   `level_5`, `level_10`, `streak_3`, `streak_7`). Default `true`. The JS core
-  has no such option; the runner emulates it by replacing the achievement table
-  after construction. A port must do the same.
+  takes it as `RewardSystem` config. A save that already holds a built-in keeps
+  it and its reward XP when the option is off.
 - `streakDays`: `"any"` (default) or `"record"`. With `any`, `record` and `addXP` mark today as a play day. With `record`, only `record` does. XP from an achievement reward never marks a day.
 - `achievements`: extra achievements by id, `{ name, description?, icon?, xp?, when }`.
 
@@ -99,9 +99,10 @@ except for `setClock`, where it is accepted and checked if present.
 | `record` | `activity`, `result?` | `record(activity, result)`. A missing `result` means the default. `null` is passed as `null`. Returns `true`. |
 | `unlockAchievement` | `id` | `unlockAchievement(id)`. |
 | `markAchievementsSeen` | `ids` | `markAchievementsSeen(ids)`. |
+| `reset` | none | `reset()`. Replaces the player with an empty document, keeps the device id, saves, and returns the new snapshot. Fires `player_reset` after the save. |
 | `getXPForNextLevel` | none | Reads `{ total, needed, progress }`. |
 | `export` | `as` | `export()`. Keeps the document under the name `as`. |
-| `import` | `doc` or `from`, `silent?` | `import(doc, { silent })`. `from` names a kept document. Returns the snapshot. |
+| `import` | `doc` or `from`, `silent?` | `import(doc, { silent })`. `from` names a kept document. Returns the snapshot. Achievement ids with no definition are kept but fire no event. |
 | `merge` | `a`, `b`, `as?` | `merge(a, b)`. Each side is a document or the name of a kept one. Returns the document. |
 | `validate` | `doc`, `as?` | `validate(doc)`. Returns the cleaned document. |
 
@@ -143,7 +144,7 @@ CI also runs the conformance file once in `America/Los_Angeles`
 (`DOPAMINE_TEST_TZ`), so the daylight saving case can fail.
 
 Event names: `xp_gained`, `level_up`, `achievement_unlocked`, `personal_best`
-(payload `{ activity, score }`), `streak_updated`, `save_failed` and
+(payload `{ activity, score }`), `streak_updated`, `player_reset` (empty payload), `save_failed` and
 `load_failed`. `load_failed` is covered for a corrupt value and for a document
 the core refuses (`reason` is `corrupt`, `unsupported_version` or
 `too_many_devices`). A read that fails in storage cannot be made by a fixture.

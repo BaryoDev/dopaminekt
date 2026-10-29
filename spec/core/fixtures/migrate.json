@@ -561,6 +561,47 @@
             }
         },
         {
+            "name": "a 2.x document holding a built-in keeps its reward when built-ins are off",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "note": "The save holds first_game from before the option was off. Its reward is still 50 and the legacy entry is still the old xp minus 50.",
+            "savedJson": {
+                "xp": 500,
+                "level": 3,
+                "totalGamesPlayed": 7,
+                "achievements": {
+                    "first_game": {
+                        "unlockedAt": 1,
+                        "seen": true
+                    }
+                },
+                "streak": {
+                    "current": 1,
+                    "longest": 1,
+                    "lastPlayDate": "2026-08-07"
+                }
+            },
+            "afterInit": {
+                "player": {
+                    "xp": 500,
+                    "level": 3
+                },
+                "docExact": {
+                    "v": 3,
+                    "xpBy": {
+                        "legacy": 450
+                    },
+                    "achievements.first_game.reward": 50
+                },
+                "achievements": [
+                    "first_game"
+                ],
+                "events": []
+            }
+        },
+        {
             "name": "a 2.x streak rebuilds the play dates",
             "clock": "2026-08-07T09:00:00",
             "savedJson": {
