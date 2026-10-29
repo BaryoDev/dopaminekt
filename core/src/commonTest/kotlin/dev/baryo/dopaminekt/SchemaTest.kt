@@ -52,7 +52,7 @@ class SchemaTest {
         val minimum = node["minimum"].finiteNumber()
         if (number != null && minimum != null && number < minimum) errors += "$path: below $minimum"
         val pattern = (node["pattern"] as? JsonPrimitive)?.content
-        if (value is JsonPrimitive && value.isString && pattern != null && !Regex(pattern).matches(value.content)) {
+        if (value is JsonPrimitive && value.isString && pattern != null && !Regex(pattern).containsMatchIn(value.content)) {
             errors += "$path: does not match $pattern"
         }
 
