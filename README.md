@@ -2,7 +2,11 @@
 
 Kotlin Multiplatform core for dopaminekt. Targets: JVM, Android, iosArm64, iosSimulatorArm64.
 
-It follows dopaminejs 3.1.0. What is in so far is the saved player document and the math around it. The reward system itself is not in yet.
+It follows dopaminejs 3.1.0.
+
+- `Progress(storage, config)` is one player: XP, levels, streaks, play stats and achievements, saved as a version 3 document. Call `init()` first. `addXp`, `record`, `unlockAchievement`, `import`, `export`, `reset` and `snapshot` work on it.
+- `Progress.on(name, listener)` gives events: `xp_gained`, `level_up`, `achievement_unlocked`, `personal_best`, `streak_updated`, `player_reset`, `save_failed` and `load_failed`.
+- `Progress.use(middleware)` adds hooks that run before and after XP, records and unlocks. A before hook can reject a call or change its input.
 
 - `validate(json)` cleans any JSON value into a version 3 document, migrating a 2.x save. Entries it cannot use are dropped. It throws `DopamineError` with the code `invalid_document`, `unsupported_version` or `too_many_devices`.
 - `merge(a, b)` joins two saves. The result does not depend on argument order.
@@ -33,7 +37,7 @@ The shared test fixtures come from the public [dopaminejs](https://www.npmjs.com
 
 `./gradlew generateFixtureSources` writes the fixtures and `spec/core/schema.json` into a Kotlin file under `core/build/`, so the JVM, Android and iOS tests read the same data with no file access. The test compile tasks run it. The generated file is not committed.
 
-The fixture runner (`FixtureRunnerTest`) runs each case in Asia/Manila and America/Los_Angeles, with the clock set to the case's local time in that zone. It runs the validate and merge steps and the saved players that only need validate. Cases that need the reward system are skipped, and the run prints how many ran and were skipped per file.
+The fixture runner (`FixtureRunnerTest`) runs every case in every file through `Progress`, in Asia/Manila and America/Los_Angeles, with the clock set to the case's local time in that zone. None are skipped, and the test pins how many cases run per file.
 
 To move to a new dopaminejs version, change the pin, run `syncFixtures` and commit the result.
 
