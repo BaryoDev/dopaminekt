@@ -3,8 +3,8 @@ package dev.baryo.dopaminekt
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
 
 /** The key prefix the data service uses unless the caller picks one. */
 internal const val DEFAULT_PREFIX: String = "dopamine_"
@@ -25,9 +25,12 @@ internal const val CORRUPT_CODE: String = "DOPAMINE_CORRUPT"
  */
 internal class DataService(
     private val storage: StoragePort,
-    val prefix: String = DEFAULT_PREFIX,
+    prefix: String = DEFAULT_PREFIX,
     private val onError: (Throwable) -> Unit = {},
 ) {
+    /** The key prefix. An empty one falls back to the default, as the JS config does. */
+    val prefix: String = prefix.ifEmpty { DEFAULT_PREFIX }
+
     private val lock = Mutex()
 
     /** Saves [data] as JSON text. Returns false when serializing or the storage call fails. */
@@ -45,7 +48,7 @@ internal class DataService(
     }
 
     /**
-     * Loads the value under [key]. Nothing saved, or an empty text, gives null.
+     * Loads the value under [key]. Nothing saved, an empty text, or a saved `null` gives null.
      *
      * With [strict] a failed read throws what the storage threw, and text that is not JSON throws
      * [CorruptDataException]. Without it both give null.
@@ -62,7 +65,7 @@ internal class DataService(
         }
         if (text.isNullOrEmpty()) return null
         return try {
-            Json.parseToJsonElement(text)
+            parseJsonStrict(text).takeIf { it !is JsonNull }
         } catch (e: Exception) {
             if (strict) throw CorruptDataException(key, text)
             onError(e)

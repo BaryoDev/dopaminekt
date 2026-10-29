@@ -184,4 +184,58 @@ class DataServiceTest {
         data.clear("player")
         assertNull(storage.get("dopamine_player"))
     }
+
+    @Test
+    fun savedNullLoadsAsNull() = runTest {
+        val storage = MemoryStorage()
+        storage.set("dopamine_player", "null")
+        assertNull(DataService(storage).load("player", strict = true))
+    }
+
+    @Test
+    fun anEmptyPrefixFallsBackToTheDefault() = runTest {
+        val storage = MemoryStorage()
+        val data = DataService(storage, prefix = "")
+        assertEquals("dopamine_", data.prefix)
+        data.save("device", JsonPrimitive("abc"))
+        assertEquals("\"abc\"", storage.get("dopamine_device"))
+    }
+
+    @Test
+    fun textJsCannotParseIsCorrupt() = runTest {
+        for (text in listOf("garbage", "tru", "NaN", "'x'", """{"a":abc}""", "Infinity", "undefined", "01", "+1", ".5")) {
+            val storage = MemoryStorage()
+            storage.set("dopamine_player", text)
+            val data = DataService(storage)
+            assertFailsWith<CorruptDataException>(text) { data.load("player", strict = true) }
+            assertNull(data.load("player"), text)
+        }
+    }
+
+    @Test
+    fun oneE999AndNormalDocumentsLoad() = runTest {
+        val storage = MemoryStorage()
+        storage.set("dopamine_player", """{"xp":1e999}""")
+        assertEquals("""{"xp":1e999}""", DataService(storage).load("player", strict = true).toString())
+        storage.set("dopamine_player", """{"v":3,"name":"A","playDates":["2026-08-07"],"best":{"x":1.5}}""")
+        assertTrue(DataService(storage).load("player", strict = true) is JsonObject)
+    }
+
+    @Test
+    fun aCancelledSaveQueuedBehindTheLockDoesNotBlockTheNext() = runTest {
+        val storage = DelayingStorage(delays = mutableListOf(100, 0))
+        val data = DataService(storage)
+        launch { data.save("player", JsonPrimitive("a")) }
+        runCurrent()
+        val queued = launch { data.save("player", JsonPrimitive("b")) }
+        runCurrent()
+        queued.cancel()
+        runCurrent()
+        var third: Boolean? = null
+        launch { third = data.save("player", JsonPrimitive("c")) }
+        advanceUntilIdle()
+        assertEquals(true, third)
+        assertEquals("\"c\"", storage.values["dopamine_player"])
+        assertFalse(storage.log.any { it == "start:\"b\"" })
+    }
 }
