@@ -1,9 +1,10 @@
 package dev.baryo.dopaminekt
 
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
-import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -16,28 +17,26 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 /**
- * Runs the language-neutral cases in spec/core/fixtures for the document layer:
- * the validate and merge steps and the saved players that only need validate.
- * Cases that need the reward system are skipped by [K3B_OPS] and the reasons
- * in [skipReason]. Anything the runner does not understand fails the test.
+ * Runs the language-neutral cases in spec/core/fixtures through [Progress], in two time zones.
+ * Anything the runner does not understand fails the test.
  */
 class FixtureRunnerTest {
     private val zones = listOf("Asia/Manila", "America/Los_Angeles")
 
-    // File to (run, skipped). Skipped cases need the reward system. A fixture change must update these.
-    private val EXPECTED_COUNTS = mapOf(
-        "achievements.json" to (0 to 7),
-        "levels.json" to (0 to 6),
-        "merge.json" to (11 to 16),
-        "migrate.json" to (33 to 1),
-        "scores.json" to (0 to 13),
-        "streaks.json" to (4 to 13),
+    // Cases per file. A fixture change must update these. None is skipped.
+    private val expectedCounts = mapOf(
+        "achievements.json" to 7,
+        "levels.json" to 6,
+        "merge.json" to 27,
+        "migrate.json" to 34,
+        "scores.json" to 13,
+        "streaks.json" to 17,
     )
 
     @Test
-    fun fixtureRunnerRunsEveryDocumentCase() {
+    fun fixtureRunnerRunsEveryCase() = runTest {
         val failures = mutableListOf<String>()
-        val counts = mutableMapOf<String, Pair<Int, Int>>()
+        val counts = mutableMapOf<String, Int>()
         assertTrue(FixtureData.files.isNotEmpty(), "no fixture files were generated")
 
         for ((file, text) in FixtureData.files.entries.sortedBy { it.key }.map { it.key to it.value }) {
@@ -45,42 +44,36 @@ class FixtureRunnerTest {
             val cases = suite["cases"] as? JsonArray
             assertTrue(cases != null && cases.isNotEmpty(), "$file has no cases")
             var run = 0
-            var skipped = 0
             for (element in cases) {
                 val case = element as JsonObject
                 val name = (case["name"] as JsonPrimitive).content
                 try {
-                    val reason = FixtureCase.inspect(case)
-                    if (reason != null) {
-                        skipped++
-                        continue
-                    }
+                    FixtureCase.inspect(case)
                     run++
                     for (zone in zones) {
                         try {
                             FixtureCase(case, TimeZone.of(zone)).run()
+                        } catch (error: CancellationException) {
+                            throw error
                         } catch (error: Throwable) {
                             failures += "$file / $name / $zone: ${error.message}"
                         }
                     }
+                } catch (error: CancellationException) {
+                    throw error
                 } catch (error: Throwable) {
                     failures += "$file / $name: ${error.message}"
                 }
             }
-            counts[file] = run to skipped
-            println("fixture runner $file: $run run, $skipped skipped (K3b)")
+            counts[file] = run
+            println("fixture runner $file: $run run")
+            assertEquals(cases.size, run, "$file: every case runs")
         }
 
         assertTrue(failures.isEmpty(), failures.joinToString("\n"))
-        assertEquals(EXPECTED_COUNTS, counts, "cases run and skipped per file")
+        assertEquals(expectedCounts, counts, "cases run per file")
     }
 }
-
-/** Ops that need the reward system. A case using one is skipped with the reason K3b. */
-private val K3B_OPS = setOf(
-    "setClock", "reload", "addXP", "record", "unlockAchievement", "markAchievementsSeen",
-    "reset", "getXPForNextLevel", "export", "import",
-)
 
 private val CASE_KEYS = setOf("name", "note", "config", "clock", "device", "savedJson", "savedRaw", "afterInit", "steps", "storage")
 private val STORAGE_OPTION_KEYS = setOf("failWrites")
@@ -186,59 +179,105 @@ private fun checkCondition(id: String, whenValue: JsonElement?) {
     }
 }
 
-/** The XP a 2.x save holds for each achievement id: the built-ins, then the case's own. */
-private fun rewardsOf(config: JsonObject?): Map<String, Double> {
-    val rewards = LinkedHashMap(BUILTIN_REWARDS)
-    val defs = config?.get("achievements") as? JsonObject ?: return rewards
-    for ((id, def) in defs) {
-        val xp = (def as JsonObject)["xp"].finiteNumber()
-        rewards[id] = if (xp != null && xp > 0) xp else 0.0
+/** Builds the achievement a fixture describes. Its check is data, so the runner builds the function. */
+private fun definitionOf(id: String, def: JsonObject): AchievementDefinition {
+    val cond = def["when"] as JsonObject
+    val check: (JsonObject, String?, JsonObject?) -> Boolean = when {
+        "always" in cond -> { _, _, _ -> true }
+        "never" in cond -> { _, _, _ -> false }
+        "throws" in cond -> { _, _, _ -> throw IllegalStateException("check failed on purpose") }
+        "player" in cond -> {
+            val path = cond["player"].string()!!
+            val gte = cond["gte"].finiteNumber()!!
+            ({ player, _, _ -> (getPath(player, path).finiteNumber() ?: Double.NaN) >= gte })
+        }
+        "activity" in cond -> {
+            val want = cond["activity"].string()
+            ({ _, activity, _ -> activity == want })
+        }
+        else -> {
+            val min = cond["score_gte"].finiteNumber()!!
+            ({ _, _, result -> (result?.get("score").finiteNumber() ?: Double.NaN) >= min })
+        }
     }
-    return rewards
+    return AchievementDefinition(
+        name = def["name"].string() ?: id,
+        description = def["description"].string() ?: "",
+        icon = def["icon"].string() ?: "",
+        xp = def["xp"].finiteNumber() ?: 0.0,
+        check = check,
+    )
 }
 
-private class FixedClock(private val zone: TimeZone, private val millis: Long) : Clock {
+/** A clock the case moves. It names days in [zone] from the local wall time, never through UTC. */
+private class FixedClock(private val zone: TimeZone, wall: String) : Clock {
     private val system = SystemClock(zone)
+    private var millis = at(wall)
+
+    fun at(wall: String): Long = LocalDateTime.parse(wall).toInstant(zone).toEpochMilliseconds()
+    fun set(wall: String) {
+        millis = at(wall)
+    }
+
     override fun now(): Long = millis
     override fun localDate(millis: Long): String = system.localDate(millis)
 }
 
+/** An in-memory store. [failWrites] makes every set throw. Seeding goes around it. */
+private class FixtureStorage(private val failWrites: Boolean) : StoragePort {
+    val values = HashMap<String, String>()
+    override suspend fun get(key: String): String? = values[key]
+    override suspend fun set(key: String, value: String) {
+        if (failWrites) throw IllegalStateException("storage write failed")
+        values[key] = value
+    }
+    override suspend fun remove(key: String) {
+        values.remove(key)
+    }
+}
+
+private val EVENT_NAMES = listOf(
+    "xp_gained", "level_up", "achievement_unlocked", "personal_best",
+    "streak_updated", "player_reset", "save_failed", "load_failed",
+)
+
 private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
-    private val clock: Clock
+    private val clock = FixedClock(zone, case["clock"].string()!!)
     private val registry = HashMap<String, JsonElement>()
-    private val loaded: Doc
-    private val today: String
-    private var loadFailure: String? = null
+    private val storage = FixtureStorage((case["storage"] as? JsonObject)?.get("failWrites")?.let { (it as JsonPrimitive).content == "true" } == true)
+    private val events = mutableListOf<JsonObject>()
+    private val config: ProgressConfig
+    private lateinit var progress: Progress
 
     init {
-        val wall = LocalDateTime.parse(case["clock"].string()!!)
-        clock = FixedClock(zone, wall.toInstant(zone).toEpochMilliseconds())
-        today = clock.localDate()
+        val today = clock.localDate()
         check(today == case["clock"].string()!!.substring(0, 10)) { "clock day $today is not the wall day" }
-        val config = case["config"] as? JsonObject
-        val rewards = rewardsOf(config)
-        // Same as init: nothing saved, or a value that is not an object, starts an empty player.
-        // Text that does not parse, or a document the core refuses, does too, and load_failed is raised.
+        val given = case["config"] as? JsonObject
+        val defs = LinkedHashMap<String, AchievementDefinition>()
+        for ((id, def) in (given?.get("achievements") as? JsonObject) ?: JsonObject(emptyMap())) {
+            defs[id] = definitionOf(id, def as JsonObject)
+        }
+        config = ProgressConfig(
+            achievements = defs,
+            builtinAchievements = given?.get("builtinAchievements")?.let { (it as JsonPrimitive).content != "false" } ?: true,
+            clock = clock,
+            streakDays = if (given?.get("streakDays").string() == "record") StreakDays.Record else StreakDays.Any,
+        )
+        case["device"].string()?.let { storage.values["dopamine_$DEVICE_KEY"] = JsonPrimitive(it).toString() }
         val raw = case["savedRaw"].string()
-        val saved: JsonElement? = when {
-            raw != null -> try {
-                parseJsonStrict(raw)
-            } catch (error: SerializationException) {
-                loadFailure = "corrupt"
-                null
+        if (raw != null) storage.values["dopamine_player"] = raw
+        else case["savedJson"]?.let { storage.values["dopamine_player"] = it.toString() }
+    }
+
+    private suspend fun start() {
+        progress = Progress(storage, config)
+        // Subscribed before init, so load events are seen.
+        for (name in EVENT_NAMES) {
+            progress.on(name) { event ->
+                events += JsonObject(event.payload() + ("event" to JsonPrimitive(event.wireName)))
             }
-            else -> case["savedJson"]
         }
-        loaded = if (saved is JsonObject) {
-            try {
-                parseDoc(saved, clock.now(), today, rewards)
-            } catch (error: DopamineError) {
-                loadFailure = error.code
-                emptyDoc(clock.now().toDouble())
-            }
-        } else {
-            emptyDoc(clock.now().toDouble())
-        }
+        progress.init()
     }
 
     private fun docOf(value: JsonElement?, where: String): JsonElement {
@@ -247,34 +286,26 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
         return value ?: fail("$where: missing document")
     }
 
-    fun run() {
+    suspend fun run() {
+        start()
         val afterInit = case["afterInit"] as? JsonObject
-        if (afterInit != null) verify(afterInit, "afterInit", null, listOfNotNull(loadFailure))
+        if (afterInit != null) verify(afterInit, "afterInit", null)
         val steps = case["steps"] as? JsonArray ?: JsonArray(emptyList())
         for ((index, element) in steps.withIndex()) {
             val step = element as JsonObject
             val op = step["op"].string()!!
             val label = "step ${index + 1} ($op)"
+            events.clear()
             var returned: JsonElement? = null
             var thrown: Throwable? = null
             try {
-                when (op) {
-                    "merge" -> {
-                        returned = merge(docOf(step["a"], label), docOf(step["b"], label))
-                        step["as"].string()?.let { registry[it] = returned }
-                    }
-                    "validate" -> {
-                        returned = validate(docOf(step["doc"], label))
-                        step["as"].string()?.let { registry[it] = returned }
-                    }
-                    else -> fail("$label: op is not a document op")
-                }
+                returned = perform(op, step, label)
             } catch (error: DopamineError) {
                 thrown = error
             } catch (error: ArgumentTypeError) {
                 thrown = error
             }
-            val expect = step["expect"] as JsonObject
+            val expect = step["expect"] as? JsonObject ?: continue
             val wantThrow = (expect["throws"] as? JsonPrimitive)?.content
             if (wantThrow != null) {
                 val error = thrown ?: fail("$label: expected $wantThrow, nothing was thrown")
@@ -284,32 +315,89 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
             } else if (thrown != null) {
                 throw thrown
             }
-            verify(expect, label, returned, emptyList())
+            verify(expect, label, returned)
         }
     }
 
-    private fun verify(expectation: JsonObject, label: String, returned: JsonElement?, loadFailures: List<String>) {
+    // Ops use the raw entries, so arguments the typed API cannot take still reach the checks.
+    private suspend fun perform(op: String, step: JsonObject, label: String): JsonElement? {
+        val kept: JsonElement? = when (op) {
+            "setClock" -> {
+                clock.set(step["at"].string()!!)
+                null
+            }
+            "reload" -> {
+                step["device"].string()?.let { storage.values["dopamine_$DEVICE_KEY"] = JsonPrimitive(it).toString() }
+                events.clear()
+                start()
+                null
+            }
+            "addXP" -> {
+                val result = progress.addXpRaw(step["amount"], step["reason"])
+                JsonObject(
+                    mapOf(
+                        "leveledUp" to JsonPrimitive(result.leveledUp),
+                        "newLevel" to JsonPrimitive(result.newLevel),
+                        "xpGained" to number(result.xpGained),
+                    ),
+                )
+            }
+            "record" -> JsonPrimitive(progress.recordRaw(step["activity"], step["result"]))
+            "unlockAchievement" -> JsonPrimitive(progress.unlockAchievementRaw(step["id"]))
+            "markAchievementsSeen" -> {
+                progress.markAchievementsSeen((step["ids"] as JsonArray).map { it.string()!! })
+                null
+            }
+            "reset" -> progress.reset()
+            "getXPForNextLevel" -> {
+                val next = progress.getXpForNextLevel()
+                JsonObject(
+                    mapOf(
+                        "total" to number(next.total),
+                        "needed" to number(next.needed),
+                        "progress" to number(next.progress),
+                    ),
+                )
+            }
+            "export" -> progress.export().also { registry[step["as"].string()!!] = it }
+            "import" -> {
+                val from = step["from"].string()
+                val doc = if (from != null) registry[from] ?: fail("$label: no saved document named \"$from\"") else docOf(step["doc"], label)
+                progress.import(doc, silent = step["silent"]?.let { (it as JsonPrimitive).content == "true" } == true)
+            }
+            "merge" -> merge(docOf(step["a"], label), docOf(step["b"], label)).also { doc -> step["as"].string()?.let { registry[it] = doc } }
+            "validate" -> validate(docOf(step["doc"], label)).also { doc -> step["as"].string()?.let { registry[it] = doc } }
+            else -> fail("$label: unknown op")
+        }
+        return kept
+    }
+
+    private fun verify(expectation: JsonObject, label: String, returned: JsonElement?) {
         assertKeys("$label expect", expectation, EXPECT_KEYS)
         nonEmpty(expectation, "$label expect")
-        for (key in listOf("player", "playerExact", "doc", "docExact", "returnsExact")) {
+        for (key in listOf("player", "playerExact", "doc", "docExact")) {
             val value = expectation[key] ?: continue
             if (value !is JsonObject) fail("$label $key: expected an object")
             nonEmpty(value, "$label $key")
         }
         (expectation["returns"] as? JsonObject)?.let { nonEmpty(it, "$label returns") }
+        (expectation["returnsExact"] as? JsonObject)?.let { nonEmpty(it, "$label returnsExact") }
         for (key in listOf("absent", "achievements", "events")) {
             val value = expectation[key] ?: continue
             if (value !is JsonArray) fail("$label $key: expected an array")
             if (key == "absent") nonEmpty(value, "$label $key")
         }
 
-        val player = view(loaded, today)
-        val exported = render(loaded)
+        val player = progress.snapshot()
+        val exported = progress.export()
         expectation["player"]?.let { matchSubset(player, it, "$label player") }
         exact(expectation["playerExact"], player, "$label playerExact")
         expectation["doc"]?.let { matchSubset(exported, it, "$label doc") }
         exact(expectation["docExact"], exported, "$label docExact")
-        exact(expectation["returnsExact"], returned, "$label returnsExact")
+        expectation["returnsExact"]?.let { want ->
+            if (want is JsonObject) exact(want, returned, "$label returnsExact")
+            else if (!deepEqual(returned, want)) fail("$label returnsExact: expected $want, got $returned")
+        }
         (expectation["same"])?.let { same ->
             val pairs = same as? JsonArray
             if (pairs == null || pairs.isEmpty()) fail("$label same: expected a list of pairs")
@@ -329,11 +417,10 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
             assertEquals(want.map { it.string()!! }.sorted(), got, "$label achievements")
         }
         expectation["returns"]?.let { matchSubset(returned, it, "$label returns") }
-        (expectation["events"] as? JsonArray)?.let { events ->
-            // The only event this runner can see is load_failed, with the reason the load failed for.
-            val got = loadFailures.map { "load_failed:$it" }
-            val want = events.map { "${(it as JsonObject)["event"].string()}:${it["reason"].string()}" }
-            assertEquals(want, got, "$label events")
+        (expectation["events"] as? JsonArray)?.let { want ->
+            val got = events.toList()
+            assertEquals(want.size, got.size, "$label events: expected ${want.size}, got $got")
+            want.forEachIndexed { i, event -> matchSubset(got[i], event, "$label events[$i]") }
         }
     }
 
@@ -346,11 +433,8 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
     }
 
     companion object {
-        /**
-         * Checks the shape of a case, failing on anything unknown, and returns
-         * why it is skipped, or null when this runner can run it.
-         */
-        fun inspect(case: JsonObject): String? {
+        /** Checks the shape of a case and fails on anything unknown. */
+        fun inspect(case: JsonObject) {
             assertKeys("case", case, CASE_KEYS)
             if (!CLOCK_SHAPE.matches(case["clock"].string() ?: "")) fail("clock must be YYYY-MM-DDTHH:MM:SS local time")
             val steps = case["steps"] as? JsonArray
@@ -370,7 +454,6 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
                 }
             }
 
-            var usesReward = false
             for ((index, element) in (steps ?: JsonArray(emptyList())).withIndex()) {
                 val step = element as JsonObject
                 val op = step["op"].string()
@@ -379,22 +462,10 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
                 assertKeys(label, step, allowed + setOf("op", "expect"))
                 if (op == "merge") listOf("a", "b").forEach { if (it !in step) fail("$label: $it is required") }
                 if (op == "validate" && "doc" !in step) fail("$label: doc is required")
+                if (op == "import" && "doc" !in step && "from" !in step) fail("$label: doc or from is required")
                 if (op != "setClock" && step["expect"] == null) fail("$label: expect is required")
                 if (op == "setClock" && !CLOCK_SHAPE.matches(step["at"].string() ?: "")) fail("$label: at must be YYYY-MM-DDTHH:MM:SS local time")
-                if (op in K3B_OPS) usesReward = true
             }
-
-            // load_failed is raised by loading a save, which the runner can do. Other events need the reward system.
-            val otherEvents = ((case["afterInit"] as? JsonObject)?.get("events") as? JsonArray)
-                ?.any { (it as JsonObject)["event"].string() != "load_failed" } == true
-            return skipReason(usesReward = usesReward, failingWrites = "storage" in case, otherEvents = otherEvents)
-        }
-
-        private fun skipReason(usesReward: Boolean, failingWrites: Boolean, otherEvents: Boolean): String? = when {
-            usesReward -> "K3b"
-            failingWrites -> "K3b"
-            otherEvents -> "K3b"
-            else -> null
         }
     }
 }
