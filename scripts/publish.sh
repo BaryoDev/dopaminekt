@@ -31,10 +31,11 @@ version=$(grep '^[[:space:]]*VERSION_NAME[[:space:]]*=' gradle.properties | head
   | sed -e 's/^[^=]*=//' -e 's/\r//g' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
 [ -n "$version" ] || fail "VERSION_NAME is empty in gradle.properties"
 case "$version" in
-  *-SNAPSHOT) fail "VERSION_NAME $version is a SNAPSHOT. Releases only." ;;
+  *SNAPSHOT*) fail "VERSION_NAME $version is a SNAPSHOT. Releases only." ;;
 esac
-printf '%s\n' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.]+)?$' \
-  || fail "VERSION_NAME '$version' is not MAJOR.MINOR.PATCH with an optional -suffix"
+printf '%s\n' "$version" \
+  | grep -Eq '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[A-Za-z0-9.]+)?$' \
+  || fail "VERSION_NAME '$version' is not MAJOR.MINOR.PATCH (no leading zeros) with an optional -suffix"
 
 tag=$(git tag --points-at HEAD | grep -Fx "v$version" || true)
 [ -n "$tag" ] || fail "HEAD has no tag v$version. Tag the release commit first."
