@@ -7,7 +7,6 @@ It follows dopaminejs 3.1.0.
 - `Progress(storage, config)` is one player: XP, levels, streaks, play stats and achievements, saved as a version 3 document. Call `init()` first. `addXp`, `record`, `unlockAchievement`, `import`, `export`, `reset` and `snapshot` work on it.
 - `Progress.on(name, listener)` gives events: `xp_gained`, `level_up`, `achievement_unlocked`, `personal_best`, `streak_updated`, `player_reset`, `save_failed` and `load_failed`.
 - `Progress.use(middleware)` adds hooks that run before and after XP, records and unlocks. A before hook can reject a call or change its input.
-
 - `validate(json)` cleans any JSON value into a version 3 document, migrating a 2.x save. Entries it cannot use are dropped. It throws `DopamineError` with the code `invalid_document`, `unsupported_version` or `too_many_devices`.
 - `merge(a, b)` joins two saves. The result does not depend on argument order.
 - `levelFor(xp)` and `thresholdFor(level)` give the level curve.
