@@ -1,11 +1,6 @@
 package dev.baryo.dopaminekt
 
-/**
- * Buzzes the device for the player's hands. Where the device cannot vibrate, an implementation does nothing.
- *
- * An override cannot redeclare default parameter values. Calls through the interface use the
- * defaults declared here.
- */
+/** Short device vibrations. Where the device cannot vibrate, an implementation does nothing. */
 public interface Haptics {
     /** A 10 ms buzz. */
     public fun tap()
@@ -34,7 +29,11 @@ public interface SoundPlayer {
 /** A point on screen. Units belong to the renderer. */
 public data class Point(val x: Double, val y: Double)
 
-/** The kinds of burst a [ParticleRenderer] knows. [wireName] is the JS name. */
+/**
+ * The kinds of burst a [ParticleRenderer] knows. [wireName] is the JS name.
+ *
+ * JS may add values in a later contract, so use `else` when you `when` over this.
+ */
 public enum class BurstKind(public val wireName: String) {
     Confetti("confetti"),
     Sparkle("sparkle"),
@@ -51,16 +50,13 @@ public enum class BurstKind(public val wireName: String) {
 /** Tuning for one burst. A null field means the renderer's default. */
 public data class BurstOptions(val count: Int? = null, val color: String? = null)
 
-/**
- * Draws bursts of particles.
- *
- * An override cannot redeclare default parameter values. Calls through the interface use the
- * defaults declared here.
- */
+/** Draws bursts of particles. */
 public interface ParticleRenderer {
     /**
      * Draws a burst of [kind] at [at] (the renderer picks a place when null), tuned by [options].
-     * A kind the renderer does not know does nothing.
+     *
+     * An override cannot redeclare default parameter values. Calls through the interface use the
+     * defaults declared here.
      */
     public fun burst(kind: BurstKind, at: Point? = null, options: BurstOptions? = null)
 
@@ -80,7 +76,11 @@ public data class HudState(
     val next: Double? = null,
 )
 
-/** The kinds of popup. [wireName] is the JS name. */
+/**
+ * The kinds of popup. [wireName] is the JS name.
+ *
+ * JS may add values in a later contract, so use `else` when you `when` over this.
+ */
 public enum class PopupKind(public val wireName: String) {
     Achievement("achievement"),
     Level("level"),
@@ -93,7 +93,11 @@ public enum class PopupKind(public val wireName: String) {
     }
 }
 
-/** How rare an achievement popup looks. [wireName] is the JS name. */
+/**
+ * How rare an achievement popup looks. [wireName] is the JS name.
+ *
+ * JS may add values in a later contract, so use `else` when you `when` over this.
+ */
 public enum class PopupTier(public val wireName: String) {
     Common("common"),
     Rare("rare"),
@@ -143,7 +147,11 @@ public interface RewardUi {
     public fun destroy()
 }
 
-/** The parts a plugin can ask for. [wireName] is the JS name. */
+/**
+ * The parts a plugin can ask for. [wireName] is the JS name.
+ *
+ * JS may add values in a later contract, so use `else` when you `when` over this.
+ */
 public enum class PartName(public val wireName: String) {
     Ui("ui"),
     Particles("particles"),
@@ -161,8 +169,15 @@ public enum class PartName(public val wireName: String) {
  * call time and do not keep them.
  */
 public interface Parts {
+    /** The reward display, or null. */
     public val ui: RewardUi?
+
+    /** The particle renderer, or null. */
     public val particles: ParticleRenderer?
+
+    /** The sound player, or null. */
     public val sound: SoundPlayer?
+
+    /** The haptics part, or null. */
     public val haptics: Haptics?
 }

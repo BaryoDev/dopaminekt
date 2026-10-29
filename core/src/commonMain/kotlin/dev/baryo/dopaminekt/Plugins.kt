@@ -17,8 +17,31 @@ public fun isValidPluginName(name: String): Boolean =
     name.isNotEmpty() && name.all { it in 'a'..'z' || it in '0'..'9' || it == '-' }
 
 /**
+ * Wraps [storage] for the plugin called [name]. Every key is prefixed `dopamine_plugin_<name>:`,
+ * exactly as in JS, so data written by either port reads in the other, and two plugins never see
+ * each other's keys.
+ *
+ * Throws [DopamineError] with the code `plugin_invalid` when [name] fails [isValidPluginName].
+ */
+public fun pluginStorage(storage: StoragePort, name: String): StoragePort {
+    if (!isValidPluginName(name)) {
+        throw DopamineError("plugin_invalid", "Plugin names are a-z, 0-9 and -, got \"$name\"")
+    }
+    val prefix = "dopamine_plugin_$name:"
+    return object : StoragePort {
+        override suspend fun get(key: String): String? = storage.get(prefix + key)
+        override suspend fun set(key: String, value: String) = storage.set(prefix + key, value)
+        override suspend fun remove(key: String) = storage.remove(prefix + key)
+    }
+}
+
+/**
  * Something that adds to the app without being part of core. Core defines the contract and ships
  * no implementation of it.
+ *
+ * Whoever runs plugins checks [api], duplicate names, [after] and [requires], and throws
+ * [DopamineError] with the matching code. Installs run one at a time. [after] sees only plugins
+ * that finished installing. Dispose runs in reverse install order.
  */
 public interface DopaminePlugin {
     /** The plugin's name. It must pass [isValidPluginName] and be unique. */
@@ -43,12 +66,21 @@ public interface DopaminePlugin {
 /**
  * Where a plugin writes its logs.
  *
- * Takes one message and an optional [Throwable]. JS takes any number of arguments.
+ * Takes one message and an optional [Throwable]. JS takes any number of arguments. An override
+ * cannot redeclare default parameter values. Calls through the interface use the defaults declared
+ * here.
  */
 public interface Logger {
+    /** Logs a debug [message] and an optional [error]. */
     public fun debug(message: String, error: Throwable? = null)
+
+    /** Logs an info [message] and an optional [error]. */
     public fun info(message: String, error: Throwable? = null)
+
+    /** Logs a warning [message] and an optional [error]. */
     public fun warn(message: String, error: Throwable? = null)
+
+    /** Logs an error [message] and an optional [error]. */
     public fun error(message: String, error: Throwable? = null)
 }
 
@@ -73,16 +105,23 @@ public interface PluginEvents {
      * Emits a [ProgressEvent.Custom] with [data]. [wireName] must be `<plugin name>:<event>`, with
      * the name of the plugin that owns this bus. Anything else throws [DopamineError] with the
      * code `plugin_event`. That check belongs to the implementer.
+     *
+     * Call it on the dispatcher the app uses for [Progress], which is one dispatcher. An override
+     * cannot redeclare default parameter values. Calls through the interface use the defaults
+     * declared here.
      */
     public fun emit(wireName: String, data: JsonElement? = null)
 }
 
 /**
- * What a plugin gets when it installs.
+ * What a plugin gets when it installs. Each plugin gets its own context instance, and [expose] sets
+ * that plugin's handle.
  *
  * - [storage]: every key is prefixed `dopamine_plugin_<name>:`, exactly as in JS, so data written
  *   by either port reads in the other.
- * - [scope]: cancelled when the plugin is disposed. This is the one addition over JS.
+ * - [scope]: cancelled when the plugin is disposed. This is the one addition over JS. Calls into
+ *   [progress] and [events] from it must run on the dispatcher the app uses for [Progress], so give
+ *   it that dispatcher.
  * - [parts]: live, so read a part at call time. A part named in [DopaminePlugin.requires] is not
  *   null at install.
  * - [plugin]: returns null until the named plugin has finished installing, which is what

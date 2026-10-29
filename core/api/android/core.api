@@ -336,6 +336,7 @@ public final class dev/baryo/dopaminekt/PluginEvents$DefaultImpls {
 public final class dev/baryo/dopaminekt/PluginsKt {
 	public static final field HOST_API I
 	public static final fun isValidPluginName (Ljava/lang/String;)Z
+	public static final fun pluginStorage (Ldev/baryo/dopaminekt/StoragePort;Ljava/lang/String;)Ldev/baryo/dopaminekt/StoragePort;
 }
 
 public final class dev/baryo/dopaminekt/Point {
