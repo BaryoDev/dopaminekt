@@ -1,0 +1,656 @@
+public final class dev/baryo/dopaminekt/AchievementDefinition {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;DLkotlin/jvm/functions/Function3;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;DLkotlin/jvm/functions/Function3;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCheck ()Lkotlin/jvm/functions/Function3;
+	public final fun getDescription ()Ljava/lang/String;
+	public final fun getIcon ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getXp ()D
+}
+
+public final class dev/baryo/dopaminekt/AddXpResult {
+	public fun <init> (ZJD)V
+	public final fun component1 ()Z
+	public final fun component2 ()J
+	public final fun component3 ()D
+	public final fun copy (ZJD)Ldev/baryo/dopaminekt/AddXpResult;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/AddXpResult;ZJDILjava/lang/Object;)Ldev/baryo/dopaminekt/AddXpResult;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLeveledUp ()Z
+	public final fun getNewLevel ()J
+	public final fun getXpGained ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/AfterRecordContext {
+	public fun <init> (Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;D)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lkotlinx/serialization/json/JsonObject;
+	public final fun component3 ()D
+	public final fun copy (Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;D)Ldev/baryo/dopaminekt/AfterRecordContext;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/AfterRecordContext;Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;DILjava/lang/Object;)Ldev/baryo/dopaminekt/AfterRecordContext;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getActivity ()Ljava/lang/String;
+	public final fun getResult ()Lkotlinx/serialization/json/JsonObject;
+	public final fun getXp ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/AfterUnlockContext {
+	public fun <init> (Ljava/lang/String;D)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()D
+	public final fun copy (Ljava/lang/String;D)Ldev/baryo/dopaminekt/AfterUnlockContext;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/AfterUnlockContext;Ljava/lang/String;DILjava/lang/Object;)Ldev/baryo/dopaminekt/AfterUnlockContext;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getId ()Ljava/lang/String;
+	public final fun getReward ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/AfterXpContext {
+	public fun <init> (DLjava/lang/String;DJ)V
+	public final fun component1 ()D
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()D
+	public final fun component4 ()J
+	public final fun copy (DLjava/lang/String;DJ)Ldev/baryo/dopaminekt/AfterXpContext;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/AfterXpContext;DLjava/lang/String;DJILjava/lang/Object;)Ldev/baryo/dopaminekt/AfterXpContext;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAmount ()D
+	public final fun getLevel ()J
+	public final fun getReason ()Ljava/lang/String;
+	public final fun getTotal ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/BeforeRecordContext {
+	public fun <init> (Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lkotlinx/serialization/json/JsonObject;
+	public final fun copy (Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;)Ldev/baryo/dopaminekt/BeforeRecordContext;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/BeforeRecordContext;Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;ILjava/lang/Object;)Ldev/baryo/dopaminekt/BeforeRecordContext;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getActivity ()Ljava/lang/String;
+	public final fun getResult ()Lkotlinx/serialization/json/JsonObject;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/BeforeUnlockContext {
+	public fun <init> (Ljava/lang/String;D)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()D
+	public final fun copy (Ljava/lang/String;D)Ldev/baryo/dopaminekt/BeforeUnlockContext;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/BeforeUnlockContext;Ljava/lang/String;DILjava/lang/Object;)Ldev/baryo/dopaminekt/BeforeUnlockContext;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getId ()Ljava/lang/String;
+	public final fun getReward ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/BeforeXpContext {
+	public fun <init> (DLjava/lang/String;)V
+	public final fun component1 ()D
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (DLjava/lang/String;)Ldev/baryo/dopaminekt/BeforeXpContext;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/BeforeXpContext;DLjava/lang/String;ILjava/lang/Object;)Ldev/baryo/dopaminekt/BeforeXpContext;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAmount ()D
+	public final fun getReason ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/BurstKind : java/lang/Enum {
+	public static final field Coins Ldev/baryo/dopaminekt/BurstKind;
+	public static final field Companion Ldev/baryo/dopaminekt/BurstKind$Companion;
+	public static final field Confetti Ldev/baryo/dopaminekt/BurstKind;
+	public static final field Fire Ldev/baryo/dopaminekt/BurstKind;
+	public static final field Sparkle Ldev/baryo/dopaminekt/BurstKind;
+	public static final field Stars Ldev/baryo/dopaminekt/BurstKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getWireName ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Ldev/baryo/dopaminekt/BurstKind;
+	public static fun values ()[Ldev/baryo/dopaminekt/BurstKind;
+}
+
+public final class dev/baryo/dopaminekt/BurstKind$Companion {
+	public final fun fromWireName (Ljava/lang/String;)Ldev/baryo/dopaminekt/BurstKind;
+}
+
+public final class dev/baryo/dopaminekt/BurstOptions {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/Integer;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Integer;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/Integer;Ljava/lang/String;)Ldev/baryo/dopaminekt/BurstOptions;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/BurstOptions;Ljava/lang/Integer;Ljava/lang/String;ILjava/lang/Object;)Ldev/baryo/dopaminekt/BurstOptions;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColor ()Ljava/lang/String;
+	public final fun getCount ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class dev/baryo/dopaminekt/Clock {
+	public abstract fun localDate (J)Ljava/lang/String;
+	public static synthetic fun localDate$default (Ldev/baryo/dopaminekt/Clock;JILjava/lang/Object;)Ljava/lang/String;
+	public abstract fun now ()J
+}
+
+public final class dev/baryo/dopaminekt/Clock$DefaultImpls {
+	public static synthetic fun localDate$default (Ldev/baryo/dopaminekt/Clock;JILjava/lang/Object;)Ljava/lang/String;
+}
+
+public abstract interface class dev/baryo/dopaminekt/Disposer {
+	public abstract fun dispose ()V
+}
+
+public final class dev/baryo/dopaminekt/DopamineError : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCode ()Ljava/lang/String;
+}
+
+public abstract interface class dev/baryo/dopaminekt/DopaminePlugin {
+	public fun getAfter ()Ljava/util/List;
+	public abstract fun getApi ()I
+	public abstract fun getName ()Ljava/lang/String;
+	public fun getRequires ()Ljava/util/List;
+	public abstract fun getVersion ()Ljava/lang/String;
+	public abstract fun install (Ldev/baryo/dopaminekt/PluginContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class dev/baryo/dopaminekt/DopaminePlugin$DefaultImpls {
+	public static fun getAfter (Ldev/baryo/dopaminekt/DopaminePlugin;)Ljava/util/List;
+	public static fun getRequires (Ldev/baryo/dopaminekt/DopaminePlugin;)Ljava/util/List;
+}
+
+public abstract interface class dev/baryo/dopaminekt/Env {
+	public abstract fun getReducedMotion ()Z
+}
+
+public final class dev/baryo/dopaminekt/FloatingText {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Double;Ljava/lang/Double;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Double;Ljava/lang/Double;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/Double;
+	public final fun component3 ()Ljava/lang/Double;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/Double;Ljava/lang/Double;Ljava/lang/String;Ljava/lang/String;)Ldev/baryo/dopaminekt/FloatingText;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/FloatingText;Ljava/lang/String;Ljava/lang/Double;Ljava/lang/Double;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Ldev/baryo/dopaminekt/FloatingText;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColor ()Ljava/lang/String;
+	public final fun getSize ()Ljava/lang/String;
+	public final fun getText ()Ljava/lang/String;
+	public final fun getX ()Ljava/lang/Double;
+	public final fun getY ()Ljava/lang/Double;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class dev/baryo/dopaminekt/Haptics {
+	public abstract fun double ()V
+	public abstract fun setEnabled (Z)V
+	public abstract fun tap ()V
+}
+
+public final class dev/baryo/dopaminekt/HudState {
+	public fun <init> (DJJLjava/lang/Double;Ljava/lang/Double;)V
+	public synthetic fun <init> (DJJLjava/lang/Double;Ljava/lang/Double;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()D
+	public final fun component2 ()J
+	public final fun component3 ()J
+	public final fun component4 ()Ljava/lang/Double;
+	public final fun component5 ()Ljava/lang/Double;
+	public final fun copy (DJJLjava/lang/Double;Ljava/lang/Double;)Ldev/baryo/dopaminekt/HudState;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/HudState;DJJLjava/lang/Double;Ljava/lang/Double;ILjava/lang/Object;)Ldev/baryo/dopaminekt/HudState;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLevel ()J
+	public final fun getNext ()Ljava/lang/Double;
+	public final fun getProgress ()Ljava/lang/Double;
+	public final fun getStreak ()J
+	public final fun getXp ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/LevelsKt {
+	public static final fun levelFor (D)J
+	public static final fun thresholdFor (J)D
+}
+
+public abstract interface class dev/baryo/dopaminekt/Logger {
+	public abstract fun debug (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public static synthetic fun debug$default (Ldev/baryo/dopaminekt/Logger;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)V
+	public abstract fun error (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public static synthetic fun error$default (Ldev/baryo/dopaminekt/Logger;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)V
+	public abstract fun info (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public static synthetic fun info$default (Ldev/baryo/dopaminekt/Logger;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)V
+	public abstract fun warn (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public static synthetic fun warn$default (Ldev/baryo/dopaminekt/Logger;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)V
+}
+
+public final class dev/baryo/dopaminekt/Logger$DefaultImpls {
+	public static synthetic fun debug$default (Ldev/baryo/dopaminekt/Logger;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)V
+	public static synthetic fun error$default (Ldev/baryo/dopaminekt/Logger;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)V
+	public static synthetic fun info$default (Ldev/baryo/dopaminekt/Logger;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)V
+	public static synthetic fun warn$default (Ldev/baryo/dopaminekt/Logger;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)V
+}
+
+public final class dev/baryo/dopaminekt/MemoryStorage : dev/baryo/dopaminekt/StoragePort {
+	public fun <init> ()V
+	public final fun clear ()V
+	public fun get (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun remove (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun set (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class dev/baryo/dopaminekt/MergeKt {
+	public static final fun merge (Lkotlinx/serialization/json/JsonElement;Lkotlinx/serialization/json/JsonElement;JLjava/lang/String;Ljava/util/Map;)Lkotlinx/serialization/json/JsonObject;
+	public static synthetic fun merge$default (Lkotlinx/serialization/json/JsonElement;Lkotlinx/serialization/json/JsonElement;JLjava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lkotlinx/serialization/json/JsonObject;
+}
+
+public abstract interface class dev/baryo/dopaminekt/Middleware {
+	public fun afterRecord (Ldev/baryo/dopaminekt/AfterRecordContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun afterUnlock (Ldev/baryo/dopaminekt/AfterUnlockContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun afterXp (Ldev/baryo/dopaminekt/AfterXpContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun beforeRecord (Ldev/baryo/dopaminekt/BeforeRecordContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun beforeUnlock (Ldev/baryo/dopaminekt/BeforeUnlockContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun beforeXp (Ldev/baryo/dopaminekt/BeforeXpContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class dev/baryo/dopaminekt/Middleware$DefaultImpls {
+	public static fun afterRecord (Ldev/baryo/dopaminekt/Middleware;Ldev/baryo/dopaminekt/AfterRecordContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun afterUnlock (Ldev/baryo/dopaminekt/Middleware;Ldev/baryo/dopaminekt/AfterUnlockContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun afterXp (Ldev/baryo/dopaminekt/Middleware;Ldev/baryo/dopaminekt/AfterXpContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun beforeRecord (Ldev/baryo/dopaminekt/Middleware;Ldev/baryo/dopaminekt/BeforeRecordContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun beforeUnlock (Ldev/baryo/dopaminekt/Middleware;Ldev/baryo/dopaminekt/BeforeUnlockContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun beforeXp (Ldev/baryo/dopaminekt/Middleware;Ldev/baryo/dopaminekt/BeforeXpContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class dev/baryo/dopaminekt/PartName : java/lang/Enum {
+	public static final field Companion Ldev/baryo/dopaminekt/PartName$Companion;
+	public static final field Haptics Ldev/baryo/dopaminekt/PartName;
+	public static final field Particles Ldev/baryo/dopaminekt/PartName;
+	public static final field Sound Ldev/baryo/dopaminekt/PartName;
+	public static final field Ui Ldev/baryo/dopaminekt/PartName;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getWireName ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Ldev/baryo/dopaminekt/PartName;
+	public static fun values ()[Ldev/baryo/dopaminekt/PartName;
+}
+
+public final class dev/baryo/dopaminekt/PartName$Companion {
+	public final fun fromWireName (Ljava/lang/String;)Ldev/baryo/dopaminekt/PartName;
+}
+
+public abstract interface class dev/baryo/dopaminekt/ParticleRenderer {
+	public abstract fun burst (Ldev/baryo/dopaminekt/BurstKind;Ldev/baryo/dopaminekt/Point;Ldev/baryo/dopaminekt/BurstOptions;)V
+	public static synthetic fun burst$default (Ldev/baryo/dopaminekt/ParticleRenderer;Ldev/baryo/dopaminekt/BurstKind;Ldev/baryo/dopaminekt/Point;Ldev/baryo/dopaminekt/BurstOptions;ILjava/lang/Object;)V
+	public abstract fun destroy ()V
+}
+
+public final class dev/baryo/dopaminekt/ParticleRenderer$DefaultImpls {
+	public static synthetic fun burst$default (Ldev/baryo/dopaminekt/ParticleRenderer;Ldev/baryo/dopaminekt/BurstKind;Ldev/baryo/dopaminekt/Point;Ldev/baryo/dopaminekt/BurstOptions;ILjava/lang/Object;)V
+}
+
+public abstract interface class dev/baryo/dopaminekt/Parts {
+	public abstract fun getHaptics ()Ldev/baryo/dopaminekt/Haptics;
+	public abstract fun getParticles ()Ldev/baryo/dopaminekt/ParticleRenderer;
+	public abstract fun getSound ()Ldev/baryo/dopaminekt/SoundPlayer;
+	public abstract fun getUi ()Ldev/baryo/dopaminekt/RewardUi;
+}
+
+public abstract interface class dev/baryo/dopaminekt/PluginContext {
+	public abstract fun expose (Ljava/lang/Object;)V
+	public abstract fun getClock ()Ldev/baryo/dopaminekt/Clock;
+	public abstract fun getEnv ()Ldev/baryo/dopaminekt/Env;
+	public abstract fun getEvents ()Ldev/baryo/dopaminekt/PluginEvents;
+	public abstract fun getLog ()Ldev/baryo/dopaminekt/Logger;
+	public abstract fun getParts ()Ldev/baryo/dopaminekt/Parts;
+	public abstract fun getProgress ()Ldev/baryo/dopaminekt/Progress;
+	public abstract fun getScope ()Lkotlinx/coroutines/CoroutineScope;
+	public abstract fun getStorage ()Ldev/baryo/dopaminekt/StoragePort;
+	public abstract fun plugin (Ljava/lang/String;)Ljava/lang/Object;
+}
+
+public abstract interface class dev/baryo/dopaminekt/PluginEvents {
+	public abstract fun emit (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;)V
+	public static synthetic fun emit$default (Ldev/baryo/dopaminekt/PluginEvents;Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;ILjava/lang/Object;)V
+	public abstract fun on (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lkotlin/jvm/functions/Function0;
+}
+
+public final class dev/baryo/dopaminekt/PluginEvents$DefaultImpls {
+	public static synthetic fun emit$default (Ldev/baryo/dopaminekt/PluginEvents;Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;ILjava/lang/Object;)V
+}
+
+public final class dev/baryo/dopaminekt/PluginsKt {
+	public static final field HOST_API I
+	public static final fun isValidPluginName (Ljava/lang/String;)Z
+}
+
+public final class dev/baryo/dopaminekt/Point {
+	public fun <init> (DD)V
+	public final fun component1 ()D
+	public final fun component2 ()D
+	public final fun copy (DD)Ldev/baryo/dopaminekt/Point;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/Point;DDILjava/lang/Object;)Ldev/baryo/dopaminekt/Point;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getX ()D
+	public final fun getY ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/Popup {
+	public fun <init> (Ldev/baryo/dopaminekt/PopupKind;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ldev/baryo/dopaminekt/PopupTier;)V
+	public synthetic fun <init> (Ldev/baryo/dopaminekt/PopupKind;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ldev/baryo/dopaminekt/PopupTier;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ldev/baryo/dopaminekt/PopupKind;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ldev/baryo/dopaminekt/PopupTier;
+	public final fun copy (Ldev/baryo/dopaminekt/PopupKind;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ldev/baryo/dopaminekt/PopupTier;)Ldev/baryo/dopaminekt/Popup;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/Popup;Ldev/baryo/dopaminekt/PopupKind;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ldev/baryo/dopaminekt/PopupTier;ILjava/lang/Object;)Ldev/baryo/dopaminekt/Popup;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBody ()Ljava/lang/String;
+	public final fun getIcon ()Ljava/lang/String;
+	public final fun getKind ()Ldev/baryo/dopaminekt/PopupKind;
+	public final fun getMeta ()Ljava/lang/String;
+	public final fun getTier ()Ldev/baryo/dopaminekt/PopupTier;
+	public final fun getTitle ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/PopupKind : java/lang/Enum {
+	public static final field Achievement Ldev/baryo/dopaminekt/PopupKind;
+	public static final field Companion Ldev/baryo/dopaminekt/PopupKind$Companion;
+	public static final field Custom Ldev/baryo/dopaminekt/PopupKind;
+	public static final field Level Ldev/baryo/dopaminekt/PopupKind;
+	public static final field Notice Ldev/baryo/dopaminekt/PopupKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getWireName ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Ldev/baryo/dopaminekt/PopupKind;
+	public static fun values ()[Ldev/baryo/dopaminekt/PopupKind;
+}
+
+public final class dev/baryo/dopaminekt/PopupKind$Companion {
+	public final fun fromWireName (Ljava/lang/String;)Ldev/baryo/dopaminekt/PopupKind;
+}
+
+public final class dev/baryo/dopaminekt/PopupTier : java/lang/Enum {
+	public static final field Common Ldev/baryo/dopaminekt/PopupTier;
+	public static final field Companion Ldev/baryo/dopaminekt/PopupTier$Companion;
+	public static final field Legendary Ldev/baryo/dopaminekt/PopupTier;
+	public static final field Rare Ldev/baryo/dopaminekt/PopupTier;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getWireName ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Ldev/baryo/dopaminekt/PopupTier;
+	public static fun values ()[Ldev/baryo/dopaminekt/PopupTier;
+}
+
+public final class dev/baryo/dopaminekt/PopupTier$Companion {
+	public final fun fromWireName (Ljava/lang/String;)Ldev/baryo/dopaminekt/PopupTier;
+}
+
+public final class dev/baryo/dopaminekt/Progress {
+	public fun <init> (Ldev/baryo/dopaminekt/StoragePort;Ldev/baryo/dopaminekt/ProgressConfig;)V
+	public synthetic fun <init> (Ldev/baryo/dopaminekt/StoragePort;Ldev/baryo/dopaminekt/ProgressConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun addXp (DLjava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun addXp$default (Ldev/baryo/dopaminekt/Progress;DLjava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun checkAchievements (Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun checkAchievements$default (Ldev/baryo/dopaminekt/Progress;Ljava/lang/String;Lkotlinx/serialization/json/JsonObject;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun clear ()V
+	public final fun defineAchievement (Ljava/lang/String;Ldev/baryo/dopaminekt/AchievementDefinition;)Lkotlin/jvm/functions/Function0;
+	public final fun emit (Ldev/baryo/dopaminekt/ProgressEvent$Custom;)V
+	public final fun export ()Lkotlinx/serialization/json/JsonObject;
+	public final fun getLoadFailed ()Z
+	public final fun getStreakMultiplier ()D
+	public final fun getUnlockedAchievements ()Ljava/util/List;
+	public final fun getUnseenAchievements ()Ljava/util/List;
+	public final fun getXpForNextLevel ()Ldev/baryo/dopaminekt/XpProgress;
+	public final fun import (Lkotlinx/serialization/json/JsonElement;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun import$default (Ldev/baryo/dopaminekt/Progress;Lkotlinx/serialization/json/JsonElement;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun init (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun markAchievementsSeen (Ljava/util/Collection;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun on (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lkotlin/jvm/functions/Function0;
+	public final fun record (Ljava/lang/String;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun record$default (Ldev/baryo/dopaminekt/Progress;Ljava/lang/String;Ljava/util/Map;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun reset (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun save (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun snapshot ()Lkotlinx/serialization/json/JsonObject;
+	public final fun unlockAchievement (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun use (Ldev/baryo/dopaminekt/Middleware;)Lkotlin/jvm/functions/Function0;
+}
+
+public final class dev/baryo/dopaminekt/ProgressConfig {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/Map;ZLdev/baryo/dopaminekt/Clock;Ldev/baryo/dopaminekt/StreakDays;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Ljava/util/Map;ZLdev/baryo/dopaminekt/Clock;Ldev/baryo/dopaminekt/StreakDays;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getAchievements ()Ljava/util/Map;
+	public final fun getBuiltinAchievements ()Z
+	public final fun getClock ()Ldev/baryo/dopaminekt/Clock;
+	public final fun getOnError ()Lkotlin/jvm/functions/Function1;
+	public final fun getPrefix ()Ljava/lang/String;
+	public final fun getStreakDays ()Ldev/baryo/dopaminekt/StreakDays;
+}
+
+public abstract class dev/baryo/dopaminekt/ProgressEvent {
+	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getWireName ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/ProgressEvent$AchievementUnlocked : dev/baryo/dopaminekt/ProgressEvent {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;D)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()D
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;D)Ldev/baryo/dopaminekt/ProgressEvent$AchievementUnlocked;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/ProgressEvent$AchievementUnlocked;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;DILjava/lang/Object;)Ldev/baryo/dopaminekt/ProgressEvent$AchievementUnlocked;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDescription ()Ljava/lang/String;
+	public final fun getIcon ()Ljava/lang/String;
+	public final fun getId ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getXp ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/ProgressEvent$Custom : dev/baryo/dopaminekt/ProgressEvent {
+	public fun <init> (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;)V
+	public synthetic fun <init> (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getData ()Lkotlinx/serialization/json/JsonElement;
+}
+
+public final class dev/baryo/dopaminekt/ProgressEvent$LevelUp : dev/baryo/dopaminekt/ProgressEvent {
+	public fun <init> (JJD)V
+	public final fun component1 ()J
+	public final fun component2 ()J
+	public final fun component3 ()D
+	public final fun copy (JJD)Ldev/baryo/dopaminekt/ProgressEvent$LevelUp;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/ProgressEvent$LevelUp;JJDILjava/lang/Object;)Ldev/baryo/dopaminekt/ProgressEvent$LevelUp;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getNewLevel ()J
+	public final fun getOldLevel ()J
+	public final fun getTotalXp ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/ProgressEvent$LoadFailed : dev/baryo/dopaminekt/ProgressEvent {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/Boolean;
+	public final fun component4 ()Ljava/lang/Throwable;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/Throwable;)Ldev/baryo/dopaminekt/ProgressEvent$LoadFailed;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/ProgressEvent$LoadFailed;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/Throwable;ILjava/lang/Object;)Ldev/baryo/dopaminekt/ProgressEvent$LoadFailed;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBackedUp ()Ljava/lang/Boolean;
+	public final fun getError ()Ljava/lang/Throwable;
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getReason ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/ProgressEvent$PersonalBest : dev/baryo/dopaminekt/ProgressEvent {
+	public fun <init> (Ljava/lang/String;D)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()D
+	public final fun copy (Ljava/lang/String;D)Ldev/baryo/dopaminekt/ProgressEvent$PersonalBest;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/ProgressEvent$PersonalBest;Ljava/lang/String;DILjava/lang/Object;)Ldev/baryo/dopaminekt/ProgressEvent$PersonalBest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getActivity ()Ljava/lang/String;
+	public final fun getScore ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/ProgressEvent$PlayerReset : dev/baryo/dopaminekt/ProgressEvent {
+	public static final field INSTANCE Ldev/baryo/dopaminekt/ProgressEvent$PlayerReset;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/ProgressEvent$SaveFailed : dev/baryo/dopaminekt/ProgressEvent {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Ldev/baryo/dopaminekt/ProgressEvent$SaveFailed;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/ProgressEvent$SaveFailed;Ljava/lang/String;ILjava/lang/Object;)Ldev/baryo/dopaminekt/ProgressEvent$SaveFailed;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKey ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/ProgressEvent$StreakUpdated : dev/baryo/dopaminekt/ProgressEvent {
+	public fun <init> (JJ)V
+	public final fun component1 ()J
+	public final fun component2 ()J
+	public final fun copy (JJ)Ldev/baryo/dopaminekt/ProgressEvent$StreakUpdated;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/ProgressEvent$StreakUpdated;JJILjava/lang/Object;)Ldev/baryo/dopaminekt/ProgressEvent$StreakUpdated;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCurrent ()J
+	public final fun getLongest ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/ProgressEvent$XpGained : dev/baryo/dopaminekt/ProgressEvent {
+	public fun <init> (DLjava/lang/String;ZJD)V
+	public final fun component1 ()D
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Z
+	public final fun component4 ()J
+	public final fun component5 ()D
+	public final fun copy (DLjava/lang/String;ZJD)Ldev/baryo/dopaminekt/ProgressEvent$XpGained;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/ProgressEvent$XpGained;DLjava/lang/String;ZJDILjava/lang/Object;)Ldev/baryo/dopaminekt/ProgressEvent$XpGained;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAmount ()D
+	public final fun getLeveledUp ()Z
+	public final fun getNewLevel ()J
+	public final fun getReason ()Ljava/lang/String;
+	public final fun getTotal ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class dev/baryo/dopaminekt/RewardUi {
+	public abstract fun destroy ()V
+	public abstract fun hud (Ldev/baryo/dopaminekt/HudState;)V
+	public abstract fun popup (Ldev/baryo/dopaminekt/Popup;)V
+	public abstract fun text (Ldev/baryo/dopaminekt/FloatingText;)V
+}
+
+public abstract interface class dev/baryo/dopaminekt/SoundPlayer {
+	public abstract fun destroy ()V
+	public abstract fun play (Ljava/lang/String;)V
+}
+
+public abstract interface class dev/baryo/dopaminekt/StoragePort {
+	public abstract fun get (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun remove (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun set (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class dev/baryo/dopaminekt/StreakDays : java/lang/Enum {
+	public static final field Any Ldev/baryo/dopaminekt/StreakDays;
+	public static final field Record Ldev/baryo/dopaminekt/StreakDays;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Ldev/baryo/dopaminekt/StreakDays;
+	public static fun values ()[Ldev/baryo/dopaminekt/StreakDays;
+}
+
+public final class dev/baryo/dopaminekt/SystemClock : dev/baryo/dopaminekt/Clock {
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/datetime/TimeZone;)V
+	public synthetic fun <init> (Lkotlinx/datetime/TimeZone;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun localDate (J)Ljava/lang/String;
+	public fun now ()J
+}
+
+public final class dev/baryo/dopaminekt/ValidateKt {
+	public static final fun validate (Lkotlinx/serialization/json/JsonElement;JLjava/lang/String;Ljava/util/Map;)Lkotlinx/serialization/json/JsonObject;
+	public static synthetic fun validate$default (Lkotlinx/serialization/json/JsonElement;JLjava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lkotlinx/serialization/json/JsonObject;
+}
+
+public abstract interface class dev/baryo/dopaminekt/Verdict {
+}
+
+public final class dev/baryo/dopaminekt/Verdict$Continue : dev/baryo/dopaminekt/Verdict {
+	public static final field INSTANCE Ldev/baryo/dopaminekt/Verdict$Continue;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/Verdict$Patch : dev/baryo/dopaminekt/Verdict {
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Object;)Ldev/baryo/dopaminekt/Verdict$Patch;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/Verdict$Patch;Ljava/lang/Object;ILjava/lang/Object;)Ldev/baryo/dopaminekt/Verdict$Patch;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContext ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/Verdict$Reject : dev/baryo/dopaminekt/Verdict {
+	public static final field INSTANCE Ldev/baryo/dopaminekt/Verdict$Reject;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/baryo/dopaminekt/XpProgress {
+	public fun <init> (DDD)V
+	public final fun component1 ()D
+	public final fun component2 ()D
+	public final fun component3 ()D
+	public final fun copy (DDD)Ldev/baryo/dopaminekt/XpProgress;
+	public static synthetic fun copy$default (Ldev/baryo/dopaminekt/XpProgress;DDDILjava/lang/Object;)Ldev/baryo/dopaminekt/XpProgress;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getNeeded ()D
+	public final fun getProgress ()D
+	public final fun getTotal ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+

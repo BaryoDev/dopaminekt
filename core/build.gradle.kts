@@ -18,8 +18,13 @@ plugins {
 group = "dev.baryo.dopaminekt"
 version = providers.gradleProperty("VERSION_NAME").get()
 
+@OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
 kotlin {
     explicitApi()
+
+    // Records the public API in core/api. check fails on a public change that is not recorded.
+    // Run updateKotlinAbi to record one.
+    abiValidation { }
 
     jvm()
 
@@ -142,6 +147,7 @@ mavenPublishing {
         description.set("Kotlin Multiplatform core of dopaminekt: progress, rewards and fixtures shared with dopaminejs.")
         url.set("https://github.com/BaryoDev/dopaminekt")
         inceptionYear.set("2026")
+        properties.put("dopaminekt.contract", "3")
         licenses {
             license {
                 name.set("Mozilla Public License 2.0")

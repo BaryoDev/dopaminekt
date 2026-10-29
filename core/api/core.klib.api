@@ -1,0 +1,732 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <dev.baryo.dopaminekt:core>
+final enum class dev.baryo.dopaminekt/BurstKind : kotlin/Enum<dev.baryo.dopaminekt/BurstKind> { // dev.baryo.dopaminekt/BurstKind|null[0]
+    enum entry Coins // dev.baryo.dopaminekt/BurstKind.Coins|null[0]
+    enum entry Confetti // dev.baryo.dopaminekt/BurstKind.Confetti|null[0]
+    enum entry Fire // dev.baryo.dopaminekt/BurstKind.Fire|null[0]
+    enum entry Sparkle // dev.baryo.dopaminekt/BurstKind.Sparkle|null[0]
+    enum entry Stars // dev.baryo.dopaminekt/BurstKind.Stars|null[0]
+
+    final val entries // dev.baryo.dopaminekt/BurstKind.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.baryo.dopaminekt/BurstKind> // dev.baryo.dopaminekt/BurstKind.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val wireName // dev.baryo.dopaminekt/BurstKind.wireName|{}wireName[0]
+        final fun <get-wireName>(): kotlin/String // dev.baryo.dopaminekt/BurstKind.wireName.<get-wireName>|<get-wireName>(){}[0]
+
+    final fun valueOf(kotlin/String): dev.baryo.dopaminekt/BurstKind // dev.baryo.dopaminekt/BurstKind.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.baryo.dopaminekt/BurstKind> // dev.baryo.dopaminekt/BurstKind.values|values#static(){}[0]
+
+    final object Companion { // dev.baryo.dopaminekt/BurstKind.Companion|null[0]
+        final fun fromWireName(kotlin/String): dev.baryo.dopaminekt/BurstKind? // dev.baryo.dopaminekt/BurstKind.Companion.fromWireName|fromWireName(kotlin.String){}[0]
+    }
+}
+
+final enum class dev.baryo.dopaminekt/PartName : kotlin/Enum<dev.baryo.dopaminekt/PartName> { // dev.baryo.dopaminekt/PartName|null[0]
+    enum entry Haptics // dev.baryo.dopaminekt/PartName.Haptics|null[0]
+    enum entry Particles // dev.baryo.dopaminekt/PartName.Particles|null[0]
+    enum entry Sound // dev.baryo.dopaminekt/PartName.Sound|null[0]
+    enum entry Ui // dev.baryo.dopaminekt/PartName.Ui|null[0]
+
+    final val entries // dev.baryo.dopaminekt/PartName.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.baryo.dopaminekt/PartName> // dev.baryo.dopaminekt/PartName.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val wireName // dev.baryo.dopaminekt/PartName.wireName|{}wireName[0]
+        final fun <get-wireName>(): kotlin/String // dev.baryo.dopaminekt/PartName.wireName.<get-wireName>|<get-wireName>(){}[0]
+
+    final fun valueOf(kotlin/String): dev.baryo.dopaminekt/PartName // dev.baryo.dopaminekt/PartName.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.baryo.dopaminekt/PartName> // dev.baryo.dopaminekt/PartName.values|values#static(){}[0]
+
+    final object Companion { // dev.baryo.dopaminekt/PartName.Companion|null[0]
+        final fun fromWireName(kotlin/String): dev.baryo.dopaminekt/PartName? // dev.baryo.dopaminekt/PartName.Companion.fromWireName|fromWireName(kotlin.String){}[0]
+    }
+}
+
+final enum class dev.baryo.dopaminekt/PopupKind : kotlin/Enum<dev.baryo.dopaminekt/PopupKind> { // dev.baryo.dopaminekt/PopupKind|null[0]
+    enum entry Achievement // dev.baryo.dopaminekt/PopupKind.Achievement|null[0]
+    enum entry Custom // dev.baryo.dopaminekt/PopupKind.Custom|null[0]
+    enum entry Level // dev.baryo.dopaminekt/PopupKind.Level|null[0]
+    enum entry Notice // dev.baryo.dopaminekt/PopupKind.Notice|null[0]
+
+    final val entries // dev.baryo.dopaminekt/PopupKind.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.baryo.dopaminekt/PopupKind> // dev.baryo.dopaminekt/PopupKind.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val wireName // dev.baryo.dopaminekt/PopupKind.wireName|{}wireName[0]
+        final fun <get-wireName>(): kotlin/String // dev.baryo.dopaminekt/PopupKind.wireName.<get-wireName>|<get-wireName>(){}[0]
+
+    final fun valueOf(kotlin/String): dev.baryo.dopaminekt/PopupKind // dev.baryo.dopaminekt/PopupKind.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.baryo.dopaminekt/PopupKind> // dev.baryo.dopaminekt/PopupKind.values|values#static(){}[0]
+
+    final object Companion { // dev.baryo.dopaminekt/PopupKind.Companion|null[0]
+        final fun fromWireName(kotlin/String): dev.baryo.dopaminekt/PopupKind? // dev.baryo.dopaminekt/PopupKind.Companion.fromWireName|fromWireName(kotlin.String){}[0]
+    }
+}
+
+final enum class dev.baryo.dopaminekt/PopupTier : kotlin/Enum<dev.baryo.dopaminekt/PopupTier> { // dev.baryo.dopaminekt/PopupTier|null[0]
+    enum entry Common // dev.baryo.dopaminekt/PopupTier.Common|null[0]
+    enum entry Legendary // dev.baryo.dopaminekt/PopupTier.Legendary|null[0]
+    enum entry Rare // dev.baryo.dopaminekt/PopupTier.Rare|null[0]
+
+    final val entries // dev.baryo.dopaminekt/PopupTier.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.baryo.dopaminekt/PopupTier> // dev.baryo.dopaminekt/PopupTier.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val wireName // dev.baryo.dopaminekt/PopupTier.wireName|{}wireName[0]
+        final fun <get-wireName>(): kotlin/String // dev.baryo.dopaminekt/PopupTier.wireName.<get-wireName>|<get-wireName>(){}[0]
+
+    final fun valueOf(kotlin/String): dev.baryo.dopaminekt/PopupTier // dev.baryo.dopaminekt/PopupTier.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.baryo.dopaminekt/PopupTier> // dev.baryo.dopaminekt/PopupTier.values|values#static(){}[0]
+
+    final object Companion { // dev.baryo.dopaminekt/PopupTier.Companion|null[0]
+        final fun fromWireName(kotlin/String): dev.baryo.dopaminekt/PopupTier? // dev.baryo.dopaminekt/PopupTier.Companion.fromWireName|fromWireName(kotlin.String){}[0]
+    }
+}
+
+final enum class dev.baryo.dopaminekt/StreakDays : kotlin/Enum<dev.baryo.dopaminekt/StreakDays> { // dev.baryo.dopaminekt/StreakDays|null[0]
+    enum entry Any // dev.baryo.dopaminekt/StreakDays.Any|null[0]
+    enum entry Record // dev.baryo.dopaminekt/StreakDays.Record|null[0]
+
+    final val entries // dev.baryo.dopaminekt/StreakDays.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.baryo.dopaminekt/StreakDays> // dev.baryo.dopaminekt/StreakDays.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): dev.baryo.dopaminekt/StreakDays // dev.baryo.dopaminekt/StreakDays.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.baryo.dopaminekt/StreakDays> // dev.baryo.dopaminekt/StreakDays.values|values#static(){}[0]
+}
+
+abstract fun interface dev.baryo.dopaminekt/Disposer { // dev.baryo.dopaminekt/Disposer|null[0]
+    abstract fun dispose() // dev.baryo.dopaminekt/Disposer.dispose|dispose(){}[0]
+}
+
+abstract interface dev.baryo.dopaminekt/Clock { // dev.baryo.dopaminekt/Clock|null[0]
+    abstract fun localDate(kotlin/Long = ...): kotlin/String // dev.baryo.dopaminekt/Clock.localDate|localDate(kotlin.Long){}[0]
+    abstract fun now(): kotlin/Long // dev.baryo.dopaminekt/Clock.now|now(){}[0]
+}
+
+abstract interface dev.baryo.dopaminekt/DopaminePlugin { // dev.baryo.dopaminekt/DopaminePlugin|null[0]
+    abstract val api // dev.baryo.dopaminekt/DopaminePlugin.api|{}api[0]
+        abstract fun <get-api>(): kotlin/Int // dev.baryo.dopaminekt/DopaminePlugin.api.<get-api>|<get-api>(){}[0]
+    abstract val name // dev.baryo.dopaminekt/DopaminePlugin.name|{}name[0]
+        abstract fun <get-name>(): kotlin/String // dev.baryo.dopaminekt/DopaminePlugin.name.<get-name>|<get-name>(){}[0]
+    abstract val version // dev.baryo.dopaminekt/DopaminePlugin.version|{}version[0]
+        abstract fun <get-version>(): kotlin/String // dev.baryo.dopaminekt/DopaminePlugin.version.<get-version>|<get-version>(){}[0]
+    open val after // dev.baryo.dopaminekt/DopaminePlugin.after|{}after[0]
+        open fun <get-after>(): kotlin.collections/List<kotlin/String> // dev.baryo.dopaminekt/DopaminePlugin.after.<get-after>|<get-after>(){}[0]
+    open val requires // dev.baryo.dopaminekt/DopaminePlugin.requires|{}requires[0]
+        open fun <get-requires>(): kotlin.collections/List<dev.baryo.dopaminekt/PartName> // dev.baryo.dopaminekt/DopaminePlugin.requires.<get-requires>|<get-requires>(){}[0]
+
+    abstract suspend fun install(dev.baryo.dopaminekt/PluginContext): dev.baryo.dopaminekt/Disposer? // dev.baryo.dopaminekt/DopaminePlugin.install|install(dev.baryo.dopaminekt.PluginContext){}[0]
+}
+
+abstract interface dev.baryo.dopaminekt/Env { // dev.baryo.dopaminekt/Env|null[0]
+    abstract val reducedMotion // dev.baryo.dopaminekt/Env.reducedMotion|{}reducedMotion[0]
+        abstract fun <get-reducedMotion>(): kotlin/Boolean // dev.baryo.dopaminekt/Env.reducedMotion.<get-reducedMotion>|<get-reducedMotion>(){}[0]
+}
+
+abstract interface dev.baryo.dopaminekt/Haptics { // dev.baryo.dopaminekt/Haptics|null[0]
+    abstract fun double() // dev.baryo.dopaminekt/Haptics.double|double(){}[0]
+    abstract fun setEnabled(kotlin/Boolean) // dev.baryo.dopaminekt/Haptics.setEnabled|setEnabled(kotlin.Boolean){}[0]
+    abstract fun tap() // dev.baryo.dopaminekt/Haptics.tap|tap(){}[0]
+}
+
+abstract interface dev.baryo.dopaminekt/Logger { // dev.baryo.dopaminekt/Logger|null[0]
+    abstract fun debug(kotlin/String, kotlin/Throwable? = ...) // dev.baryo.dopaminekt/Logger.debug|debug(kotlin.String;kotlin.Throwable?){}[0]
+    abstract fun error(kotlin/String, kotlin/Throwable? = ...) // dev.baryo.dopaminekt/Logger.error|error(kotlin.String;kotlin.Throwable?){}[0]
+    abstract fun info(kotlin/String, kotlin/Throwable? = ...) // dev.baryo.dopaminekt/Logger.info|info(kotlin.String;kotlin.Throwable?){}[0]
+    abstract fun warn(kotlin/String, kotlin/Throwable? = ...) // dev.baryo.dopaminekt/Logger.warn|warn(kotlin.String;kotlin.Throwable?){}[0]
+}
+
+abstract interface dev.baryo.dopaminekt/Middleware { // dev.baryo.dopaminekt/Middleware|null[0]
+    open suspend fun afterRecord(dev.baryo.dopaminekt/AfterRecordContext) // dev.baryo.dopaminekt/Middleware.afterRecord|afterRecord(dev.baryo.dopaminekt.AfterRecordContext){}[0]
+    open suspend fun afterUnlock(dev.baryo.dopaminekt/AfterUnlockContext) // dev.baryo.dopaminekt/Middleware.afterUnlock|afterUnlock(dev.baryo.dopaminekt.AfterUnlockContext){}[0]
+    open suspend fun afterXp(dev.baryo.dopaminekt/AfterXpContext) // dev.baryo.dopaminekt/Middleware.afterXp|afterXp(dev.baryo.dopaminekt.AfterXpContext){}[0]
+    open suspend fun beforeRecord(dev.baryo.dopaminekt/BeforeRecordContext): dev.baryo.dopaminekt/Verdict<dev.baryo.dopaminekt/BeforeRecordContext> // dev.baryo.dopaminekt/Middleware.beforeRecord|beforeRecord(dev.baryo.dopaminekt.BeforeRecordContext){}[0]
+    open suspend fun beforeUnlock(dev.baryo.dopaminekt/BeforeUnlockContext): dev.baryo.dopaminekt/Verdict<dev.baryo.dopaminekt/BeforeUnlockContext> // dev.baryo.dopaminekt/Middleware.beforeUnlock|beforeUnlock(dev.baryo.dopaminekt.BeforeUnlockContext){}[0]
+    open suspend fun beforeXp(dev.baryo.dopaminekt/BeforeXpContext): dev.baryo.dopaminekt/Verdict<dev.baryo.dopaminekt/BeforeXpContext> // dev.baryo.dopaminekt/Middleware.beforeXp|beforeXp(dev.baryo.dopaminekt.BeforeXpContext){}[0]
+}
+
+abstract interface dev.baryo.dopaminekt/ParticleRenderer { // dev.baryo.dopaminekt/ParticleRenderer|null[0]
+    abstract fun burst(dev.baryo.dopaminekt/BurstKind, dev.baryo.dopaminekt/Point? = ..., dev.baryo.dopaminekt/BurstOptions? = ...) // dev.baryo.dopaminekt/ParticleRenderer.burst|burst(dev.baryo.dopaminekt.BurstKind;dev.baryo.dopaminekt.Point?;dev.baryo.dopaminekt.BurstOptions?){}[0]
+    abstract fun destroy() // dev.baryo.dopaminekt/ParticleRenderer.destroy|destroy(){}[0]
+}
+
+abstract interface dev.baryo.dopaminekt/Parts { // dev.baryo.dopaminekt/Parts|null[0]
+    abstract val haptics // dev.baryo.dopaminekt/Parts.haptics|{}haptics[0]
+        abstract fun <get-haptics>(): dev.baryo.dopaminekt/Haptics? // dev.baryo.dopaminekt/Parts.haptics.<get-haptics>|<get-haptics>(){}[0]
+    abstract val particles // dev.baryo.dopaminekt/Parts.particles|{}particles[0]
+        abstract fun <get-particles>(): dev.baryo.dopaminekt/ParticleRenderer? // dev.baryo.dopaminekt/Parts.particles.<get-particles>|<get-particles>(){}[0]
+    abstract val sound // dev.baryo.dopaminekt/Parts.sound|{}sound[0]
+        abstract fun <get-sound>(): dev.baryo.dopaminekt/SoundPlayer? // dev.baryo.dopaminekt/Parts.sound.<get-sound>|<get-sound>(){}[0]
+    abstract val ui // dev.baryo.dopaminekt/Parts.ui|{}ui[0]
+        abstract fun <get-ui>(): dev.baryo.dopaminekt/RewardUi? // dev.baryo.dopaminekt/Parts.ui.<get-ui>|<get-ui>(){}[0]
+}
+
+abstract interface dev.baryo.dopaminekt/PluginContext { // dev.baryo.dopaminekt/PluginContext|null[0]
+    abstract val clock // dev.baryo.dopaminekt/PluginContext.clock|{}clock[0]
+        abstract fun <get-clock>(): dev.baryo.dopaminekt/Clock // dev.baryo.dopaminekt/PluginContext.clock.<get-clock>|<get-clock>(){}[0]
+    abstract val env // dev.baryo.dopaminekt/PluginContext.env|{}env[0]
+        abstract fun <get-env>(): dev.baryo.dopaminekt/Env // dev.baryo.dopaminekt/PluginContext.env.<get-env>|<get-env>(){}[0]
+    abstract val events // dev.baryo.dopaminekt/PluginContext.events|{}events[0]
+        abstract fun <get-events>(): dev.baryo.dopaminekt/PluginEvents // dev.baryo.dopaminekt/PluginContext.events.<get-events>|<get-events>(){}[0]
+    abstract val log // dev.baryo.dopaminekt/PluginContext.log|{}log[0]
+        abstract fun <get-log>(): dev.baryo.dopaminekt/Logger // dev.baryo.dopaminekt/PluginContext.log.<get-log>|<get-log>(){}[0]
+    abstract val parts // dev.baryo.dopaminekt/PluginContext.parts|{}parts[0]
+        abstract fun <get-parts>(): dev.baryo.dopaminekt/Parts // dev.baryo.dopaminekt/PluginContext.parts.<get-parts>|<get-parts>(){}[0]
+    abstract val progress // dev.baryo.dopaminekt/PluginContext.progress|{}progress[0]
+        abstract fun <get-progress>(): dev.baryo.dopaminekt/Progress // dev.baryo.dopaminekt/PluginContext.progress.<get-progress>|<get-progress>(){}[0]
+    abstract val scope // dev.baryo.dopaminekt/PluginContext.scope|{}scope[0]
+        abstract fun <get-scope>(): kotlinx.coroutines/CoroutineScope // dev.baryo.dopaminekt/PluginContext.scope.<get-scope>|<get-scope>(){}[0]
+    abstract val storage // dev.baryo.dopaminekt/PluginContext.storage|{}storage[0]
+        abstract fun <get-storage>(): dev.baryo.dopaminekt/StoragePort // dev.baryo.dopaminekt/PluginContext.storage.<get-storage>|<get-storage>(){}[0]
+
+    abstract fun expose(kotlin/Any?) // dev.baryo.dopaminekt/PluginContext.expose|expose(kotlin.Any?){}[0]
+    abstract fun plugin(kotlin/String): kotlin/Any? // dev.baryo.dopaminekt/PluginContext.plugin|plugin(kotlin.String){}[0]
+}
+
+abstract interface dev.baryo.dopaminekt/PluginEvents { // dev.baryo.dopaminekt/PluginEvents|null[0]
+    abstract fun emit(kotlin/String, kotlinx.serialization.json/JsonElement? = ...) // dev.baryo.dopaminekt/PluginEvents.emit|emit(kotlin.String;kotlinx.serialization.json.JsonElement?){}[0]
+    abstract fun on(kotlin/String, kotlin/Function1<dev.baryo.dopaminekt/ProgressEvent, kotlin/Unit>): kotlin/Function0<kotlin/Unit> // dev.baryo.dopaminekt/PluginEvents.on|on(kotlin.String;kotlin.Function1<dev.baryo.dopaminekt.ProgressEvent,kotlin.Unit>){}[0]
+}
+
+abstract interface dev.baryo.dopaminekt/RewardUi { // dev.baryo.dopaminekt/RewardUi|null[0]
+    abstract fun destroy() // dev.baryo.dopaminekt/RewardUi.destroy|destroy(){}[0]
+    abstract fun hud(dev.baryo.dopaminekt/HudState) // dev.baryo.dopaminekt/RewardUi.hud|hud(dev.baryo.dopaminekt.HudState){}[0]
+    abstract fun popup(dev.baryo.dopaminekt/Popup) // dev.baryo.dopaminekt/RewardUi.popup|popup(dev.baryo.dopaminekt.Popup){}[0]
+    abstract fun text(dev.baryo.dopaminekt/FloatingText) // dev.baryo.dopaminekt/RewardUi.text|text(dev.baryo.dopaminekt.FloatingText){}[0]
+}
+
+abstract interface dev.baryo.dopaminekt/SoundPlayer { // dev.baryo.dopaminekt/SoundPlayer|null[0]
+    abstract fun destroy() // dev.baryo.dopaminekt/SoundPlayer.destroy|destroy(){}[0]
+    abstract fun play(kotlin/String) // dev.baryo.dopaminekt/SoundPlayer.play|play(kotlin.String){}[0]
+}
+
+abstract interface dev.baryo.dopaminekt/StoragePort { // dev.baryo.dopaminekt/StoragePort|null[0]
+    abstract suspend fun get(kotlin/String): kotlin/String? // dev.baryo.dopaminekt/StoragePort.get|get(kotlin.String){}[0]
+    abstract suspend fun remove(kotlin/String) // dev.baryo.dopaminekt/StoragePort.remove|remove(kotlin.String){}[0]
+    abstract suspend fun set(kotlin/String, kotlin/String) // dev.baryo.dopaminekt/StoragePort.set|set(kotlin.String;kotlin.String){}[0]
+}
+
+sealed interface <#A: out kotlin/Any?> dev.baryo.dopaminekt/Verdict { // dev.baryo.dopaminekt/Verdict|null[0]
+    final class <#A1: kotlin/Any?> Patch : dev.baryo.dopaminekt/Verdict<#A1> { // dev.baryo.dopaminekt/Verdict.Patch|null[0]
+        constructor <init>(#A1) // dev.baryo.dopaminekt/Verdict.Patch.<init>|<init>(1:0){}[0]
+
+        final val context // dev.baryo.dopaminekt/Verdict.Patch.context|{}context[0]
+            final fun <get-context>(): #A1 // dev.baryo.dopaminekt/Verdict.Patch.context.<get-context>|<get-context>(){}[0]
+
+        final fun component1(): #A1 // dev.baryo.dopaminekt/Verdict.Patch.component1|component1(){}[0]
+        final fun copy(#A1 = ...): dev.baryo.dopaminekt/Verdict.Patch<#A1> // dev.baryo.dopaminekt/Verdict.Patch.copy|copy(1:0){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/Verdict.Patch.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/Verdict.Patch.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.baryo.dopaminekt/Verdict.Patch.toString|toString(){}[0]
+    }
+
+    final object Continue : dev.baryo.dopaminekt/Verdict<kotlin/Nothing> { // dev.baryo.dopaminekt/Verdict.Continue|null[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/Verdict.Continue.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/Verdict.Continue.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.baryo.dopaminekt/Verdict.Continue.toString|toString(){}[0]
+    }
+
+    final object Reject : dev.baryo.dopaminekt/Verdict<kotlin/Nothing> { // dev.baryo.dopaminekt/Verdict.Reject|null[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/Verdict.Reject.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/Verdict.Reject.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.baryo.dopaminekt/Verdict.Reject.toString|toString(){}[0]
+    }
+}
+
+final class dev.baryo.dopaminekt/AchievementDefinition { // dev.baryo.dopaminekt/AchievementDefinition|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String, kotlin/Double, kotlin/Function3<kotlinx.serialization.json/JsonObject, kotlin/String?, kotlinx.serialization.json/JsonObject?, kotlin/Boolean>? = ...) // dev.baryo.dopaminekt/AchievementDefinition.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;kotlin.Double;kotlin.Function3<kotlinx.serialization.json.JsonObject,kotlin.String?,kotlinx.serialization.json.JsonObject?,kotlin.Boolean>?){}[0]
+
+    final val check // dev.baryo.dopaminekt/AchievementDefinition.check|{}check[0]
+        final fun <get-check>(): kotlin/Function3<kotlinx.serialization.json/JsonObject, kotlin/String?, kotlinx.serialization.json/JsonObject?, kotlin/Boolean>? // dev.baryo.dopaminekt/AchievementDefinition.check.<get-check>|<get-check>(){}[0]
+    final val description // dev.baryo.dopaminekt/AchievementDefinition.description|{}description[0]
+        final fun <get-description>(): kotlin/String // dev.baryo.dopaminekt/AchievementDefinition.description.<get-description>|<get-description>(){}[0]
+    final val icon // dev.baryo.dopaminekt/AchievementDefinition.icon|{}icon[0]
+        final fun <get-icon>(): kotlin/String // dev.baryo.dopaminekt/AchievementDefinition.icon.<get-icon>|<get-icon>(){}[0]
+    final val name // dev.baryo.dopaminekt/AchievementDefinition.name|{}name[0]
+        final fun <get-name>(): kotlin/String // dev.baryo.dopaminekt/AchievementDefinition.name.<get-name>|<get-name>(){}[0]
+    final val xp // dev.baryo.dopaminekt/AchievementDefinition.xp|{}xp[0]
+        final fun <get-xp>(): kotlin/Double // dev.baryo.dopaminekt/AchievementDefinition.xp.<get-xp>|<get-xp>(){}[0]
+}
+
+final class dev.baryo.dopaminekt/AddXpResult { // dev.baryo.dopaminekt/AddXpResult|null[0]
+    constructor <init>(kotlin/Boolean, kotlin/Long, kotlin/Double) // dev.baryo.dopaminekt/AddXpResult.<init>|<init>(kotlin.Boolean;kotlin.Long;kotlin.Double){}[0]
+
+    final val leveledUp // dev.baryo.dopaminekt/AddXpResult.leveledUp|{}leveledUp[0]
+        final fun <get-leveledUp>(): kotlin/Boolean // dev.baryo.dopaminekt/AddXpResult.leveledUp.<get-leveledUp>|<get-leveledUp>(){}[0]
+    final val newLevel // dev.baryo.dopaminekt/AddXpResult.newLevel|{}newLevel[0]
+        final fun <get-newLevel>(): kotlin/Long // dev.baryo.dopaminekt/AddXpResult.newLevel.<get-newLevel>|<get-newLevel>(){}[0]
+    final val xpGained // dev.baryo.dopaminekt/AddXpResult.xpGained|{}xpGained[0]
+        final fun <get-xpGained>(): kotlin/Double // dev.baryo.dopaminekt/AddXpResult.xpGained.<get-xpGained>|<get-xpGained>(){}[0]
+
+    final fun component1(): kotlin/Boolean // dev.baryo.dopaminekt/AddXpResult.component1|component1(){}[0]
+    final fun component2(): kotlin/Long // dev.baryo.dopaminekt/AddXpResult.component2|component2(){}[0]
+    final fun component3(): kotlin/Double // dev.baryo.dopaminekt/AddXpResult.component3|component3(){}[0]
+    final fun copy(kotlin/Boolean = ..., kotlin/Long = ..., kotlin/Double = ...): dev.baryo.dopaminekt/AddXpResult // dev.baryo.dopaminekt/AddXpResult.copy|copy(kotlin.Boolean;kotlin.Long;kotlin.Double){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/AddXpResult.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/AddXpResult.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.baryo.dopaminekt/AddXpResult.toString|toString(){}[0]
+}
+
+final class dev.baryo.dopaminekt/AfterRecordContext { // dev.baryo.dopaminekt/AfterRecordContext|null[0]
+    constructor <init>(kotlin/String, kotlinx.serialization.json/JsonObject, kotlin/Double) // dev.baryo.dopaminekt/AfterRecordContext.<init>|<init>(kotlin.String;kotlinx.serialization.json.JsonObject;kotlin.Double){}[0]
+
+    final val activity // dev.baryo.dopaminekt/AfterRecordContext.activity|{}activity[0]
+        final fun <get-activity>(): kotlin/String // dev.baryo.dopaminekt/AfterRecordContext.activity.<get-activity>|<get-activity>(){}[0]
+    final val result // dev.baryo.dopaminekt/AfterRecordContext.result|{}result[0]
+        final fun <get-result>(): kotlinx.serialization.json/JsonObject // dev.baryo.dopaminekt/AfterRecordContext.result.<get-result>|<get-result>(){}[0]
+    final val xp // dev.baryo.dopaminekt/AfterRecordContext.xp|{}xp[0]
+        final fun <get-xp>(): kotlin/Double // dev.baryo.dopaminekt/AfterRecordContext.xp.<get-xp>|<get-xp>(){}[0]
+
+    final fun component1(): kotlin/String // dev.baryo.dopaminekt/AfterRecordContext.component1|component1(){}[0]
+    final fun component2(): kotlinx.serialization.json/JsonObject // dev.baryo.dopaminekt/AfterRecordContext.component2|component2(){}[0]
+    final fun component3(): kotlin/Double // dev.baryo.dopaminekt/AfterRecordContext.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlinx.serialization.json/JsonObject = ..., kotlin/Double = ...): dev.baryo.dopaminekt/AfterRecordContext // dev.baryo.dopaminekt/AfterRecordContext.copy|copy(kotlin.String;kotlinx.serialization.json.JsonObject;kotlin.Double){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/AfterRecordContext.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/AfterRecordContext.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.baryo.dopaminekt/AfterRecordContext.toString|toString(){}[0]
+}
+
+final class dev.baryo.dopaminekt/AfterUnlockContext { // dev.baryo.dopaminekt/AfterUnlockContext|null[0]
+    constructor <init>(kotlin/String, kotlin/Double) // dev.baryo.dopaminekt/AfterUnlockContext.<init>|<init>(kotlin.String;kotlin.Double){}[0]
+
+    final val id // dev.baryo.dopaminekt/AfterUnlockContext.id|{}id[0]
+        final fun <get-id>(): kotlin/String // dev.baryo.dopaminekt/AfterUnlockContext.id.<get-id>|<get-id>(){}[0]
+    final val reward // dev.baryo.dopaminekt/AfterUnlockContext.reward|{}reward[0]
+        final fun <get-reward>(): kotlin/Double // dev.baryo.dopaminekt/AfterUnlockContext.reward.<get-reward>|<get-reward>(){}[0]
+
+    final fun component1(): kotlin/String // dev.baryo.dopaminekt/AfterUnlockContext.component1|component1(){}[0]
+    final fun component2(): kotlin/Double // dev.baryo.dopaminekt/AfterUnlockContext.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/Double = ...): dev.baryo.dopaminekt/AfterUnlockContext // dev.baryo.dopaminekt/AfterUnlockContext.copy|copy(kotlin.String;kotlin.Double){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/AfterUnlockContext.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/AfterUnlockContext.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.baryo.dopaminekt/AfterUnlockContext.toString|toString(){}[0]
+}
+
+final class dev.baryo.dopaminekt/AfterXpContext { // dev.baryo.dopaminekt/AfterXpContext|null[0]
+    constructor <init>(kotlin/Double, kotlin/String, kotlin/Double, kotlin/Long) // dev.baryo.dopaminekt/AfterXpContext.<init>|<init>(kotlin.Double;kotlin.String;kotlin.Double;kotlin.Long){}[0]
+
+    final val amount // dev.baryo.dopaminekt/AfterXpContext.amount|{}amount[0]
+        final fun <get-amount>(): kotlin/Double // dev.baryo.dopaminekt/AfterXpContext.amount.<get-amount>|<get-amount>(){}[0]
+    final val level // dev.baryo.dopaminekt/AfterXpContext.level|{}level[0]
+        final fun <get-level>(): kotlin/Long // dev.baryo.dopaminekt/AfterXpContext.level.<get-level>|<get-level>(){}[0]
+    final val reason // dev.baryo.dopaminekt/AfterXpContext.reason|{}reason[0]
+        final fun <get-reason>(): kotlin/String // dev.baryo.dopaminekt/AfterXpContext.reason.<get-reason>|<get-reason>(){}[0]
+    final val total // dev.baryo.dopaminekt/AfterXpContext.total|{}total[0]
+        final fun <get-total>(): kotlin/Double // dev.baryo.dopaminekt/AfterXpContext.total.<get-total>|<get-total>(){}[0]
+
+    final fun component1(): kotlin/Double // dev.baryo.dopaminekt/AfterXpContext.component1|component1(){}[0]
+    final fun component2(): kotlin/String // dev.baryo.dopaminekt/AfterXpContext.component2|component2(){}[0]
+    final fun component3(): kotlin/Double // dev.baryo.dopaminekt/AfterXpContext.component3|component3(){}[0]
+    final fun component4(): kotlin/Long // dev.baryo.dopaminekt/AfterXpContext.component4|component4(){}[0]
+    final fun copy(kotlin/Double = ..., kotlin/String = ..., kotlin/Double = ..., kotlin/Long = ...): dev.baryo.dopaminekt/AfterXpContext // dev.baryo.dopaminekt/AfterXpContext.copy|copy(kotlin.Double;kotlin.String;kotlin.Double;kotlin.Long){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/AfterXpContext.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/AfterXpContext.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.baryo.dopaminekt/AfterXpContext.toString|toString(){}[0]
+}
+
+final class dev.baryo.dopaminekt/BeforeRecordContext { // dev.baryo.dopaminekt/BeforeRecordContext|null[0]
+    constructor <init>(kotlin/String, kotlinx.serialization.json/JsonObject) // dev.baryo.dopaminekt/BeforeRecordContext.<init>|<init>(kotlin.String;kotlinx.serialization.json.JsonObject){}[0]
+
+    final val activity // dev.baryo.dopaminekt/BeforeRecordContext.activity|{}activity[0]
+        final fun <get-activity>(): kotlin/String // dev.baryo.dopaminekt/BeforeRecordContext.activity.<get-activity>|<get-activity>(){}[0]
+    final val result // dev.baryo.dopaminekt/BeforeRecordContext.result|{}result[0]
+        final fun <get-result>(): kotlinx.serialization.json/JsonObject // dev.baryo.dopaminekt/BeforeRecordContext.result.<get-result>|<get-result>(){}[0]
+
+    final fun component1(): kotlin/String // dev.baryo.dopaminekt/BeforeRecordContext.component1|component1(){}[0]
+    final fun component2(): kotlinx.serialization.json/JsonObject // dev.baryo.dopaminekt/BeforeRecordContext.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlinx.serialization.json/JsonObject = ...): dev.baryo.dopaminekt/BeforeRecordContext // dev.baryo.dopaminekt/BeforeRecordContext.copy|copy(kotlin.String;kotlinx.serialization.json.JsonObject){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/BeforeRecordContext.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/BeforeRecordContext.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.baryo.dopaminekt/BeforeRecordContext.toString|toString(){}[0]
+}
+
+final class dev.baryo.dopaminekt/BeforeUnlockContext { // dev.baryo.dopaminekt/BeforeUnlockContext|null[0]
+    constructor <init>(kotlin/String, kotlin/Double) // dev.baryo.dopaminekt/BeforeUnlockContext.<init>|<init>(kotlin.String;kotlin.Double){}[0]
+
+    final val id // dev.baryo.dopaminekt/BeforeUnlockContext.id|{}id[0]
+        final fun <get-id>(): kotlin/String // dev.baryo.dopaminekt/BeforeUnlockContext.id.<get-id>|<get-id>(){}[0]
+    final val reward // dev.baryo.dopaminekt/BeforeUnlockContext.reward|{}reward[0]
+        final fun <get-reward>(): kotlin/Double // dev.baryo.dopaminekt/BeforeUnlockContext.reward.<get-reward>|<get-reward>(){}[0]
+
+    final fun component1(): kotlin/String // dev.baryo.dopaminekt/BeforeUnlockContext.component1|component1(){}[0]
+    final fun component2(): kotlin/Double // dev.baryo.dopaminekt/BeforeUnlockContext.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/Double = ...): dev.baryo.dopaminekt/BeforeUnlockContext // dev.baryo.dopaminekt/BeforeUnlockContext.copy|copy(kotlin.String;kotlin.Double){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/BeforeUnlockContext.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/BeforeUnlockContext.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.baryo.dopaminekt/BeforeUnlockContext.toString|toString(){}[0]
+}
+
+final class dev.baryo.dopaminekt/BeforeXpContext { // dev.baryo.dopaminekt/BeforeXpContext|null[0]
+    constructor <init>(kotlin/Double, kotlin/String) // dev.baryo.dopaminekt/BeforeXpContext.<init>|<init>(kotlin.Double;kotlin.String){}[0]
+
+    final val amount // dev.baryo.dopaminekt/BeforeXpContext.amount|{}amount[0]
+        final fun <get-amount>(): kotlin/Double // dev.baryo.dopaminekt/BeforeXpContext.amount.<get-amount>|<get-amount>(){}[0]
+    final val reason // dev.baryo.dopaminekt/BeforeXpContext.reason|{}reason[0]
+        final fun <get-reason>(): kotlin/String // dev.baryo.dopaminekt/BeforeXpContext.reason.<get-reason>|<get-reason>(){}[0]
+
+    final fun component1(): kotlin/Double // dev.baryo.dopaminekt/BeforeXpContext.component1|component1(){}[0]
+    final fun component2(): kotlin/String // dev.baryo.dopaminekt/BeforeXpContext.component2|component2(){}[0]
+    final fun copy(kotlin/Double = ..., kotlin/String = ...): dev.baryo.dopaminekt/BeforeXpContext // dev.baryo.dopaminekt/BeforeXpContext.copy|copy(kotlin.Double;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/BeforeXpContext.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/BeforeXpContext.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.baryo.dopaminekt/BeforeXpContext.toString|toString(){}[0]
+}
+
+final class dev.baryo.dopaminekt/BurstOptions { // dev.baryo.dopaminekt/BurstOptions|null[0]
+    constructor <init>(kotlin/Int? = ..., kotlin/String? = ...) // dev.baryo.dopaminekt/BurstOptions.<init>|<init>(kotlin.Int?;kotlin.String?){}[0]
+
+    final val color // dev.baryo.dopaminekt/BurstOptions.color|{}color[0]
+        final fun <get-color>(): kotlin/String? // dev.baryo.dopaminekt/BurstOptions.color.<get-color>|<get-color>(){}[0]
+    final val count // dev.baryo.dopaminekt/BurstOptions.count|{}count[0]
+        final fun <get-count>(): kotlin/Int? // dev.baryo.dopaminekt/BurstOptions.count.<get-count>|<get-count>(){}[0]
+
+    final fun component1(): kotlin/Int? // dev.baryo.dopaminekt/BurstOptions.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // dev.baryo.dopaminekt/BurstOptions.component2|component2(){}[0]
+    final fun copy(kotlin/Int? = ..., kotlin/String? = ...): dev.baryo.dopaminekt/BurstOptions // dev.baryo.dopaminekt/BurstOptions.copy|copy(kotlin.Int?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/BurstOptions.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/BurstOptions.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.baryo.dopaminekt/BurstOptions.toString|toString(){}[0]
+}
+
+final class dev.baryo.dopaminekt/DopamineError : kotlin/RuntimeException { // dev.baryo.dopaminekt/DopamineError|null[0]
+    constructor <init>(kotlin/String, kotlin/String = ...) // dev.baryo.dopaminekt/DopamineError.<init>|<init>(kotlin.String;kotlin.String){}[0]
+
+    final val code // dev.baryo.dopaminekt/DopamineError.code|{}code[0]
+        final fun <get-code>(): kotlin/String // dev.baryo.dopaminekt/DopamineError.code.<get-code>|<get-code>(){}[0]
+}
+
+final class dev.baryo.dopaminekt/FloatingText { // dev.baryo.dopaminekt/FloatingText|null[0]
+    constructor <init>(kotlin/String, kotlin/Double? = ..., kotlin/Double? = ..., kotlin/String? = ..., kotlin/String? = ...) // dev.baryo.dopaminekt/FloatingText.<init>|<init>(kotlin.String;kotlin.Double?;kotlin.Double?;kotlin.String?;kotlin.String?){}[0]
+
+    final val color // dev.baryo.dopaminekt/FloatingText.color|{}color[0]
+        final fun <get-color>(): kotlin/String? // dev.baryo.dopaminekt/FloatingText.color.<get-color>|<get-color>(){}[0]
+    final val size // dev.baryo.dopaminekt/FloatingText.size|{}size[0]
+        final fun <get-size>(): kotlin/String? // dev.baryo.dopaminekt/FloatingText.size.<get-size>|<get-size>(){}[0]
+    final val text // dev.baryo.dopaminekt/FloatingText.text|{}text[0]
+        final fun <get-text>(): kotlin/String // dev.baryo.dopaminekt/FloatingText.text.<get-text>|<get-text>(){}[0]
+    final val x // dev.baryo.dopaminekt/FloatingText.x|{}x[0]
+        final fun <get-x>(): kotlin/Double? // dev.baryo.dopaminekt/FloatingText.x.<get-x>|<get-x>(){}[0]
+    final val y // dev.baryo.dopaminekt/FloatingText.y|{}y[0]
+        final fun <get-y>(): kotlin/Double? // dev.baryo.dopaminekt/FloatingText.y.<get-y>|<get-y>(){}[0]
+
+    final fun component1(): kotlin/String // dev.baryo.dopaminekt/FloatingText.component1|component1(){}[0]
+    final fun component2(): kotlin/Double? // dev.baryo.dopaminekt/FloatingText.component2|component2(){}[0]
+    final fun component3(): kotlin/Double? // dev.baryo.dopaminekt/FloatingText.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // dev.baryo.dopaminekt/FloatingText.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // dev.baryo.dopaminekt/FloatingText.component5|component5(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/Double? = ..., kotlin/Double? = ..., kotlin/String? = ..., kotlin/String? = ...): dev.baryo.dopaminekt/FloatingText // dev.baryo.dopaminekt/FloatingText.copy|copy(kotlin.String;kotlin.Double?;kotlin.Double?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/FloatingText.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/FloatingText.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.baryo.dopaminekt/FloatingText.toString|toString(){}[0]
+}
+
+final class dev.baryo.dopaminekt/HudState { // dev.baryo.dopaminekt/HudState|null[0]
+    constructor <init>(kotlin/Double, kotlin/Long, kotlin/Long, kotlin/Double? = ..., kotlin/Double? = ...) // dev.baryo.dopaminekt/HudState.<init>|<init>(kotlin.Double;kotlin.Long;kotlin.Long;kotlin.Double?;kotlin.Double?){}[0]
+
+    final val level // dev.baryo.dopaminekt/HudState.level|{}level[0]
+        final fun <get-level>(): kotlin/Long // dev.baryo.dopaminekt/HudState.level.<get-level>|<get-level>(){}[0]
+    final val next // dev.baryo.dopaminekt/HudState.next|{}next[0]
+        final fun <get-next>(): kotlin/Double? // dev.baryo.dopaminekt/HudState.next.<get-next>|<get-next>(){}[0]
+    final val progress // dev.baryo.dopaminekt/HudState.progress|{}progress[0]
+        final fun <get-progress>(): kotlin/Double? // dev.baryo.dopaminekt/HudState.progress.<get-progress>|<get-progress>(){}[0]
+    final val streak // dev.baryo.dopaminekt/HudState.streak|{}streak[0]
+        final fun <get-streak>(): kotlin/Long // dev.baryo.dopaminekt/HudState.streak.<get-streak>|<get-streak>(){}[0]
+    final val xp // dev.baryo.dopaminekt/HudState.xp|{}xp[0]
+        final fun <get-xp>(): kotlin/Double // dev.baryo.dopaminekt/HudState.xp.<get-xp>|<get-xp>(){}[0]
+
+    final fun component1(): kotlin/Double // dev.baryo.dopaminekt/HudState.component1|component1(){}[0]
+    final fun component2(): kotlin/Long // dev.baryo.dopaminekt/HudState.component2|component2(){}[0]
+    final fun component3(): kotlin/Long // dev.baryo.dopaminekt/HudState.component3|component3(){}[0]
+    final fun component4(): kotlin/Double? // dev.baryo.dopaminekt/HudState.component4|component4(){}[0]
+    final fun component5(): kotlin/Double? // dev.baryo.dopaminekt/HudState.component5|component5(){}[0]
+    final fun copy(kotlin/Double = ..., kotlin/Long = ..., kotlin/Long = ..., kotlin/Double? = ..., kotlin/Double? = ...): dev.baryo.dopaminekt/HudState // dev.baryo.dopaminekt/HudState.copy|copy(kotlin.Double;kotlin.Long;kotlin.Long;kotlin.Double?;kotlin.Double?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/HudState.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/HudState.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.baryo.dopaminekt/HudState.toString|toString(){}[0]
+}
+
+final class dev.baryo.dopaminekt/MemoryStorage : dev.baryo.dopaminekt/StoragePort { // dev.baryo.dopaminekt/MemoryStorage|null[0]
+    constructor <init>() // dev.baryo.dopaminekt/MemoryStorage.<init>|<init>(){}[0]
+
+    final fun clear() // dev.baryo.dopaminekt/MemoryStorage.clear|clear(){}[0]
+    final suspend fun get(kotlin/String): kotlin/String? // dev.baryo.dopaminekt/MemoryStorage.get|get(kotlin.String){}[0]
+    final suspend fun remove(kotlin/String) // dev.baryo.dopaminekt/MemoryStorage.remove|remove(kotlin.String){}[0]
+    final suspend fun set(kotlin/String, kotlin/String) // dev.baryo.dopaminekt/MemoryStorage.set|set(kotlin.String;kotlin.String){}[0]
+}
+
+final class dev.baryo.dopaminekt/Point { // dev.baryo.dopaminekt/Point|null[0]
+    constructor <init>(kotlin/Double, kotlin/Double) // dev.baryo.dopaminekt/Point.<init>|<init>(kotlin.Double;kotlin.Double){}[0]
+
+    final val x // dev.baryo.dopaminekt/Point.x|{}x[0]
+        final fun <get-x>(): kotlin/Double // dev.baryo.dopaminekt/Point.x.<get-x>|<get-x>(){}[0]
+    final val y // dev.baryo.dopaminekt/Point.y|{}y[0]
+        final fun <get-y>(): kotlin/Double // dev.baryo.dopaminekt/Point.y.<get-y>|<get-y>(){}[0]
+
+    final fun component1(): kotlin/Double // dev.baryo.dopaminekt/Point.component1|component1(){}[0]
+    final fun component2(): kotlin/Double // dev.baryo.dopaminekt/Point.component2|component2(){}[0]
+    final fun copy(kotlin/Double = ..., kotlin/Double = ...): dev.baryo.dopaminekt/Point // dev.baryo.dopaminekt/Point.copy|copy(kotlin.Double;kotlin.Double){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/Point.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/Point.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.baryo.dopaminekt/Point.toString|toString(){}[0]
+}
+
+final class dev.baryo.dopaminekt/Popup { // dev.baryo.dopaminekt/Popup|null[0]
+    constructor <init>(dev.baryo.dopaminekt/PopupKind, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., dev.baryo.dopaminekt/PopupTier? = ...) // dev.baryo.dopaminekt/Popup.<init>|<init>(dev.baryo.dopaminekt.PopupKind;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;dev.baryo.dopaminekt.PopupTier?){}[0]
+
+    final val body // dev.baryo.dopaminekt/Popup.body|{}body[0]
+        final fun <get-body>(): kotlin/String? // dev.baryo.dopaminekt/Popup.body.<get-body>|<get-body>(){}[0]
+    final val icon // dev.baryo.dopaminekt/Popup.icon|{}icon[0]
+        final fun <get-icon>(): kotlin/String? // dev.baryo.dopaminekt/Popup.icon.<get-icon>|<get-icon>(){}[0]
+    final val kind // dev.baryo.dopaminekt/Popup.kind|{}kind[0]
+        final fun <get-kind>(): dev.baryo.dopaminekt/PopupKind // dev.baryo.dopaminekt/Popup.kind.<get-kind>|<get-kind>(){}[0]
+    final val meta // dev.baryo.dopaminekt/Popup.meta|{}meta[0]
+        final fun <get-meta>(): kotlin/String? // dev.baryo.dopaminekt/Popup.meta.<get-meta>|<get-meta>(){}[0]
+    final val tier // dev.baryo.dopaminekt/Popup.tier|{}tier[0]
+        final fun <get-tier>(): dev.baryo.dopaminekt/PopupTier? // dev.baryo.dopaminekt/Popup.tier.<get-tier>|<get-tier>(){}[0]
+    final val title // dev.baryo.dopaminekt/Popup.title|{}title[0]
+        final fun <get-title>(): kotlin/String? // dev.baryo.dopaminekt/Popup.title.<get-title>|<get-title>(){}[0]
+
+    final fun component1(): dev.baryo.dopaminekt/PopupKind // dev.baryo.dopaminekt/Popup.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // dev.baryo.dopaminekt/Popup.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // dev.baryo.dopaminekt/Popup.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // dev.baryo.dopaminekt/Popup.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // dev.baryo.dopaminekt/Popup.component5|component5(){}[0]
+    final fun component6(): dev.baryo.dopaminekt/PopupTier? // dev.baryo.dopaminekt/Popup.component6|component6(){}[0]
+    final fun copy(dev.baryo.dopaminekt/PopupKind = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., dev.baryo.dopaminekt/PopupTier? = ...): dev.baryo.dopaminekt/Popup // dev.baryo.dopaminekt/Popup.copy|copy(dev.baryo.dopaminekt.PopupKind;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?;dev.baryo.dopaminekt.PopupTier?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/Popup.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/Popup.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.baryo.dopaminekt/Popup.toString|toString(){}[0]
+}
+
+final class dev.baryo.dopaminekt/Progress { // dev.baryo.dopaminekt/Progress|null[0]
+    constructor <init>(dev.baryo.dopaminekt/StoragePort, dev.baryo.dopaminekt/ProgressConfig = ...) // dev.baryo.dopaminekt/Progress.<init>|<init>(dev.baryo.dopaminekt.StoragePort;dev.baryo.dopaminekt.ProgressConfig){}[0]
+
+    final val loadFailed // dev.baryo.dopaminekt/Progress.loadFailed|{}loadFailed[0]
+        final fun <get-loadFailed>(): kotlin/Boolean // dev.baryo.dopaminekt/Progress.loadFailed.<get-loadFailed>|<get-loadFailed>(){}[0]
+
+    final fun clear() // dev.baryo.dopaminekt/Progress.clear|clear(){}[0]
+    final fun defineAchievement(kotlin/String, dev.baryo.dopaminekt/AchievementDefinition): kotlin/Function0<kotlin/Unit> // dev.baryo.dopaminekt/Progress.defineAchievement|defineAchievement(kotlin.String;dev.baryo.dopaminekt.AchievementDefinition){}[0]
+    final fun emit(dev.baryo.dopaminekt/ProgressEvent.Custom) // dev.baryo.dopaminekt/Progress.emit|emit(dev.baryo.dopaminekt.ProgressEvent.Custom){}[0]
+    final fun export(): kotlinx.serialization.json/JsonObject // dev.baryo.dopaminekt/Progress.export|export(){}[0]
+    final fun getStreakMultiplier(): kotlin/Double // dev.baryo.dopaminekt/Progress.getStreakMultiplier|getStreakMultiplier(){}[0]
+    final fun getUnlockedAchievements(): kotlin.collections/List<kotlinx.serialization.json/JsonObject> // dev.baryo.dopaminekt/Progress.getUnlockedAchievements|getUnlockedAchievements(){}[0]
+    final fun getUnseenAchievements(): kotlin.collections/List<kotlinx.serialization.json/JsonObject> // dev.baryo.dopaminekt/Progress.getUnseenAchievements|getUnseenAchievements(){}[0]
+    final fun getXpForNextLevel(): dev.baryo.dopaminekt/XpProgress // dev.baryo.dopaminekt/Progress.getXpForNextLevel|getXpForNextLevel(){}[0]
+    final fun on(kotlin/String, kotlin/Function1<dev.baryo.dopaminekt/ProgressEvent, kotlin/Unit>): kotlin/Function0<kotlin/Unit> // dev.baryo.dopaminekt/Progress.on|on(kotlin.String;kotlin.Function1<dev.baryo.dopaminekt.ProgressEvent,kotlin.Unit>){}[0]
+    final fun snapshot(): kotlinx.serialization.json/JsonObject // dev.baryo.dopaminekt/Progress.snapshot|snapshot(){}[0]
+    final fun use(dev.baryo.dopaminekt/Middleware): kotlin/Function0<kotlin/Unit> // dev.baryo.dopaminekt/Progress.use|use(dev.baryo.dopaminekt.Middleware){}[0]
+    final suspend fun addXp(kotlin/Double, kotlin/String = ...): dev.baryo.dopaminekt/AddXpResult // dev.baryo.dopaminekt/Progress.addXp|addXp(kotlin.Double;kotlin.String){}[0]
+    final suspend fun checkAchievements(kotlin/String? = ..., kotlinx.serialization.json/JsonObject? = ...): kotlin.collections/List<dev.baryo.dopaminekt/AchievementDefinition> // dev.baryo.dopaminekt/Progress.checkAchievements|checkAchievements(kotlin.String?;kotlinx.serialization.json.JsonObject?){}[0]
+    final suspend fun import(kotlinx.serialization.json/JsonElement, kotlin/Boolean = ...): kotlinx.serialization.json/JsonObject // dev.baryo.dopaminekt/Progress.import|import(kotlinx.serialization.json.JsonElement;kotlin.Boolean){}[0]
+    final suspend fun init(): kotlinx.serialization.json/JsonObject // dev.baryo.dopaminekt/Progress.init|init(){}[0]
+    final suspend fun markAchievementsSeen(kotlin.collections/Collection<kotlin/String>) // dev.baryo.dopaminekt/Progress.markAchievementsSeen|markAchievementsSeen(kotlin.collections.Collection<kotlin.String>){}[0]
+    final suspend fun record(kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/Double> = ...): kotlin/Boolean // dev.baryo.dopaminekt/Progress.record|record(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.Double>){}[0]
+    final suspend fun reset(): kotlinx.serialization.json/JsonObject // dev.baryo.dopaminekt/Progress.reset|reset(){}[0]
+    final suspend fun save() // dev.baryo.dopaminekt/Progress.save|save(){}[0]
+    final suspend fun unlockAchievement(kotlin/String): kotlin/Boolean // dev.baryo.dopaminekt/Progress.unlockAchievement|unlockAchievement(kotlin.String){}[0]
+}
+
+final class dev.baryo.dopaminekt/ProgressConfig { // dev.baryo.dopaminekt/ProgressConfig|null[0]
+    constructor <init>(kotlin.collections/Map<kotlin/String, dev.baryo.dopaminekt/AchievementDefinition> = ..., kotlin/Boolean = ..., dev.baryo.dopaminekt/Clock = ..., dev.baryo.dopaminekt/StreakDays = ..., kotlin/String = ..., kotlin/Function1<kotlin/Throwable, kotlin/Unit> = ...) // dev.baryo.dopaminekt/ProgressConfig.<init>|<init>(kotlin.collections.Map<kotlin.String,dev.baryo.dopaminekt.AchievementDefinition>;kotlin.Boolean;dev.baryo.dopaminekt.Clock;dev.baryo.dopaminekt.StreakDays;kotlin.String;kotlin.Function1<kotlin.Throwable,kotlin.Unit>){}[0]
+
+    final val achievements // dev.baryo.dopaminekt/ProgressConfig.achievements|{}achievements[0]
+        final fun <get-achievements>(): kotlin.collections/Map<kotlin/String, dev.baryo.dopaminekt/AchievementDefinition> // dev.baryo.dopaminekt/ProgressConfig.achievements.<get-achievements>|<get-achievements>(){}[0]
+    final val builtinAchievements // dev.baryo.dopaminekt/ProgressConfig.builtinAchievements|{}builtinAchievements[0]
+        final fun <get-builtinAchievements>(): kotlin/Boolean // dev.baryo.dopaminekt/ProgressConfig.builtinAchievements.<get-builtinAchievements>|<get-builtinAchievements>(){}[0]
+    final val clock // dev.baryo.dopaminekt/ProgressConfig.clock|{}clock[0]
+        final fun <get-clock>(): dev.baryo.dopaminekt/Clock // dev.baryo.dopaminekt/ProgressConfig.clock.<get-clock>|<get-clock>(){}[0]
+    final val onError // dev.baryo.dopaminekt/ProgressConfig.onError|{}onError[0]
+        final fun <get-onError>(): kotlin/Function1<kotlin/Throwable, kotlin/Unit> // dev.baryo.dopaminekt/ProgressConfig.onError.<get-onError>|<get-onError>(){}[0]
+    final val prefix // dev.baryo.dopaminekt/ProgressConfig.prefix|{}prefix[0]
+        final fun <get-prefix>(): kotlin/String // dev.baryo.dopaminekt/ProgressConfig.prefix.<get-prefix>|<get-prefix>(){}[0]
+    final val streakDays // dev.baryo.dopaminekt/ProgressConfig.streakDays|{}streakDays[0]
+        final fun <get-streakDays>(): dev.baryo.dopaminekt/StreakDays // dev.baryo.dopaminekt/ProgressConfig.streakDays.<get-streakDays>|<get-streakDays>(){}[0]
+}
+
+final class dev.baryo.dopaminekt/SystemClock : dev.baryo.dopaminekt/Clock { // dev.baryo.dopaminekt/SystemClock|null[0]
+    constructor <init>(kotlinx.datetime/TimeZone = ...) // dev.baryo.dopaminekt/SystemClock.<init>|<init>(kotlinx.datetime.TimeZone){}[0]
+
+    final fun localDate(kotlin/Long): kotlin/String // dev.baryo.dopaminekt/SystemClock.localDate|localDate(kotlin.Long){}[0]
+    final fun now(): kotlin/Long // dev.baryo.dopaminekt/SystemClock.now|now(){}[0]
+}
+
+final class dev.baryo.dopaminekt/XpProgress { // dev.baryo.dopaminekt/XpProgress|null[0]
+    constructor <init>(kotlin/Double, kotlin/Double, kotlin/Double) // dev.baryo.dopaminekt/XpProgress.<init>|<init>(kotlin.Double;kotlin.Double;kotlin.Double){}[0]
+
+    final val needed // dev.baryo.dopaminekt/XpProgress.needed|{}needed[0]
+        final fun <get-needed>(): kotlin/Double // dev.baryo.dopaminekt/XpProgress.needed.<get-needed>|<get-needed>(){}[0]
+    final val progress // dev.baryo.dopaminekt/XpProgress.progress|{}progress[0]
+        final fun <get-progress>(): kotlin/Double // dev.baryo.dopaminekt/XpProgress.progress.<get-progress>|<get-progress>(){}[0]
+    final val total // dev.baryo.dopaminekt/XpProgress.total|{}total[0]
+        final fun <get-total>(): kotlin/Double // dev.baryo.dopaminekt/XpProgress.total.<get-total>|<get-total>(){}[0]
+
+    final fun component1(): kotlin/Double // dev.baryo.dopaminekt/XpProgress.component1|component1(){}[0]
+    final fun component2(): kotlin/Double // dev.baryo.dopaminekt/XpProgress.component2|component2(){}[0]
+    final fun component3(): kotlin/Double // dev.baryo.dopaminekt/XpProgress.component3|component3(){}[0]
+    final fun copy(kotlin/Double = ..., kotlin/Double = ..., kotlin/Double = ...): dev.baryo.dopaminekt/XpProgress // dev.baryo.dopaminekt/XpProgress.copy|copy(kotlin.Double;kotlin.Double;kotlin.Double){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/XpProgress.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/XpProgress.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.baryo.dopaminekt/XpProgress.toString|toString(){}[0]
+}
+
+sealed class dev.baryo.dopaminekt/ProgressEvent { // dev.baryo.dopaminekt/ProgressEvent|null[0]
+    final val wireName // dev.baryo.dopaminekt/ProgressEvent.wireName|{}wireName[0]
+        final fun <get-wireName>(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.wireName.<get-wireName>|<get-wireName>(){}[0]
+
+    final class AchievementUnlocked : dev.baryo.dopaminekt/ProgressEvent { // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked|null[0]
+        constructor <init>(kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/Double) // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.Double){}[0]
+
+        final val description // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.description|{}description[0]
+            final fun <get-description>(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.description.<get-description>|<get-description>(){}[0]
+        final val icon // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.icon|{}icon[0]
+            final fun <get-icon>(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.icon.<get-icon>|<get-icon>(){}[0]
+        final val id // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.id|{}id[0]
+            final fun <get-id>(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.id.<get-id>|<get-id>(){}[0]
+        final val name // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.name|{}name[0]
+            final fun <get-name>(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.name.<get-name>|<get-name>(){}[0]
+        final val xp // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.xp|{}xp[0]
+            final fun <get-xp>(): kotlin/Double // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.xp.<get-xp>|<get-xp>(){}[0]
+
+        final fun component1(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.component1|component1(){}[0]
+        final fun component2(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.component2|component2(){}[0]
+        final fun component3(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.component3|component3(){}[0]
+        final fun component4(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.component4|component4(){}[0]
+        final fun component5(): kotlin/Double // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.component5|component5(){}[0]
+        final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin/Double = ...): dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.copy|copy(kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.Double){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.AchievementUnlocked.toString|toString(){}[0]
+    }
+
+    final class Custom : dev.baryo.dopaminekt/ProgressEvent { // dev.baryo.dopaminekt/ProgressEvent.Custom|null[0]
+        constructor <init>(kotlin/String, kotlinx.serialization.json/JsonElement? = ...) // dev.baryo.dopaminekt/ProgressEvent.Custom.<init>|<init>(kotlin.String;kotlinx.serialization.json.JsonElement?){}[0]
+
+        final val data // dev.baryo.dopaminekt/ProgressEvent.Custom.data|{}data[0]
+            final fun <get-data>(): kotlinx.serialization.json/JsonElement? // dev.baryo.dopaminekt/ProgressEvent.Custom.data.<get-data>|<get-data>(){}[0]
+    }
+
+    final class LevelUp : dev.baryo.dopaminekt/ProgressEvent { // dev.baryo.dopaminekt/ProgressEvent.LevelUp|null[0]
+        constructor <init>(kotlin/Long, kotlin/Long, kotlin/Double) // dev.baryo.dopaminekt/ProgressEvent.LevelUp.<init>|<init>(kotlin.Long;kotlin.Long;kotlin.Double){}[0]
+
+        final val newLevel // dev.baryo.dopaminekt/ProgressEvent.LevelUp.newLevel|{}newLevel[0]
+            final fun <get-newLevel>(): kotlin/Long // dev.baryo.dopaminekt/ProgressEvent.LevelUp.newLevel.<get-newLevel>|<get-newLevel>(){}[0]
+        final val oldLevel // dev.baryo.dopaminekt/ProgressEvent.LevelUp.oldLevel|{}oldLevel[0]
+            final fun <get-oldLevel>(): kotlin/Long // dev.baryo.dopaminekt/ProgressEvent.LevelUp.oldLevel.<get-oldLevel>|<get-oldLevel>(){}[0]
+        final val totalXp // dev.baryo.dopaminekt/ProgressEvent.LevelUp.totalXp|{}totalXp[0]
+            final fun <get-totalXp>(): kotlin/Double // dev.baryo.dopaminekt/ProgressEvent.LevelUp.totalXp.<get-totalXp>|<get-totalXp>(){}[0]
+
+        final fun component1(): kotlin/Long // dev.baryo.dopaminekt/ProgressEvent.LevelUp.component1|component1(){}[0]
+        final fun component2(): kotlin/Long // dev.baryo.dopaminekt/ProgressEvent.LevelUp.component2|component2(){}[0]
+        final fun component3(): kotlin/Double // dev.baryo.dopaminekt/ProgressEvent.LevelUp.component3|component3(){}[0]
+        final fun copy(kotlin/Long = ..., kotlin/Long = ..., kotlin/Double = ...): dev.baryo.dopaminekt/ProgressEvent.LevelUp // dev.baryo.dopaminekt/ProgressEvent.LevelUp.copy|copy(kotlin.Long;kotlin.Long;kotlin.Double){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/ProgressEvent.LevelUp.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/ProgressEvent.LevelUp.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.LevelUp.toString|toString(){}[0]
+    }
+
+    final class LoadFailed : dev.baryo.dopaminekt/ProgressEvent { // dev.baryo.dopaminekt/ProgressEvent.LoadFailed|null[0]
+        constructor <init>(kotlin/String, kotlin/String, kotlin/Boolean? = ..., kotlin/Throwable? = ...) // dev.baryo.dopaminekt/ProgressEvent.LoadFailed.<init>|<init>(kotlin.String;kotlin.String;kotlin.Boolean?;kotlin.Throwable?){}[0]
+
+        final val backedUp // dev.baryo.dopaminekt/ProgressEvent.LoadFailed.backedUp|{}backedUp[0]
+            final fun <get-backedUp>(): kotlin/Boolean? // dev.baryo.dopaminekt/ProgressEvent.LoadFailed.backedUp.<get-backedUp>|<get-backedUp>(){}[0]
+        final val error // dev.baryo.dopaminekt/ProgressEvent.LoadFailed.error|{}error[0]
+            final fun <get-error>(): kotlin/Throwable? // dev.baryo.dopaminekt/ProgressEvent.LoadFailed.error.<get-error>|<get-error>(){}[0]
+        final val key // dev.baryo.dopaminekt/ProgressEvent.LoadFailed.key|{}key[0]
+            final fun <get-key>(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.LoadFailed.key.<get-key>|<get-key>(){}[0]
+        final val reason // dev.baryo.dopaminekt/ProgressEvent.LoadFailed.reason|{}reason[0]
+            final fun <get-reason>(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.LoadFailed.reason.<get-reason>|<get-reason>(){}[0]
+
+        final fun component1(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.LoadFailed.component1|component1(){}[0]
+        final fun component2(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.LoadFailed.component2|component2(){}[0]
+        final fun component3(): kotlin/Boolean? // dev.baryo.dopaminekt/ProgressEvent.LoadFailed.component3|component3(){}[0]
+        final fun component4(): kotlin/Throwable? // dev.baryo.dopaminekt/ProgressEvent.LoadFailed.component4|component4(){}[0]
+        final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/Boolean? = ..., kotlin/Throwable? = ...): dev.baryo.dopaminekt/ProgressEvent.LoadFailed // dev.baryo.dopaminekt/ProgressEvent.LoadFailed.copy|copy(kotlin.String;kotlin.String;kotlin.Boolean?;kotlin.Throwable?){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/ProgressEvent.LoadFailed.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/ProgressEvent.LoadFailed.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.LoadFailed.toString|toString(){}[0]
+    }
+
+    final class PersonalBest : dev.baryo.dopaminekt/ProgressEvent { // dev.baryo.dopaminekt/ProgressEvent.PersonalBest|null[0]
+        constructor <init>(kotlin/String, kotlin/Double) // dev.baryo.dopaminekt/ProgressEvent.PersonalBest.<init>|<init>(kotlin.String;kotlin.Double){}[0]
+
+        final val activity // dev.baryo.dopaminekt/ProgressEvent.PersonalBest.activity|{}activity[0]
+            final fun <get-activity>(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.PersonalBest.activity.<get-activity>|<get-activity>(){}[0]
+        final val score // dev.baryo.dopaminekt/ProgressEvent.PersonalBest.score|{}score[0]
+            final fun <get-score>(): kotlin/Double // dev.baryo.dopaminekt/ProgressEvent.PersonalBest.score.<get-score>|<get-score>(){}[0]
+
+        final fun component1(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.PersonalBest.component1|component1(){}[0]
+        final fun component2(): kotlin/Double // dev.baryo.dopaminekt/ProgressEvent.PersonalBest.component2|component2(){}[0]
+        final fun copy(kotlin/String = ..., kotlin/Double = ...): dev.baryo.dopaminekt/ProgressEvent.PersonalBest // dev.baryo.dopaminekt/ProgressEvent.PersonalBest.copy|copy(kotlin.String;kotlin.Double){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/ProgressEvent.PersonalBest.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/ProgressEvent.PersonalBest.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.PersonalBest.toString|toString(){}[0]
+    }
+
+    final class SaveFailed : dev.baryo.dopaminekt/ProgressEvent { // dev.baryo.dopaminekt/ProgressEvent.SaveFailed|null[0]
+        constructor <init>(kotlin/String) // dev.baryo.dopaminekt/ProgressEvent.SaveFailed.<init>|<init>(kotlin.String){}[0]
+
+        final val key // dev.baryo.dopaminekt/ProgressEvent.SaveFailed.key|{}key[0]
+            final fun <get-key>(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.SaveFailed.key.<get-key>|<get-key>(){}[0]
+
+        final fun component1(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.SaveFailed.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): dev.baryo.dopaminekt/ProgressEvent.SaveFailed // dev.baryo.dopaminekt/ProgressEvent.SaveFailed.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/ProgressEvent.SaveFailed.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/ProgressEvent.SaveFailed.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.SaveFailed.toString|toString(){}[0]
+    }
+
+    final class StreakUpdated : dev.baryo.dopaminekt/ProgressEvent { // dev.baryo.dopaminekt/ProgressEvent.StreakUpdated|null[0]
+        constructor <init>(kotlin/Long, kotlin/Long) // dev.baryo.dopaminekt/ProgressEvent.StreakUpdated.<init>|<init>(kotlin.Long;kotlin.Long){}[0]
+
+        final val current // dev.baryo.dopaminekt/ProgressEvent.StreakUpdated.current|{}current[0]
+            final fun <get-current>(): kotlin/Long // dev.baryo.dopaminekt/ProgressEvent.StreakUpdated.current.<get-current>|<get-current>(){}[0]
+        final val longest // dev.baryo.dopaminekt/ProgressEvent.StreakUpdated.longest|{}longest[0]
+            final fun <get-longest>(): kotlin/Long // dev.baryo.dopaminekt/ProgressEvent.StreakUpdated.longest.<get-longest>|<get-longest>(){}[0]
+
+        final fun component1(): kotlin/Long // dev.baryo.dopaminekt/ProgressEvent.StreakUpdated.component1|component1(){}[0]
+        final fun component2(): kotlin/Long // dev.baryo.dopaminekt/ProgressEvent.StreakUpdated.component2|component2(){}[0]
+        final fun copy(kotlin/Long = ..., kotlin/Long = ...): dev.baryo.dopaminekt/ProgressEvent.StreakUpdated // dev.baryo.dopaminekt/ProgressEvent.StreakUpdated.copy|copy(kotlin.Long;kotlin.Long){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/ProgressEvent.StreakUpdated.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/ProgressEvent.StreakUpdated.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.StreakUpdated.toString|toString(){}[0]
+    }
+
+    final class XpGained : dev.baryo.dopaminekt/ProgressEvent { // dev.baryo.dopaminekt/ProgressEvent.XpGained|null[0]
+        constructor <init>(kotlin/Double, kotlin/String, kotlin/Boolean, kotlin/Long, kotlin/Double) // dev.baryo.dopaminekt/ProgressEvent.XpGained.<init>|<init>(kotlin.Double;kotlin.String;kotlin.Boolean;kotlin.Long;kotlin.Double){}[0]
+
+        final val amount // dev.baryo.dopaminekt/ProgressEvent.XpGained.amount|{}amount[0]
+            final fun <get-amount>(): kotlin/Double // dev.baryo.dopaminekt/ProgressEvent.XpGained.amount.<get-amount>|<get-amount>(){}[0]
+        final val leveledUp // dev.baryo.dopaminekt/ProgressEvent.XpGained.leveledUp|{}leveledUp[0]
+            final fun <get-leveledUp>(): kotlin/Boolean // dev.baryo.dopaminekt/ProgressEvent.XpGained.leveledUp.<get-leveledUp>|<get-leveledUp>(){}[0]
+        final val newLevel // dev.baryo.dopaminekt/ProgressEvent.XpGained.newLevel|{}newLevel[0]
+            final fun <get-newLevel>(): kotlin/Long // dev.baryo.dopaminekt/ProgressEvent.XpGained.newLevel.<get-newLevel>|<get-newLevel>(){}[0]
+        final val reason // dev.baryo.dopaminekt/ProgressEvent.XpGained.reason|{}reason[0]
+            final fun <get-reason>(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.XpGained.reason.<get-reason>|<get-reason>(){}[0]
+        final val total // dev.baryo.dopaminekt/ProgressEvent.XpGained.total|{}total[0]
+            final fun <get-total>(): kotlin/Double // dev.baryo.dopaminekt/ProgressEvent.XpGained.total.<get-total>|<get-total>(){}[0]
+
+        final fun component1(): kotlin/Double // dev.baryo.dopaminekt/ProgressEvent.XpGained.component1|component1(){}[0]
+        final fun component2(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.XpGained.component2|component2(){}[0]
+        final fun component3(): kotlin/Boolean // dev.baryo.dopaminekt/ProgressEvent.XpGained.component3|component3(){}[0]
+        final fun component4(): kotlin/Long // dev.baryo.dopaminekt/ProgressEvent.XpGained.component4|component4(){}[0]
+        final fun component5(): kotlin/Double // dev.baryo.dopaminekt/ProgressEvent.XpGained.component5|component5(){}[0]
+        final fun copy(kotlin/Double = ..., kotlin/String = ..., kotlin/Boolean = ..., kotlin/Long = ..., kotlin/Double = ...): dev.baryo.dopaminekt/ProgressEvent.XpGained // dev.baryo.dopaminekt/ProgressEvent.XpGained.copy|copy(kotlin.Double;kotlin.String;kotlin.Boolean;kotlin.Long;kotlin.Double){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/ProgressEvent.XpGained.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/ProgressEvent.XpGained.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.XpGained.toString|toString(){}[0]
+    }
+
+    final object PlayerReset : dev.baryo.dopaminekt/ProgressEvent { // dev.baryo.dopaminekt/ProgressEvent.PlayerReset|null[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.baryo.dopaminekt/ProgressEvent.PlayerReset.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.baryo.dopaminekt/ProgressEvent.PlayerReset.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.baryo.dopaminekt/ProgressEvent.PlayerReset.toString|toString(){}[0]
+    }
+}
+
+final const val dev.baryo.dopaminekt/HOST_API // dev.baryo.dopaminekt/HOST_API|{}HOST_API[0]
+    final fun <get-HOST_API>(): kotlin/Int // dev.baryo.dopaminekt/HOST_API.<get-HOST_API>|<get-HOST_API>(){}[0]
+
+final fun dev.baryo.dopaminekt/isValidPluginName(kotlin/String): kotlin/Boolean // dev.baryo.dopaminekt/isValidPluginName|isValidPluginName(kotlin.String){}[0]
+final fun dev.baryo.dopaminekt/levelFor(kotlin/Double): kotlin/Long // dev.baryo.dopaminekt/levelFor|levelFor(kotlin.Double){}[0]
+final fun dev.baryo.dopaminekt/merge(kotlinx.serialization.json/JsonElement, kotlinx.serialization.json/JsonElement, kotlin/Long = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/Double>? = ...): kotlinx.serialization.json/JsonObject // dev.baryo.dopaminekt/merge|merge(kotlinx.serialization.json.JsonElement;kotlinx.serialization.json.JsonElement;kotlin.Long;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.Double>?){}[0]
+final fun dev.baryo.dopaminekt/thresholdFor(kotlin/Long): kotlin/Double // dev.baryo.dopaminekt/thresholdFor|thresholdFor(kotlin.Long){}[0]
+final fun dev.baryo.dopaminekt/validate(kotlinx.serialization.json/JsonElement, kotlin/Long = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, kotlin/Double>? = ...): kotlinx.serialization.json/JsonObject // dev.baryo.dopaminekt/validate|validate(kotlinx.serialization.json.JsonElement;kotlin.Long;kotlin.String?;kotlin.collections.Map<kotlin.String,kotlin.Double>?){}[0]
