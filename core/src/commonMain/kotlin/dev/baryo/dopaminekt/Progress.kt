@@ -1,6 +1,8 @@
 package dev.baryo.dopaminekt
 
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
@@ -147,10 +149,22 @@ public class Progress(storage: StoragePort, config: ProgressConfig = ProgressCon
      * a failed read retries the read and keeps the progress made since.
      */
     public suspend fun init(): JsonObject {
-        val saved = readSaved()
-        // A failed retry keeps the progress made since the first init.
-        if (!(blocked && doc != null)) doc = loadDoc(saved)
-        readDevice()
+        val wasBlocked = blocked
+        val wasReadFailed = readFailed
+        try {
+            val saved = readSaved()
+            // A failed retry keeps the progress made since the first init.
+            val loaded = if (blocked && doc != null) doc!! else loadDoc(saved)
+            val device = deviceId?.let { DeviceId(it, deviceSaved) } ?: data.readDevice()
+            // Nothing is set until every read is done, so a cancelled init leaves Progress as it was.
+            doc = loaded
+            deviceId = device.id
+            deviceSaved = device.saved
+        } catch (e: CancellationException) {
+            blocked = wasBlocked
+            readFailed = wasReadFailed
+            throw e
+        }
         save()
         return snapshot()
     }
@@ -193,14 +207,6 @@ public class Progress(storage: StoragePort, config: ProgressConfig = ProgressCon
             publish(ProgressEvent.LoadFailed(PLAYER_KEY, e.code, error = e))
             emptyDoc(clock.now().toDouble())
         }
-    }
-
-    // The device id is made once, kept under its own key and never part of the merged document.
-    private suspend fun readDevice() {
-        if (deviceId != null) return
-        val device = data.readDevice()
-        deviceId = device.id
-        deviceSaved = device.saved
     }
 
     // A write that would add a device past the cap is refused, so the stored save never becomes
@@ -258,14 +264,17 @@ public class Progress(storage: StoragePort, config: ProgressConfig = ProgressCon
         write()
     }
 
-    // The actual persistence call. Bypasses batching.
+    // The actual persistence call. Bypasses batching. It runs to the end even when the caller is
+    // cancelled, so memory is never ahead of storage.
     private suspend fun write() {
         if (blocked) return
-        val player = requirePlayer()
-        player.lastPlayedAt = clock.now().toDouble()
-        // The device id is written with every write until it works, and a failure is not announced.
-        if (!deviceSaved) deviceSaved = data.saveDevice(deviceId!!)
-        if (!data.save(PLAYER_KEY, render(player))) publish(ProgressEvent.SaveFailed(PLAYER_KEY))
+        withContext(NonCancellable) {
+            val player = requirePlayer()
+            player.lastPlayedAt = clock.now().toDouble()
+            // The device id is written with every write until it works, and a failure is not announced.
+            if (!deviceSaved) deviceSaved = data.saveDevice(deviceId!!)
+            if (!data.save(PLAYER_KEY, render(player))) publish(ProgressEvent.SaveFailed(PLAYER_KEY))
+        }
     }
 
     private suspend fun <T> batch(block: suspend () -> T): T {
@@ -276,7 +285,12 @@ public class Progress(storage: StoragePort, config: ProgressConfig = ProgressCon
             batchDepth--
             if (batchDepth == 0 && pendingSave) {
                 pendingSave = false
-                write()
+                try {
+                    write()
+                } catch (e: Throwable) {
+                    pendingSave = true
+                    throw e
+                }
             }
         }
     }
@@ -598,7 +612,10 @@ public class Progress(storage: StoragePort, config: ProgressConfig = ProgressCon
     public fun getUnseenAchievements(): List<JsonObject> =
         getUnlockedAchievements().filter { (it["seen"] as? JsonPrimitive)?.content != "true" }
 
-    /** Marks the unlocked achievements in [ids] as seen. An id that is not unlocked is ignored. */
+    /**
+     * Marks the unlocked achievements in [ids] as seen. An id that is not unlocked is ignored.
+     * Before [init] it throws [IllegalStateException].
+     */
     public suspend fun markAchievementsSeen(ids: Collection<String>) {
         val player = requirePlayer()
         for (id in ids) {
@@ -608,6 +625,7 @@ public class Progress(storage: StoragePort, config: ProgressConfig = ProgressCon
         save()
     }
 
+    // A reason that is not a string is kept as its JSON text, as the event field is a String.
     private fun reasonText(reason: JsonElement?): String = when {
         reason == null -> ""
         reason is JsonPrimitive && reason.isString -> reason.content
