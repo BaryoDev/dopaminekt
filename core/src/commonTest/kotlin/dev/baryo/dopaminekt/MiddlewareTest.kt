@@ -12,7 +12,7 @@ import kotlin.test.assertNull
 
 class MiddlewareTest {
     private suspend fun MiddlewareChain.xp(amount: Double): BeforeXpContext? =
-        before(BeforeXpContext(amount, "r"), ::acceptXp) { m, c -> m.beforeXP(c) }
+        before(BeforeXpContext(amount, "r"), ::acceptXp) { m, c -> m.beforeXp(c) }
 
     @Test
     fun noMiddlewareLeavesTheContextAlone() = runTest {
@@ -24,13 +24,13 @@ class MiddlewareTest {
         val chain = MiddlewareChain()
         val seen = mutableListOf<Double>()
         chain.use(object : Middleware {
-            override suspend fun beforeXP(context: BeforeXpContext): Verdict<BeforeXpContext> {
+            override suspend fun beforeXp(context: BeforeXpContext): Verdict<BeforeXpContext> {
                 seen += context.amount
                 return Verdict.Patch(context.copy(amount = context.amount * 2))
             }
         })
         chain.use(object : Middleware {
-            override suspend fun beforeXP(context: BeforeXpContext): Verdict<BeforeXpContext> {
+            override suspend fun beforeXp(context: BeforeXpContext): Verdict<BeforeXpContext> {
                 seen += context.amount
                 return Verdict.Continue
             }
@@ -44,10 +44,10 @@ class MiddlewareTest {
         val chain = MiddlewareChain()
         var later = 0
         chain.use(object : Middleware {
-            override suspend fun beforeXP(context: BeforeXpContext): Verdict<BeforeXpContext> = Verdict.Reject
+            override suspend fun beforeXp(context: BeforeXpContext): Verdict<BeforeXpContext> = Verdict.Reject
         })
         chain.use(object : Middleware {
-            override suspend fun beforeXP(context: BeforeXpContext): Verdict<BeforeXpContext> {
+            override suspend fun beforeXp(context: BeforeXpContext): Verdict<BeforeXpContext> {
                 later++
                 return Verdict.Continue
             }
@@ -60,7 +60,7 @@ class MiddlewareTest {
     fun aPatchThatFailsAcceptIsDropped() = runTest {
         val chain = MiddlewareChain()
         chain.use(object : Middleware {
-            override suspend fun beforeXP(context: BeforeXpContext): Verdict<BeforeXpContext> =
+            override suspend fun beforeXp(context: BeforeXpContext): Verdict<BeforeXpContext> =
                 Verdict.Patch(context.copy(amount = Double.NaN))
         })
         assertEquals(5.0, chain.xp(5.0)?.amount)
@@ -71,10 +71,10 @@ class MiddlewareTest {
         val errors = mutableListOf<Throwable>()
         val chain = MiddlewareChain { errors += it }
         chain.use(object : Middleware {
-            override suspend fun beforeXP(context: BeforeXpContext): Verdict<BeforeXpContext> = throw IllegalStateException("x")
+            override suspend fun beforeXp(context: BeforeXpContext): Verdict<BeforeXpContext> = throw IllegalStateException("x")
         })
         chain.use(object : Middleware {
-            override suspend fun beforeXP(context: BeforeXpContext): Verdict<BeforeXpContext> =
+            override suspend fun beforeXp(context: BeforeXpContext): Verdict<BeforeXpContext> =
                 Verdict.Patch(context.copy(amount = 7.0))
         })
         assertEquals(7.0, chain.xp(5.0)?.amount)
@@ -85,12 +85,12 @@ class MiddlewareTest {
     fun cancellationIsRethrownFromBeforeAndAfter() = runTest {
         val chain = MiddlewareChain()
         chain.use(object : Middleware {
-            override suspend fun beforeXP(context: BeforeXpContext): Verdict<BeforeXpContext> = throw CancellationException("stop")
-            override suspend fun afterXP(context: AfterXpContext) = throw CancellationException("stop")
+            override suspend fun beforeXp(context: BeforeXpContext): Verdict<BeforeXpContext> = throw CancellationException("stop")
+            override suspend fun afterXp(context: AfterXpContext) = throw CancellationException("stop")
         })
         assertFailsWith<CancellationException> { chain.xp(5.0) }
         assertFailsWith<CancellationException> {
-            chain.after(AfterXpContext(1.0, "r", 1.0, 1)) { m, c -> m.afterXP(c) }
+            chain.after(AfterXpContext(1.0, "r", 1.0, 1)) { m, c -> m.afterXp(c) }
         }
     }
 
@@ -114,7 +114,7 @@ class MiddlewareTest {
     fun unsubscribeRemovesTheMiddleware() = runTest {
         val chain = MiddlewareChain()
         val off = chain.use(object : Middleware {
-            override suspend fun beforeXP(context: BeforeXpContext): Verdict<BeforeXpContext> = Verdict.Reject
+            override suspend fun beforeXp(context: BeforeXpContext): Verdict<BeforeXpContext> = Verdict.Reject
         })
         assertNull(chain.xp(1.0))
         off()
@@ -126,9 +126,9 @@ class MiddlewareTest {
         val chain = MiddlewareChain()
         var added = 0
         chain.use(object : Middleware {
-            override suspend fun beforeXP(context: BeforeXpContext): Verdict<BeforeXpContext> {
+            override suspend fun beforeXp(context: BeforeXpContext): Verdict<BeforeXpContext> {
                 chain.use(object : Middleware {
-                    override suspend fun beforeXP(context: BeforeXpContext): Verdict<BeforeXpContext> {
+                    override suspend fun beforeXp(context: BeforeXpContext): Verdict<BeforeXpContext> {
                         added++
                         return Verdict.Continue
                     }
@@ -170,10 +170,10 @@ class MiddlewareTest {
     @Test
     fun defaultHooksDoNothing() = runTest {
         val noop = object : Middleware {}
-        assertEquals(Verdict.Continue, noop.beforeXP(BeforeXpContext(1.0, "")))
+        assertEquals(Verdict.Continue, noop.beforeXp(BeforeXpContext(1.0, "")))
         assertEquals(Verdict.Continue, noop.beforeRecord(BeforeRecordContext("a", JsonObject(emptyMap()))))
         assertEquals(Verdict.Continue, noop.beforeUnlock(BeforeUnlockContext("a", 1.0)))
-        noop.afterXP(AfterXpContext(1.0, "", 1.0, 1))
+        noop.afterXp(AfterXpContext(1.0, "", 1.0, 1))
         noop.afterUnlock(AfterUnlockContext("a", 1.0))
     }
 }

@@ -1,9 +1,12 @@
 package dev.baryo.dopaminekt
 
 import kotlinx.coroutines.CancellationException
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
 /**
- * Something that happened to the player. [wireName] is the event name other ports use, and the
+ * Something that happened to the player. [wireName] is the event name the JS library emits, and the
  * fields carry the same keys as their payloads.
  */
 public sealed class ProgressEvent(public val wireName: String) {
@@ -20,7 +23,7 @@ public sealed class ProgressEvent(public val wireName: String) {
     public data class LevelUp(
         val oldLevel: Long,
         val newLevel: Long,
-        val totalXP: Double,
+        val totalXp: Double,
     ) : ProgressEvent("level_up")
 
     /** An achievement unlocked. The fields are the definition's, without its check. */
@@ -100,4 +103,50 @@ internal class EventEmitter(private val onError: (Throwable) -> Unit = {}) {
     fun clear() {
         listeners.clear()
     }
+}
+
+/**
+ * The payload the JS library publishes with this event, under the JS keys (`totalXP`, not
+ * `totalXp`). A load error is written as its message. The achievement check is not part of it.
+ */
+internal fun ProgressEvent.payload(): JsonObject {
+    val fields = LinkedHashMap<String, JsonElement>()
+    when (this) {
+        is ProgressEvent.XpGained -> {
+            fields["amount"] = number(amount)
+            fields["reason"] = JsonPrimitive(reason)
+            fields["leveledUp"] = JsonPrimitive(leveledUp)
+            fields["newLevel"] = JsonPrimitive(newLevel)
+            fields["total"] = number(total)
+        }
+        is ProgressEvent.LevelUp -> {
+            fields["oldLevel"] = JsonPrimitive(oldLevel)
+            fields["newLevel"] = JsonPrimitive(newLevel)
+            fields["totalXP"] = number(totalXp)
+        }
+        is ProgressEvent.AchievementUnlocked -> {
+            fields["name"] = JsonPrimitive(name)
+            fields["description"] = JsonPrimitive(description)
+            fields["icon"] = JsonPrimitive(icon)
+            fields["xp"] = number(xp)
+            fields["id"] = JsonPrimitive(id)
+        }
+        is ProgressEvent.StreakUpdated -> {
+            fields["current"] = JsonPrimitive(current)
+            fields["longest"] = JsonPrimitive(longest)
+        }
+        is ProgressEvent.PersonalBest -> {
+            fields["activity"] = JsonPrimitive(activity)
+            fields["score"] = number(score)
+        }
+        is ProgressEvent.PlayerReset -> {}
+        is ProgressEvent.SaveFailed -> fields["key"] = JsonPrimitive(key)
+        is ProgressEvent.LoadFailed -> {
+            fields["key"] = JsonPrimitive(key)
+            fields["reason"] = JsonPrimitive(reason)
+            backedUp?.let { fields["backedUp"] = JsonPrimitive(it) }
+            error?.let { fields["error"] = JsonPrimitive(it.message ?: it.toString()) }
+        }
+    }
+    return JsonObject(fields)
 }

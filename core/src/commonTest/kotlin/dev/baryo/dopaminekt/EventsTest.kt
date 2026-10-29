@@ -102,4 +102,38 @@ class EventsTest {
         assertTrue(event.error === error)
         assertEquals(null, event.backedUp)
     }
+
+    @Test
+    fun payloadsUseTheJsKeys() {
+        fun keys(event: ProgressEvent) = event.payload().keys
+        assertEquals(setOf("amount", "reason", "leveledUp", "newLevel", "total"), keys(xp))
+        assertEquals(setOf("oldLevel", "newLevel", "totalXP"), keys(ProgressEvent.LevelUp(1, 2, 100.0)))
+        assertEquals(
+            setOf("name", "description", "icon", "xp", "id"),
+            keys(ProgressEvent.AchievementUnlocked("a", "n", "d", "i", 1.0)),
+        )
+        assertEquals(setOf("current", "longest"), keys(ProgressEvent.StreakUpdated(2, 3)))
+        assertEquals(setOf("activity", "score"), keys(ProgressEvent.PersonalBest("tap", 5.0)))
+        assertEquals(emptySet(), keys(ProgressEvent.PlayerReset))
+        assertEquals(setOf("key"), keys(ProgressEvent.SaveFailed("player")))
+        assertEquals(setOf("key", "reason", "backedUp"), keys(ProgressEvent.LoadFailed("player", "corrupt", backedUp = true)))
+        assertEquals(
+            setOf("key", "reason", "error"),
+            keys(ProgressEvent.LoadFailed("player", "read", error = IllegalStateException("denied"))),
+        )
+        assertEquals(setOf("key", "reason"), keys(ProgressEvent.LoadFailed("player", "too_many_devices")))
+    }
+
+    @Test
+    fun payloadValuesAreRenderedLikeTheDocument() {
+        assertEquals("""{"oldLevel":1,"newLevel":2,"totalXP":100}""", ProgressEvent.LevelUp(1, 2, 100.0).payload().toString())
+        assertEquals(
+            """{"amount":10,"reason":"Played tap","leveledUp":false,"newLevel":1,"total":10}""",
+            xp.payload().toString(),
+        )
+        assertEquals(
+            """{"key":"player","reason":"read","error":"denied"}""",
+            ProgressEvent.LoadFailed("player", "read", error = IllegalStateException("denied")).payload().toString(),
+        )
+    }
 }

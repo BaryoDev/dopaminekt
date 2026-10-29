@@ -44,9 +44,9 @@ public data class AfterUnlockContext(val id: String, val reward: Double)
  * skipped, except for a cancellation, which is rethrown.
  */
 public interface Middleware {
-    public suspend fun beforeXP(context: BeforeXpContext): Verdict<BeforeXpContext> = Verdict.Continue
+    public suspend fun beforeXp(context: BeforeXpContext): Verdict<BeforeXpContext> = Verdict.Continue
 
-    public suspend fun afterXP(context: AfterXpContext) {}
+    public suspend fun afterXp(context: AfterXpContext) {}
 
     public suspend fun beforeRecord(context: BeforeRecordContext): Verdict<BeforeRecordContext> = Verdict.Continue
 
