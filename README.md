@@ -1,0 +1,52 @@
+# dopaminekt
+
+Kotlin Multiplatform core for dopaminekt. It is the plain Kotlin part that other modules plug into. Targets: JVM, Android, iosArm64, iosSimulatorArm64.
+
+This is a skeleton. The core logic is not in yet, so there is nothing to call.
+
+## Use it
+
+```kotlin
+// build.gradle.kts
+repositories { mavenCentral() }
+
+kotlin.sourceSets.commonMain.dependencies {
+    implementation("dev.baryo.dopaminekt:core:0.0.1")
+}
+```
+
+Nothing is published to Maven Central yet.
+
+The module depends on kotlinx-coroutines-core, kotlinx-serialization-json and kotlinx-datetime, and on nothing else.
+
+## Fixtures
+
+The shared test fixtures come from the public [dopaminejs](https://www.npmjs.com/package/dopaminejs) npm package, pinned in `gradle/libs.versions.toml` (`dopaminejs`). They are committed in `spec/core/`, with a SHA-256 per file in `spec/CHECKSUMS`.
+
+- `./gradlew syncFixtures` runs `npm pack dopaminejs@<pin>` with whatever registry npm is set to, copies the package's `spec/` into `spec/core/` and rewrites `spec/CHECKSUMS`. It needs network and npm.
+- `./gradlew verifyFixtures` runs offline and fails, naming the file, when `spec/core/` differs from `spec/CHECKSUMS`. `check` runs it.
+
+To move to a new dopaminejs version, change the pin, run `syncFixtures` and commit the result.
+
+## Build and check
+
+```
+./gradlew check
+```
+
+CI runs this on Linux in the Asia/Manila and America/Los_Angeles time zones. Linux cannot build iOS klibs, so iOS targets are skipped there. Run `./gradlew iosSimulatorArm64Test` on a Mac.
+
+## Release
+
+Releases are published from a Mac, never from CI. Maven Central cannot take a release back, so check the artifacts first.
+
+1. Set `VERSION_NAME` in `gradle.properties` to the release version, commit it to `main`, and tag that commit `v<version>`.
+2. Run `./gradlew publishToMavenLocal` and read the artifact list and the POM.
+3. Put these in the environment: `ORG_GRADLE_PROJECT_mavenCentralUsername`, `ORG_GRADLE_PROJECT_mavenCentralPassword`, `ORG_GRADLE_PROJECT_signingInMemoryKey`, `ORG_GRADLE_PROJECT_signingInMemoryKeyPassword`.
+4. Run `scripts/publish.sh`. It refuses unless HEAD carries the tag `v<version>`, the commit is on `main` and all four variables are set. Then it runs `./gradlew check iosSimulatorArm64Test` and `./gradlew publishAndReleaseToMavenCentral`.
+
+Without a signing key in the environment, builds and `check` still work. Publications are signed only when `signingInMemoryKey` is set.
+
+## License
+
+MPL-2.0. See `LICENSE`.
