@@ -288,7 +288,7 @@ internal class FixtureCase(private val case: JsonObject, zone: TimeZone) {
         // Subscribed before init, so load events are seen.
         for (name in EVENT_NAMES) {
             progress.on(name) { event ->
-                events += JsonObject(event.payload() + ("event" to JsonPrimitive(event.wireName)))
+                events += JsonObject((event.payload() as JsonObject) + ("event" to JsonPrimitive(event.wireName)))
             }
         }
         progress.init()

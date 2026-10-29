@@ -105,6 +105,23 @@ public class Progress(storage: StoragePort, config: ProgressConfig = ProgressCon
      */
     public fun on(wireName: String, listener: (ProgressEvent) -> Unit): () -> Unit = emitter.on(wireName, listener)
 
+    /**
+     * Delivers a plugin [event] to the listeners of its name, in order, synchronously. A throwing
+     * listener is passed to the error callback and skipped, as for any event.
+     *
+     * Throws [DopamineError] with the code `plugin_event` when the name has no `:` or starts with
+     * `:`, so a plugin can never send a core event such as `xp_gained`. A name like `a:` is
+     * accepted. The check does not prove the prefix is the caller's own plugin name. That is only
+     * guaranteed for a plugin that emits through `PluginContext.events`.
+     */
+    public fun emit(event: ProgressEvent.Custom) {
+        val name = event.wireName
+        if (name.indexOf(':') <= 0) {
+            throw DopamineError("plugin_event", "Plugin event names look like <plugin>:<event>, got \"$name\"")
+        }
+        publish(event)
+    }
+
     /** Removes every listener. */
     public fun clear() {
         emitter.clear()

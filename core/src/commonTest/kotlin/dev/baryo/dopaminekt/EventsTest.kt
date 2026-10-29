@@ -1,6 +1,7 @@
 package dev.baryo.dopaminekt
 
 import kotlinx.coroutines.CancellationException
+import kotlinx.serialization.json.JsonObject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -105,7 +106,7 @@ class EventsTest {
 
     @Test
     fun payloadsUseTheJsKeys() {
-        fun keys(event: ProgressEvent) = event.payload().keys
+        fun keys(event: ProgressEvent) = (event.payload() as JsonObject).keys
         assertEquals(setOf("amount", "reason", "leveledUp", "newLevel", "total"), keys(xp))
         assertEquals(setOf("oldLevel", "newLevel", "totalXP"), keys(ProgressEvent.LevelUp(1, 2, 100.0)))
         assertEquals(

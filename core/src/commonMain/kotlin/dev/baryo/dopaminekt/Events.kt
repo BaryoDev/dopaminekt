@@ -65,6 +65,13 @@ public sealed class ProgressEvent(public val wireName: String) {
         val backedUp: Boolean? = null,
         val error: Throwable? = null,
     ) : ProgressEvent("load_failed")
+
+    /**
+     * An event a plugin emits. [wireName] is `<plugin name>:<event>` and [data] is whatever the
+     * plugin sends, or null for none. The constructor is public so a caller can build one, but only
+     * [Progress.emit] checks the name. Core event names never reach a listener through it.
+     */
+    public class Custom(wireName: String, public val data: JsonElement? = null) : ProgressEvent(wireName)
 }
 
 /**
@@ -108,8 +115,11 @@ internal class EventEmitter(private val onError: (Throwable) -> Unit = {}) {
 /**
  * The payload the JS library publishes with this event, under the JS keys (`totalXP`, not
  * `totalXp`). A load error is written as its message. The achievement check is not part of it.
+ * A core event gives a [JsonObject]. A [ProgressEvent.Custom] gives its data unchanged, which is
+ * null for none.
  */
-internal fun ProgressEvent.payload(): JsonObject {
+internal fun ProgressEvent.payload(): JsonElement? {
+    if (this is ProgressEvent.Custom) return data
     val fields = LinkedHashMap<String, JsonElement>()
     when (this) {
         is ProgressEvent.XpGained -> {
@@ -141,6 +151,7 @@ internal fun ProgressEvent.payload(): JsonObject {
         }
         is ProgressEvent.PlayerReset -> {}
         is ProgressEvent.SaveFailed -> fields["key"] = JsonPrimitive(key)
+        is ProgressEvent.Custom -> {}
         is ProgressEvent.LoadFailed -> {
             fields["key"] = JsonPrimitive(key)
             fields["reason"] = JsonPrimitive(reason)
