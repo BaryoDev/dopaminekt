@@ -41,7 +41,7 @@ kotlin {
 
 // Fail before any upload when a Maven Central task is scheduled without a signing key.
 // publishToMavenLocal is not matched, so it keeps working unsigned.
-val hasSigningKey = providers.gradleProperty("signingInMemoryKey").isPresent
+val hasSigningKey = providers.gradleProperty("signingInMemoryKey").orNull?.isNotBlank() == true
 gradle.taskGraph.whenReady {
     val central = allTasks.filter { it.name.contains("MavenCentral") }
     if (central.isNotEmpty() && !hasSigningKey) {
@@ -65,7 +65,7 @@ mavenPublishing {
     publishToMavenCentral()
     // Sign only when a key is in the environment, so local builds and CI need none.
     // The task graph check below stops any Maven Central publish that has no key.
-    if (providers.gradleProperty("signingInMemoryKey").isPresent) {
+    if (hasSigningKey) {
         signAllPublications()
     }
 
