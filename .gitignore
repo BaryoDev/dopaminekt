@@ -18,5 +18,6 @@ captures/
 *.key
 *.pgp
 .env
+*.env
 .env.*
 secring.*
