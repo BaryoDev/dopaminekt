@@ -222,7 +222,7 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
         val raw = case["savedRaw"].string()
         val saved: JsonElement? = when {
             raw != null -> try {
-                Json.parseToJsonElement(raw)
+                parseJsonStrict(raw)
             } catch (error: SerializationException) {
                 loadFailure = "corrupt"
                 null
