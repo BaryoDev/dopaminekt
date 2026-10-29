@@ -17,14 +17,33 @@ if [ ${#missing[@]} -gt 0 ]; then
   fail "unset: ${missing[*]}. Nothing was published."
 fi
 
-version=$(sed -n 's/^VERSION_NAME=//p' gradle.properties)
-[ -n "$version" ] || fail "VERSION_NAME not found in gradle.properties"
+clean_tree() {
+  local dirty
+  dirty=$(git status --porcelain) || fail "git status failed"
+  [ -z "$dirty" ] || fail "working tree is not clean:"$'\n'"$dirty"
+}
+clean_tree
 
-tag=$(git tag --points-at HEAD | grep -x "v$version" || true)
+# Exactly one VERSION_NAME line, so the tag check and Gradle read the same value.
+count=$(grep -c '^[[:space:]]*VERSION_NAME[[:space:]]*=' gradle.properties || true)
+[ "$count" = "1" ] || fail "gradle.properties must have exactly one VERSION_NAME line, found $count"
+version=$(grep '^[[:space:]]*VERSION_NAME[[:space:]]*=' gradle.properties | head -n 1 \
+  | sed -e 's/^[^=]*=//' -e 's/\r//g' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+[ -n "$version" ] || fail "VERSION_NAME is empty in gradle.properties"
+case "$version" in
+  *-SNAPSHOT) fail "VERSION_NAME $version is a SNAPSHOT. Releases only." ;;
+esac
+printf '%s\n' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.]+)?$' \
+  || fail "VERSION_NAME '$version' is not MAJOR.MINOR.PATCH with an optional -suffix"
+
+tag=$(git tag --points-at HEAD | grep -Fx "v$version" || true)
 [ -n "$tag" ] || fail "HEAD has no tag v$version. Tag the release commit first."
 
 git fetch --quiet origin main || fail "cannot fetch origin/main to check the tagged commit"
 git merge-base --is-ancestor HEAD origin/main || fail "HEAD is not on main"
 
+# Never run Gradle here with --info or --debug. They can print properties, including the signing key.
 ./gradlew check iosSimulatorArm64Test
+
+clean_tree
 ./gradlew publishAndReleaseToMavenCentral
