@@ -1,5 +1,6 @@
 package dev.baryo.dopaminekt
 
+import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlin.test.Test
@@ -43,7 +44,7 @@ class PluginEventsTest {
     }
 
     @Test
-    fun emitRejectsACoreEventName() {
+    fun emitRejectsACoreEventNameForLackingAColon() {
         val heard = mutableListOf<ProgressEvent>()
         progress.on("xp_gained") { heard += it }
         val error = assertFailsWith<DopamineError> { progress.emit(ProgressEvent.Custom("xp_gained")) }
@@ -73,23 +74,60 @@ class PluginEventsTest {
     }
 
     @Test
-    fun pluginNamesMatchTheRule() {
-        assertEquals(false, isValidPluginName(""))
-        assertEquals(false, isValidPluginName("Abc"))
-        assertEquals(false, isValidPluginName("a:b"))
-        assertEquals(false, isValidPluginName("a b"))
-        assertEquals(true, isValidPluginName("a-1"))
-        assertEquals(true, isValidPluginName("spin"))
+    fun emitNamesFollowTheColonRule() {
+        for (name in listOf("", ":", "::", "spin", ":x")) {
+            val error = assertFailsWith<DopamineError>(name) { progress.emit(ProgressEvent.Custom(name)) }
+            assertEquals("plugin_event", error.code, name)
+        }
+        for (name in listOf("a:", "a:b:c", "xp_gained:x")) {
+            var count = 0
+            progress.on(name) { count++ }
+            progress.emit(ProgressEvent.Custom(name))
+            assertEquals(1, count, name)
+        }
     }
 
     @Test
-    fun partNamesRoundTripTheirWireNames() {
-        for (part in PartName.entries) assertEquals(part, PartName.fromWireName(part.wireName))
+    fun pluginNamesMatchTheRule() {
+        val valid = listOf("a-1", "spin", "-", "123")
+        val invalid = listOf("", "Abc", "a:b", "a b", "a_b", "\u00e9", "a\n")
+        for (name in valid) assertEquals(true, isValidPluginName(name), name)
+        for (name in invalid) assertEquals(false, isValidPluginName(name), name)
+    }
+
+    @Test
+    fun wireNamesAreTheJsStringsAndRoundTrip() {
+        assertEquals(listOf("confetti", "sparkle", "fire", "stars", "coins"), BurstKind.entries.map { it.wireName })
+        assertEquals(listOf("achievement", "level", "notice", "custom"), PopupKind.entries.map { it.wireName })
+        assertEquals(listOf("common", "rare", "legendary"), PopupTier.entries.map { it.wireName })
         assertEquals(listOf("ui", "particles", "sound", "haptics"), PartName.entries.map { it.wireName })
-        assertNull(PartName.fromWireName("video"))
-        assertEquals(BurstKind.Coins, BurstKind.fromWireName("coins"))
-        assertNull(BurstKind.fromWireName("rain"))
-        assertEquals(PopupKind.Notice, PopupKind.fromWireName("notice"))
-        assertEquals(PopupTier.Legendary, PopupTier.fromWireName("legendary"))
+        for (v in BurstKind.entries) assertEquals(v, BurstKind.fromWireName(v.wireName))
+        for (v in PopupKind.entries) assertEquals(v, PopupKind.fromWireName(v.wireName))
+        for (v in PopupTier.entries) assertEquals(v, PopupTier.fromWireName(v.wireName))
+        for (v in PartName.entries) assertEquals(v, PartName.fromWireName(v.wireName))
+        for (bad in listOf("", "UI", " ui", "Confetti")) {
+            assertNull(BurstKind.fromWireName(bad), bad)
+            assertNull(PopupKind.fromWireName(bad), bad)
+            assertNull(PopupTier.fromWireName(bad), bad)
+            assertNull(PartName.fromWireName(bad), bad)
+        }
+    }
+
+    @Test
+    fun pluginStorageUsesTheExactPrefixAndKeepsPluginsApart() = runTest {
+        val base = MemoryStorage()
+        val a = pluginStorage(base, "spin")
+        val b = pluginStorage(base, "other")
+        a.set("k", "1")
+        assertEquals("1", base.get("dopamine_plugin_spin:k"))
+        assertEquals("1", a.get("k"))
+        assertNull(b.get("k"))
+        b.set("k", "2")
+        assertEquals("2", base.get("dopamine_plugin_other:k"))
+        a.remove("k")
+        assertNull(base.get("dopamine_plugin_spin:k"))
+        assertEquals("2", b.get("k"))
+        val error = assertFailsWith<DopamineError> { pluginStorage(base, "Bad") }
+        assertEquals("plugin_invalid", error.code)
     }
 }

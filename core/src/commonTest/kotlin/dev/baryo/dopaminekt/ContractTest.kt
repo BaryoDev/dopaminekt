@@ -118,7 +118,7 @@ class ContractTest {
         assertEquals("handle", context.plugin("spin"))
         assertEquals(
             listOf("burst:stars:null:null", "hud:1", "info:installed", "play:ding"),
-            calls.sorted(),
+            calls,
         )
 
         calls.clear()
