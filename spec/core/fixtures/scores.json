@@ -1,0 +1,755 @@
+{
+    "suite": "scores",
+    "description": "recordGame: stats, high scores and the score bonus (floor(score / 5) on top of 10, then the streak multiplier).",
+    "cases": [
+        {
+            "name": "a game with no score pays 10 XP",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 10,
+                            "totalGamesPlayed": 1
+                        },
+                        "playerExact": {
+                            "stats": {
+                                "g": {
+                                    "plays": 1,
+                                    "best": 0
+                                }
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 10
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "a score of 100 adds a bonus of 20 and sets the high score",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "result": {
+                        "score": 100
+                    },
+                    "expect": {
+                        "player": {
+                            "xp": 30
+                        },
+                        "playerExact": {
+                            "stats": {
+                                "g": {
+                                    "plays": 1,
+                                    "best": 100
+                                }
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "personal_best",
+                                "activity": "g",
+                                "score": 100
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 30,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 30
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "the bonus rounds down per 5 points",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "result": {
+                        "score": 4
+                    },
+                    "expect": {
+                        "player": {
+                            "xp": 10
+                        },
+                        "events": [
+                            {
+                                "event": "personal_best",
+                                "activity": "g",
+                                "score": 4
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 10
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "result": {
+                        "score": 5
+                    },
+                    "expect": {
+                        "player": {
+                            "xp": 21
+                        },
+                        "events": [
+                            {
+                                "event": "personal_best",
+                                "activity": "g",
+                                "score": 5
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 11,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 21
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "result": {
+                        "score": 9
+                    },
+                    "expect": {
+                        "player": {
+                            "xp": 32
+                        },
+                        "events": [
+                            {
+                                "event": "personal_best",
+                                "activity": "g",
+                                "score": 9
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 11,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 32
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "result": {
+                        "score": 10
+                    },
+                    "expect": {
+                        "player": {
+                            "xp": 44
+                        },
+                        "events": [
+                            {
+                                "event": "personal_best",
+                                "activity": "g",
+                                "score": 10
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 12,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 44
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "fractional scores keep their fraction as the high score",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "result": {
+                        "score": 12.5
+                    },
+                    "expect": {
+                        "player": {
+                            "xp": 12
+                        },
+                        "playerExact": {
+                            "stats": {
+                                "g": {
+                                    "plays": 1,
+                                    "best": 12.5
+                                }
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "personal_best",
+                                "activity": "g",
+                                "score": 12.5
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 12,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 12
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "zero and negative scores earn no bonus and no high score",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "result": {
+                        "score": 0
+                    },
+                    "expect": {
+                        "player": {
+                            "xp": 10
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 10
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "result": {
+                        "score": -50
+                    },
+                    "expect": {
+                        "player": {
+                            "xp": 20
+                        },
+                        "playerExact": {
+                            "stats": {
+                                "g": {
+                                    "plays": 2,
+                                    "best": 0
+                                }
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 20
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "a lower score does not replace the high score",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "result": {
+                        "score": 100
+                    },
+                    "expect": {
+                        "player": {
+                            "xp": 30
+                        },
+                        "events": [
+                            {
+                                "event": "personal_best",
+                                "activity": "g",
+                                "score": 100
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 30,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 30
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "result": {
+                        "score": 50
+                    },
+                    "expect": {
+                        "player": {
+                            "xp": 50
+                        },
+                        "playerExact": {
+                            "stats": {
+                                "g": {
+                                    "plays": 2,
+                                    "best": 100
+                                }
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 20,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 50
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "the streak multiplier applies to the score bonus",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "note": "The day is counted before the XP, so this game already pays x1.25. (10 + 3) * 1.25 = 16.25, floored to 16.",
+            "savedJson": {
+                "streak": {
+                    "current": 2,
+                    "longest": 2,
+                    "lastPlayDate": "2026-08-06"
+                }
+            },
+            "afterInit": {
+                "player": {
+                    "streak": {
+                        "current": 2,
+                        "lastPlayDate": "2026-08-06"
+                    }
+                },
+                "events": []
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "result": {
+                        "score": 15
+                    },
+                    "expect": {
+                        "player": {
+                            "xp": 16
+                        },
+                        "events": [
+                            {
+                                "event": "streak_updated",
+                                "current": 3,
+                                "longest": 3
+                            },
+                            {
+                                "event": "personal_best",
+                                "activity": "g",
+                                "score": 15
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 16,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 16
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "extra result fields add up and unsafe keys are ignored",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "note": "A non-numeric value adds 0 but still creates the stat.",
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "result": {
+                        "score": 10,
+                        "kills": 3,
+                        "label": "x",
+                        "__proto__": 7
+                    },
+                    "expect": {
+                        "player": {
+                            "xp": 12
+                        },
+                        "playerExact": {
+                            "stats": {
+                                "g": {
+                                    "plays": 1,
+                                    "best": 10,
+                                    "kills": 3,
+                                    "label": 0
+                                }
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "personal_best",
+                                "activity": "g",
+                                "score": 10
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 12,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 12
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "result": {
+                        "kills": 2
+                    },
+                    "expect": {
+                        "player": {
+                            "xp": 22
+                        },
+                        "playerExact": {
+                            "stats": {
+                                "g": {
+                                    "plays": 2,
+                                    "best": 10,
+                                    "kills": 5,
+                                    "label": 0
+                                }
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 22
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "a non-numeric score is rejected before anything changes",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "result": {
+                        "score": "50"
+                    },
+                    "expect": {
+                        "throws": "TypeError",
+                        "player": {
+                            "xp": 0,
+                            "totalGamesPlayed": 0
+                        },
+                        "playerExact": {
+                            "stats": {}
+                        },
+                        "events": []
+                    }
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "result": {
+                        "score": 5
+                    },
+                    "expect": {
+                        "player": {
+                            "xp": 11,
+                            "totalGamesPlayed": 1
+                        },
+                        "events": [
+                            {
+                                "event": "personal_best",
+                                "activity": "g",
+                                "score": 5
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 11,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 11
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "unsafe game names and bad result shapes are rejected",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "__proto__",
+                    "expect": {
+                        "throws": "TypeError",
+                        "events": []
+                    }
+                },
+                {
+                    "op": "record",
+                    "activity": "constructor",
+                    "expect": {
+                        "throws": "TypeError",
+                        "events": []
+                    }
+                },
+                {
+                    "op": "record",
+                    "activity": "",
+                    "expect": {
+                        "throws": "TypeError",
+                        "events": []
+                    }
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "result": null,
+                    "expect": {
+                        "throws": "TypeError",
+                        "events": []
+                    }
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "result": [
+                        1
+                    ],
+                    "expect": {
+                        "throws": "TypeError",
+                        "player": {
+                            "xp": 0,
+                            "totalGamesPlayed": 0
+                        },
+                        "playerExact": {
+                            "stats": {}
+                        },
+                        "events": []
+                    }
+                }
+            ]
+        },
+        {
+            "name": "a game named after an Object method is an ordinary game",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "toString",
+                    "expect": {
+                        "playerExact": {
+                            "stats": {
+                                "toString": {
+                                    "plays": 1,
+                                    "best": 0
+                                }
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played toString",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 10
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "progress survives a reload",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "result": {
+                        "score": 20
+                    },
+                    "expect": {
+                        "player": {
+                            "xp": 14
+                        },
+                        "events": [
+                            {
+                                "event": "personal_best",
+                                "activity": "g",
+                                "score": 20
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 14,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 14
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "reload",
+                    "expect": {
+                        "player": {
+                            "xp": 14,
+                            "totalGamesPlayed": 1
+                        },
+                        "playerExact": {
+                            "stats": {
+                                "g": {
+                                    "plays": 1,
+                                    "best": 20
+                                }
+                            }
+                        },
+                        "events": []
+                    }
+                }
+            ]
+        },
+        {
+            "name": "an unsafe key in the result is dropped",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "result": {
+                        "constructor": 4,
+                        "kills": 1
+                    },
+                    "expect": {
+                        "playerExact": {
+                            "stats": {
+                                "g": {
+                                    "plays": 1,
+                                    "best": 0,
+                                    "kills": 1
+                                }
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 10
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

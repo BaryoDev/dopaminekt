@@ -1,0 +1,611 @@
+{
+    "suite": "achievements",
+    "description": "Achievement unlocks, their XP, and the order events fire in. Built-in achievements are first_game, level_5, level_10, streak_3 and streak_7.",
+    "cases": [
+        {
+            "name": "first_game and streak_3 unlock in definition order",
+            "clock": "2026-08-07T09:00:00",
+            "note": "The first game today makes the streak 3, so it pays x1.25 (12 XP). first_game (+50) unlocks, then streak_3 (+100) pushes the player to level 2.",
+            "savedJson": {
+                "xp": 0,
+                "level": 1,
+                "totalGamesPlayed": 0,
+                "streak": {
+                    "current": 2,
+                    "longest": 2,
+                    "lastPlayDate": "2026-08-06"
+                }
+            },
+            "afterInit": {
+                "player": {
+                    "streak": {
+                        "current": 2,
+                        "longest": 2,
+                        "lastPlayDate": "2026-08-06"
+                    }
+                },
+                "events": []
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 162,
+                            "level": 2,
+                            "totalGamesPlayed": 1
+                        },
+                        "achievements": [
+                            "first_game",
+                            "streak_3"
+                        ],
+                        "events": [
+                            {
+                                "event": "streak_updated",
+                                "current": 3,
+                                "longest": 3
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 12,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 12
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 50,
+                                "reason": "Achievement: First Steps",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 62
+                            },
+                            {
+                                "event": "achievement_unlocked",
+                                "id": "first_game",
+                                "name": "First Steps",
+                                "xp": 50
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 100,
+                                "reason": "Achievement: Dedicated",
+                                "leveledUp": true,
+                                "newLevel": 2,
+                                "total": 162
+                            },
+                            {
+                                "event": "level_up",
+                                "oldLevel": 1,
+                                "newLevel": 2,
+                                "totalXP": 162
+                            },
+                            {
+                                "event": "achievement_unlocked",
+                                "id": "streak_3",
+                                "name": "Dedicated",
+                                "xp": 100
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "an achievement that levels the player up fires xp, level, then unlock",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false,
+                "achievements": {
+                    "big": {
+                        "name": "Big",
+                        "xp": 100,
+                        "when": {
+                            "always": true
+                        }
+                    }
+                }
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 110,
+                            "level": 2
+                        },
+                        "achievements": [
+                            "big"
+                        ],
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 10
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 100,
+                                "reason": "Achievement: Big",
+                                "leveledUp": true,
+                                "newLevel": 2,
+                                "total": 110
+                            },
+                            {
+                                "event": "level_up",
+                                "oldLevel": 1,
+                                "newLevel": 2,
+                                "totalXP": 110
+                            },
+                            {
+                                "event": "achievement_unlocked",
+                                "id": "big",
+                                "name": "Big",
+                                "xp": 100
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 120,
+                            "level": 2
+                        },
+                        "achievements": [
+                            "big"
+                        ],
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 2,
+                                "total": 120
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "a check that throws does not stop the others",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false,
+                "achievements": {
+                    "bad": {
+                        "name": "Bad",
+                        "xp": 99,
+                        "when": {
+                            "throws": true
+                        }
+                    },
+                    "ok": {
+                        "name": "Fine",
+                        "xp": 5,
+                        "when": {
+                            "always": true
+                        }
+                    }
+                }
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 15
+                        },
+                        "achievements": [
+                            "ok"
+                        ],
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 10
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 5,
+                                "reason": "Achievement: Fine",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 15
+                            },
+                            {
+                                "event": "achievement_unlocked",
+                                "id": "ok",
+                                "name": "Fine",
+                                "xp": 5
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "check conditions see the player, the game name and the result",
+            "clock": "2026-08-07T09:00:00",
+            "note": "second_game has no xp, so it pays 0 and still fires an xp_gained event.",
+            "config": {
+                "builtinAchievements": false,
+                "achievements": {
+                    "second_game": {
+                        "name": "Twice",
+                        "when": {
+                            "player": "totalGamesPlayed",
+                            "gte": 2
+                        }
+                    },
+                    "perfect": {
+                        "name": "Perfect",
+                        "xp": 20,
+                        "when": {
+                            "score_gte": 100
+                        }
+                    },
+                    "arcade_only": {
+                        "name": "Arcade",
+                        "xp": 7,
+                        "when": {
+                            "activity": "arcade"
+                        }
+                    }
+                }
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "puzzle",
+                    "result": {
+                        "score": 100
+                    },
+                    "expect": {
+                        "player": {
+                            "xp": 50
+                        },
+                        "achievements": [
+                            "perfect"
+                        ],
+                        "events": [
+                            {
+                                "event": "personal_best",
+                                "activity": "puzzle",
+                                "score": 100
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 30,
+                                "reason": "Played puzzle",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 30
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 20,
+                                "reason": "Achievement: Perfect",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 50
+                            },
+                            {
+                                "event": "achievement_unlocked",
+                                "id": "perfect",
+                                "name": "Perfect",
+                                "xp": 20
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "record",
+                    "activity": "arcade",
+                    "expect": {
+                        "player": {
+                            "xp": 67
+                        },
+                        "achievements": [
+                            "arcade_only",
+                            "perfect",
+                            "second_game"
+                        ],
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played arcade",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 60
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 0,
+                                "reason": "Achievement: Twice",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 60
+                            },
+                            {
+                                "event": "achievement_unlocked",
+                                "id": "second_game",
+                                "name": "Twice"
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 7,
+                                "reason": "Achievement: Arcade",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 67
+                            },
+                            {
+                                "event": "achievement_unlocked",
+                                "id": "arcade_only",
+                                "name": "Arcade",
+                                "xp": 7
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "manual unlock pays once and ignores unknown or unsafe ids",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false,
+                "achievements": {
+                    "gift": {
+                        "name": "Gift",
+                        "xp": 40,
+                        "when": {
+                            "never": true
+                        }
+                    }
+                }
+            },
+            "steps": [
+                {
+                    "op": "unlockAchievement",
+                    "id": "gift",
+                    "expect": {
+                        "returns": true,
+                        "player": {
+                            "xp": 40,
+                            "achievements": {
+                                "gift": {
+                                    "seen": false
+                                }
+                            }
+                        },
+                        "achievements": [
+                            "gift"
+                        ],
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 40,
+                                "reason": "Achievement: Gift",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 40
+                            },
+                            {
+                                "event": "achievement_unlocked",
+                                "id": "gift",
+                                "name": "Gift",
+                                "xp": 40
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "unlockAchievement",
+                    "id": "gift",
+                    "expect": {
+                        "returns": false,
+                        "player": {
+                            "xp": 40
+                        },
+                        "events": []
+                    }
+                },
+                {
+                    "op": "unlockAchievement",
+                    "id": "missing",
+                    "expect": {
+                        "returns": false,
+                        "events": []
+                    }
+                },
+                {
+                    "op": "unlockAchievement",
+                    "id": "__proto__",
+                    "expect": {
+                        "returns": false,
+                        "events": []
+                    }
+                },
+                {
+                    "op": "unlockAchievement",
+                    "id": "toString",
+                    "expect": {
+                        "returns": false,
+                        "events": []
+                    }
+                },
+                {
+                    "op": "markAchievementsSeen",
+                    "ids": [
+                        "gift",
+                        "__proto__",
+                        "nope"
+                    ],
+                    "expect": {
+                        "player": {
+                            "achievements": {
+                                "gift": {
+                                    "seen": true
+                                }
+                            }
+                        },
+                        "achievements": [
+                            "gift"
+                        ],
+                        "absent": [
+                            "achievements.__proto__",
+                            "achievements.nope"
+                        ],
+                        "events": []
+                    }
+                }
+            ]
+        },
+        {
+            "name": "level_5 unlocks when the level is exactly 5",
+            "clock": "2026-08-07T09:00:00",
+            "note": "The game takes xp from 990 to exactly 1000, the level 5 threshold.",
+            "savedJson": {
+                "xp": 990,
+                "level": 4,
+                "totalGamesPlayed": 5,
+                "achievements": {
+                    "first_game": {
+                        "unlockedAt": 1,
+                        "seen": true
+                    }
+                }
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 1100,
+                            "level": 5
+                        },
+                        "achievements": [
+                            "first_game",
+                            "level_5"
+                        ],
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": true,
+                                "newLevel": 5,
+                                "total": 1000
+                            },
+                            {
+                                "event": "level_up",
+                                "oldLevel": 4,
+                                "newLevel": 5,
+                                "totalXP": 1000
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 100,
+                                "reason": "Achievement: Rising Star",
+                                "leveledUp": false,
+                                "newLevel": 5,
+                                "total": 1100
+                            },
+                            {
+                                "event": "achievement_unlocked",
+                                "id": "level_5",
+                                "name": "Rising Star",
+                                "xp": 100
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "level_10 unlocks when the level is exactly 10",
+            "clock": "2026-08-07T09:00:00",
+            "note": "The game takes xp from 4490 to exactly 4500, the level 10 threshold.",
+            "savedJson": {
+                "xp": 4490,
+                "level": 9,
+                "totalGamesPlayed": 50,
+                "achievements": {
+                    "first_game": {
+                        "unlockedAt": 1,
+                        "seen": true
+                    },
+                    "level_5": {
+                        "unlockedAt": 1,
+                        "seen": true
+                    }
+                }
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 4750,
+                            "level": 10
+                        },
+                        "achievements": [
+                            "first_game",
+                            "level_5",
+                            "level_10"
+                        ],
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": true,
+                                "newLevel": 10,
+                                "total": 4500
+                            },
+                            {
+                                "event": "level_up",
+                                "oldLevel": 9,
+                                "newLevel": 10,
+                                "totalXP": 4500
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 250,
+                                "reason": "Achievement: Expert Player",
+                                "leveledUp": false,
+                                "newLevel": 10,
+                                "total": 4750
+                            },
+                            {
+                                "event": "achievement_unlocked",
+                                "id": "level_10",
+                                "name": "Expert Player",
+                                "xp": 250
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

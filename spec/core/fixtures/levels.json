@@ -1,0 +1,421 @@
+{
+    "suite": "levels",
+    "description": "Level curve: total XP for level L is 50 * L * (L - 1). Levels are never taken back.",
+    "cases": [
+        {
+            "name": "every boundary up to level 4 lands on the threshold",
+            "clock": "2026-08-07T09:00:00",
+            "steps": [
+                {
+                    "op": "addXP",
+                    "amount": 99,
+                    "expect": {
+                        "player": {
+                            "xp": 99,
+                            "level": 1
+                        },
+                        "returns": {
+                            "leveledUp": false,
+                            "newLevel": 1,
+                            "xpGained": 99
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 99,
+                                "reason": "",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 99
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "addXP",
+                    "amount": 1,
+                    "expect": {
+                        "player": {
+                            "xp": 100,
+                            "level": 2
+                        },
+                        "returns": {
+                            "leveledUp": true,
+                            "newLevel": 2,
+                            "xpGained": 1
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 1,
+                                "reason": "",
+                                "leveledUp": true,
+                                "newLevel": 2,
+                                "total": 100
+                            },
+                            {
+                                "event": "level_up",
+                                "oldLevel": 1,
+                                "newLevel": 2,
+                                "totalXP": 100
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "addXP",
+                    "amount": 199,
+                    "expect": {
+                        "player": {
+                            "xp": 299,
+                            "level": 2
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 199,
+                                "reason": "",
+                                "leveledUp": false,
+                                "newLevel": 2,
+                                "total": 299
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "addXP",
+                    "amount": 1,
+                    "expect": {
+                        "player": {
+                            "xp": 300,
+                            "level": 3
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 1,
+                                "reason": "",
+                                "leveledUp": true,
+                                "newLevel": 3,
+                                "total": 300
+                            },
+                            {
+                                "event": "level_up",
+                                "oldLevel": 2,
+                                "newLevel": 3,
+                                "totalXP": 300
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "addXP",
+                    "amount": 299,
+                    "expect": {
+                        "player": {
+                            "xp": 599,
+                            "level": 3
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 299,
+                                "reason": "",
+                                "leveledUp": false,
+                                "newLevel": 3,
+                                "total": 599
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "addXP",
+                    "amount": 1,
+                    "expect": {
+                        "player": {
+                            "xp": 600,
+                            "level": 4
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 1,
+                                "reason": "",
+                                "leveledUp": true,
+                                "newLevel": 4,
+                                "total": 600
+                            },
+                            {
+                                "event": "level_up",
+                                "oldLevel": 3,
+                                "newLevel": 4,
+                                "totalXP": 600
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "one award can skip levels and carries its reason",
+            "clock": "2026-08-07T09:00:00",
+            "steps": [
+                {
+                    "op": "addXP",
+                    "amount": 4499,
+                    "reason": "bonus",
+                    "expect": {
+                        "player": {
+                            "xp": 4499,
+                            "level": 9
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 4499,
+                                "reason": "bonus",
+                                "leveledUp": true,
+                                "newLevel": 9,
+                                "total": 4499
+                            },
+                            {
+                                "event": "level_up",
+                                "oldLevel": 1,
+                                "newLevel": 9,
+                                "totalXP": 4499
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "addXP",
+                    "amount": 1,
+                    "expect": {
+                        "player": {
+                            "xp": 4500,
+                            "level": 10
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 1,
+                                "reason": "",
+                                "leveledUp": true,
+                                "newLevel": 10,
+                                "total": 4500
+                            },
+                            {
+                                "event": "level_up",
+                                "oldLevel": 9,
+                                "newLevel": 10,
+                                "totalXP": 4500
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "negative XP lowers the total, stops at 0 and never lowers the level",
+            "clock": "2026-08-07T09:00:00",
+            "savedJson": {
+                "xp": 150,
+                "level": 2
+            },
+            "steps": [
+                {
+                    "op": "addXP",
+                    "amount": -50,
+                    "expect": {
+                        "player": {
+                            "xp": 100,
+                            "level": 2
+                        },
+                        "returns": {
+                            "leveledUp": false,
+                            "newLevel": 2,
+                            "xpGained": -50
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": -50,
+                                "reason": "",
+                                "leveledUp": false,
+                                "newLevel": 2,
+                                "total": 100
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "addXP",
+                    "amount": -500,
+                    "expect": {
+                        "player": {
+                            "xp": 0,
+                            "level": 2
+                        },
+                        "returns": {
+                            "leveledUp": false,
+                            "newLevel": 2,
+                            "xpGained": -100
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": -100,
+                                "reason": "",
+                                "leveledUp": false,
+                                "newLevel": 2,
+                                "total": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "a non-finite amount is rejected",
+            "clock": "2026-08-07T09:00:00",
+            "note": "JSON has no NaN. A string, null and a missing amount stand in for it; all fail the finite-number check.",
+            "steps": [
+                {
+                    "op": "addXP",
+                    "amount": "10",
+                    "expect": {
+                        "throws": "TypeError",
+                        "player": {
+                            "xp": 0
+                        },
+                        "events": []
+                    }
+                },
+                {
+                    "op": "addXP",
+                    "amount": null,
+                    "expect": {
+                        "throws": "TypeError",
+                        "player": {
+                            "xp": 0
+                        },
+                        "events": []
+                    }
+                },
+                {
+                    "op": "addXP",
+                    "expect": {
+                        "throws": "TypeError",
+                        "player": {
+                            "xp": 0
+                        },
+                        "events": []
+                    }
+                }
+            ]
+        },
+        {
+            "name": "XP needed for the next level",
+            "clock": "2026-08-07T09:00:00",
+            "savedJson": {
+                "xp": 150,
+                "level": 2
+            },
+            "steps": [
+                {
+                    "op": "getXPForNextLevel",
+                    "expect": {
+                        "returns": {
+                            "total": 300,
+                            "needed": 150,
+                            "progress": 0.25
+                        }
+                    }
+                },
+                {
+                    "op": "addXP",
+                    "amount": 150,
+                    "expect": {
+                        "player": {
+                            "xp": 300,
+                            "level": 3
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 150,
+                                "reason": "",
+                                "leveledUp": true,
+                                "newLevel": 3,
+                                "total": 300
+                            },
+                            {
+                                "event": "level_up",
+                                "oldLevel": 2,
+                                "newLevel": 3,
+                                "totalXP": 300
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "getXPForNextLevel",
+                    "expect": {
+                        "returns": {
+                            "total": 600,
+                            "needed": 300,
+                            "progress": 0
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "a failed write fires save_failed",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "storage": {
+                "failWrites": true
+            },
+            "note": "Every storage write throws. The core logs, fires save_failed and carries on with the in-memory player.",
+            "afterInit": {
+                "player": {
+                    "xp": 0
+                },
+                "events": [
+                    {
+                        "event": "save_failed",
+                        "key": "player"
+                    }
+                ]
+            },
+            "steps": [
+                {
+                    "op": "addXP",
+                    "amount": 5,
+                    "expect": {
+                        "player": {
+                            "xp": 5
+                        },
+                        "events": [
+                            {
+                                "event": "save_failed",
+                                "key": "player"
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 5,
+                                "reason": "",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 5
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

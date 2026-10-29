@@ -1,0 +1,924 @@
+{
+    "suite": "streaks",
+    "description": "Daily streaks use local calendar dates, never UTC. The clock is a local date and time. The current streak is derived from the play dates.",
+    "cases": [
+        {
+            "name": "a new player has no streak",
+            "clock": "2026-08-07T09:00:00",
+            "note": "The streak is derived from the days played. Loading counts no day.",
+            "afterInit": {
+                "player": {
+                    "streak": {
+                        "current": 0,
+                        "longest": 0
+                    }
+                },
+                "absent": [
+                    "streak.lastPlayDate"
+                ],
+                "events": []
+            }
+        },
+        {
+            "name": "the first game starts the streak with no event",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 10,
+                            "streak": {
+                                "current": 1,
+                                "longest": 1,
+                                "lastPlayDate": "2026-08-07"
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 10
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "a second game on the same day changes nothing",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "streak": {
+                                "current": 1
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 10
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 20,
+                            "streak": {
+                                "current": 1,
+                                "longest": 1
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 20
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "playing the day after continues the streak",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "savedJson": {
+                "v": 3,
+                "playDates": [
+                    "2026-08-06"
+                ]
+            },
+            "note": "Until the day ends, yesterday still counts as the current streak.",
+            "afterInit": {
+                "player": {
+                    "streak": {
+                        "current": 1,
+                        "longest": 1,
+                        "lastPlayDate": "2026-08-06"
+                    }
+                },
+                "events": []
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "streak": {
+                                "current": 2,
+                                "longest": 2,
+                                "lastPlayDate": "2026-08-07"
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "streak_updated",
+                                "current": 2,
+                                "longest": 2
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 10
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "a gap of days breaks the streak and keeps longest",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "savedJson": {
+                "v": 3,
+                "playDates": [
+                    "2026-08-02",
+                    "2026-08-03",
+                    "2026-08-04"
+                ]
+            },
+            "afterInit": {
+                "player": {
+                    "streak": {
+                        "current": 0,
+                        "longest": 3,
+                        "lastPlayDate": "2026-08-04"
+                    }
+                },
+                "events": []
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "streak": {
+                                "current": 1,
+                                "longest": 3,
+                                "lastPlayDate": "2026-08-07"
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "streak_updated",
+                                "current": 1,
+                                "longest": 3
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 10
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "a game after local midnight counts the new day with the tab left open",
+            "clock": "2026-08-07T23:59:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "note": "The streak event comes before the XP event inside record. The first game ever fires none.",
+            "afterInit": {
+                "player": {
+                    "streak": {
+                        "current": 0,
+                        "longest": 0
+                    }
+                },
+                "absent": [
+                    "streak.lastPlayDate"
+                ],
+                "events": []
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 10,
+                            "streak": {
+                                "current": 1,
+                                "longest": 1,
+                                "lastPlayDate": "2026-08-07"
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 10
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "setClock",
+                    "at": "2026-08-08T00:01:00"
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 20,
+                            "streak": {
+                                "current": 2,
+                                "longest": 2,
+                                "lastPlayDate": "2026-08-08"
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "streak_updated",
+                                "current": 2,
+                                "longest": 2
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 20
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "leap day continues the streak into March",
+            "clock": "2028-03-01T10:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "savedJson": {
+                "v": 3,
+                "playDates": [
+                    "2028-02-28",
+                    "2028-02-29"
+                ]
+            },
+            "afterInit": {
+                "player": {
+                    "streak": {
+                        "current": 2,
+                        "longest": 2,
+                        "lastPlayDate": "2028-02-29"
+                    }
+                },
+                "events": []
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 12,
+                            "streak": {
+                                "current": 3,
+                                "longest": 3,
+                                "lastPlayDate": "2028-03-01"
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "streak_updated",
+                                "current": 3,
+                                "longest": 3
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 12,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 12
+                            }
+                        ]
+                    }
+                }
+            ],
+            "note": "Day 3 of a streak pays x1.25, so the 10 XP play gives 12."
+        },
+        {
+            "name": "new year continues the streak",
+            "clock": "2027-01-01T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "savedJson": {
+                "v": 3,
+                "playDates": [
+                    "2026-12-30",
+                    "2026-12-31"
+                ]
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "streak": {
+                                "current": 3,
+                                "longest": 3,
+                                "lastPlayDate": "2027-01-01"
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "streak_updated",
+                                "current": 3,
+                                "longest": 3
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 12,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 12
+                            }
+                        ]
+                    }
+                }
+            ],
+            "note": "Day 3 of a streak pays x1.25, so the 10 XP play gives 12."
+        },
+        {
+            "name": "a play date a day after today stays, later ones go",
+            "clock": "2026-08-07T09:00:00",
+            "note": "The day after today stays, because the player can be a zone ahead of the clock. 2026-08-09 is two days ahead and is dropped. The kept day does not count yet.",
+            "savedJson": {
+                "v": 3,
+                "longest": 2,
+                "playDates": [
+                    "2026-08-08",
+                    "2026-08-09"
+                ]
+            },
+            "afterInit": {
+                "player": {
+                    "streak": {
+                        "current": 0,
+                        "longest": 2
+                    }
+                },
+                "absent": [
+                    "streak.lastPlayDate"
+                ],
+                "doc": {
+                    "playDates": [
+                        "2026-08-08"
+                    ]
+                },
+                "events": []
+            }
+        },
+        {
+            "name": "play dates older than 400 days are dropped",
+            "clock": "2026-08-07T09:00:00",
+            "note": "Trimmed against today, 400 days counted inclusive. 2025-07-04 is 399 days before 2026-08-07 and stays, 2025-07-03 is 400 days before and goes.",
+            "savedJson": {
+                "v": 3,
+                "longest": 1,
+                "playDates": [
+                    "2025-07-03",
+                    "2025-07-04",
+                    "2026-08-06"
+                ]
+            },
+            "afterInit": {
+                "doc": {
+                    "playDates": [
+                        "2025-07-04",
+                        "2026-08-06"
+                    ]
+                },
+                "events": []
+            }
+        },
+        {
+            "name": "a far future date is dropped and real history stays",
+            "clock": "2026-08-07T09:00:00",
+            "note": "The window counts back from today and a date past tomorrow is dropped, so the year 2099 changes nothing.",
+            "savedJson": {
+                "v": 3,
+                "longest": 1,
+                "playDates": [
+                    "2025-07-04",
+                    "2026-08-06",
+                    "2099-01-01"
+                ]
+            },
+            "afterInit": {
+                "doc": {
+                    "playDates": [
+                        "2025-07-04",
+                        "2026-08-06"
+                    ]
+                },
+                "player": {
+                    "streak": {
+                        "current": 1,
+                        "longest": 1,
+                        "lastPlayDate": "2026-08-06"
+                    }
+                },
+                "events": []
+            }
+        },
+        {
+            "name": "yesterday is a calendar day across a daylight saving change",
+            "clock": "2026-03-09T00:30:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "note": "US clocks went forward on 2026-03-08. Yesterday is 2026-03-08 even though less than 24 hours passed since that day ended. CI also runs this file in America/Los_Angeles.",
+            "savedJson": {
+                "v": 3,
+                "playDates": [
+                    "2026-03-06",
+                    "2026-03-07",
+                    "2026-03-08"
+                ]
+            },
+            "afterInit": {
+                "player": {
+                    "streak": {
+                        "current": 3,
+                        "longest": 3,
+                        "lastPlayDate": "2026-03-08"
+                    }
+                },
+                "events": []
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 12,
+                            "streak": {
+                                "current": 4,
+                                "longest": 4,
+                                "lastPlayDate": "2026-03-09"
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "streak_updated",
+                                "current": 4,
+                                "longest": 4
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 12,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 12
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "streak multiplier ladder over eight days",
+            "clock": "2026-08-01T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "note": "Streak 3 pays x1.25, 5 pays x1.5, 7 pays x2. Base play XP is 10, floored after the multiplier.",
+            "afterInit": {
+                "player": {
+                    "streak": {
+                        "current": 0,
+                        "longest": 0
+                    }
+                },
+                "events": []
+            },
+            "steps": [
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 10,
+                            "level": 1,
+                            "streak": {
+                                "current": 1,
+                                "longest": 1
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 10
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "setClock",
+                    "at": "2026-08-02T09:00:00"
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 20,
+                            "level": 1,
+                            "streak": {
+                                "current": 2,
+                                "longest": 2
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "streak_updated",
+                                "current": 2,
+                                "longest": 2
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 10,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 20
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "setClock",
+                    "at": "2026-08-03T09:00:00"
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 32,
+                            "level": 1,
+                            "streak": {
+                                "current": 3,
+                                "longest": 3
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "streak_updated",
+                                "current": 3,
+                                "longest": 3
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 12,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 32
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "setClock",
+                    "at": "2026-08-04T09:00:00"
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 44,
+                            "level": 1,
+                            "streak": {
+                                "current": 4,
+                                "longest": 4
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "streak_updated",
+                                "current": 4,
+                                "longest": 4
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 12,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 44
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "setClock",
+                    "at": "2026-08-05T09:00:00"
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 59,
+                            "level": 1,
+                            "streak": {
+                                "current": 5,
+                                "longest": 5
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "streak_updated",
+                                "current": 5,
+                                "longest": 5
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 15,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 59
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "setClock",
+                    "at": "2026-08-06T09:00:00"
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 74,
+                            "level": 1,
+                            "streak": {
+                                "current": 6,
+                                "longest": 6
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "streak_updated",
+                                "current": 6,
+                                "longest": 6
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 15,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 74
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "setClock",
+                    "at": "2026-08-07T09:00:00"
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 94,
+                            "level": 1,
+                            "streak": {
+                                "current": 7,
+                                "longest": 7
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "streak_updated",
+                                "current": 7,
+                                "longest": 7
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 20,
+                                "reason": "Played g",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 94
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "setClock",
+                    "at": "2026-08-08T09:00:00"
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "xp": 114,
+                            "level": 2,
+                            "streak": {
+                                "current": 8,
+                                "longest": 8
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "streak_updated",
+                                "current": 8,
+                                "longest": 8
+                            },
+                            {
+                                "event": "xp_gained",
+                                "amount": 20,
+                                "reason": "Played g",
+                                "leveledUp": true,
+                                "newLevel": 2,
+                                "total": 114
+                            },
+                            {
+                                "event": "level_up",
+                                "oldLevel": 1,
+                                "newLevel": 2,
+                                "totalXP": 114
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "addXP marks the day by default",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false
+            },
+            "steps": [
+                {
+                    "op": "addXP",
+                    "amount": 5,
+                    "expect": {
+                        "player": {
+                            "xp": 5,
+                            "streak": {
+                                "current": 1,
+                                "longest": 1,
+                                "lastPlayDate": "2026-08-07"
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 5,
+                                "reason": "",
+                                "leveledUp": false,
+                                "newLevel": 1,
+                                "total": 5
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "addXP does not mark the day when streakDays is record",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false,
+                "streakDays": "record"
+            },
+            "steps": [
+                {
+                    "op": "addXP",
+                    "amount": 5,
+                    "expect": {
+                        "player": {
+                            "xp": 5,
+                            "streak": {
+                                "current": 0,
+                                "longest": 0
+                            }
+                        },
+                        "absent": [
+                            "streak.lastPlayDate"
+                        ]
+                    }
+                },
+                {
+                    "op": "record",
+                    "activity": "g",
+                    "expect": {
+                        "player": {
+                            "streak": {
+                                "current": 1,
+                                "longest": 1,
+                                "lastPlayDate": "2026-08-07"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "achievement reward XP never marks the day",
+            "clock": "2026-08-07T09:00:00",
+            "config": {
+                "builtinAchievements": false,
+                "achievements": {
+                    "x": {
+                        "name": "X",
+                        "xp": 30,
+                        "when": {
+                            "always": true
+                        }
+                    }
+                }
+            },
+            "steps": [
+                {
+                    "op": "unlockAchievement",
+                    "id": "x",
+                    "expect": {
+                        "player": {
+                            "xp": 30,
+                            "streak": {
+                                "current": 0,
+                                "longest": 0
+                            }
+                        },
+                        "absent": [
+                            "streak.lastPlayDate"
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

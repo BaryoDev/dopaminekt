@@ -1,0 +1,1739 @@
+{
+    "suite": "merge",
+    "description": "merge, validate, import and export. Saved documents join per device, so merging in any order, any grouping or twice gives the same document.",
+    "cases": [
+        {
+            "name": "two offline devices add up",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "note": "500 shared, then 100 earned on each device while offline.",
+            "steps": [
+                {
+                    "op": "merge",
+                    "a": {
+                        "v": 3,
+                        "xpBy": {
+                            "a": 600
+                        }
+                    },
+                    "b": {
+                        "v": 3,
+                        "xpBy": {
+                            "a": 500,
+                            "b": 100
+                        }
+                    },
+                    "as": "m",
+                    "expect": {
+                        "returnsExact": {
+                            "xpBy": {
+                                "a": 600,
+                                "b": 100
+                            }
+                        }
+                    }
+                },
+                {
+                    "op": "import",
+                    "from": "m",
+                    "silent": true,
+                    "expect": {
+                        "player": {
+                            "xp": 700,
+                            "level": 4
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "merge twice equals merge once",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "validate",
+                    "doc": {
+                        "v": 3,
+                        "name": "Ann",
+                        "createdAt": 100,
+                        "lastPlayedAt": 500,
+                        "level": 2,
+                        "longest": 2,
+                        "playDates": [
+                            "2026-08-01",
+                            "2026-08-02"
+                        ],
+                        "xpBy": {
+                            "a": 150
+                        },
+                        "xpSpentBy": {
+                            "a": 10
+                        },
+                        "gamesBy": {
+                            "a": 3
+                        },
+                        "playsBy": {
+                            "g": {
+                                "a": 3
+                            }
+                        },
+                        "best": {
+                            "g": 40
+                        },
+                        "sumsBy": {
+                            "g": {
+                                "kills": {
+                                    "a": 6
+                                }
+                            }
+                        },
+                        "achievements": {
+                            "first_game": {
+                                "unlockedAt": 300,
+                                "seen": false,
+                                "reward": 50
+                            }
+                        }
+                    },
+                    "as": "a",
+                    "expect": {
+                        "returns": {
+                            "v": 3
+                        }
+                    }
+                },
+                {
+                    "op": "validate",
+                    "doc": {
+                        "v": 3,
+                        "name": "Bo",
+                        "createdAt": 50,
+                        "lastPlayedAt": 400,
+                        "level": 3,
+                        "longest": 4,
+                        "playDates": [
+                            "2026-08-02",
+                            "2026-08-03"
+                        ],
+                        "xpBy": {
+                            "a": 120,
+                            "b": 90
+                        },
+                        "xpSpentBy": {
+                            "b": 5
+                        },
+                        "gamesBy": {
+                            "b": 2
+                        },
+                        "playsBy": {
+                            "g": {
+                                "b": 2
+                            },
+                            "h": {
+                                "b": 1
+                            }
+                        },
+                        "best": {
+                            "g": 70,
+                            "h": 5
+                        },
+                        "sumsBy": {
+                            "g": {
+                                "kills": {
+                                    "b": 4
+                                }
+                            }
+                        },
+                        "achievements": {
+                            "first_game": {
+                                "unlockedAt": 200,
+                                "seen": true,
+                                "reward": 50
+                            },
+                            "level_5": {
+                                "unlockedAt": 250,
+                                "seen": false,
+                                "reward": 100
+                            }
+                        }
+                    },
+                    "as": "b",
+                    "expect": {
+                        "returns": {
+                            "v": 3
+                        }
+                    }
+                },
+                {
+                    "op": "merge",
+                    "a": "a",
+                    "b": "b",
+                    "as": "ab",
+                    "expect": {
+                        "returns": {
+                            "v": 3
+                        }
+                    }
+                },
+                {
+                    "op": "merge",
+                    "a": "ab",
+                    "b": "b",
+                    "as": "abb",
+                    "expect": {
+                        "returns": {
+                            "v": 3
+                        }
+                    }
+                },
+                {
+                    "op": "merge",
+                    "a": "ab",
+                    "b": "ab",
+                    "as": "abab",
+                    "expect": {
+                        "returns": {
+                            "v": 3
+                        }
+                    }
+                },
+                {
+                    "op": "merge",
+                    "a": "ab",
+                    "b": "a",
+                    "as": "aba",
+                    "expect": {
+                        "returns": {
+                            "v": 3
+                        }
+                    }
+                },
+                {
+                    "op": "validate",
+                    "doc": "ab",
+                    "as": "clean",
+                    "expect": {
+                        "same": [
+                            [
+                                "ab",
+                                "abb"
+                            ],
+                            [
+                                "ab",
+                                "abab"
+                            ],
+                            [
+                                "ab",
+                                "aba"
+                            ],
+                            [
+                                "ab",
+                                "clean"
+                            ]
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "merge a b equals merge b a",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "validate",
+                    "doc": {
+                        "v": 3,
+                        "name": "Ann",
+                        "createdAt": 100,
+                        "lastPlayedAt": 500,
+                        "level": 2,
+                        "longest": 2,
+                        "playDates": [
+                            "2026-08-01",
+                            "2026-08-02"
+                        ],
+                        "xpBy": {
+                            "a": 150
+                        },
+                        "xpSpentBy": {
+                            "a": 10
+                        },
+                        "gamesBy": {
+                            "a": 3
+                        },
+                        "playsBy": {
+                            "g": {
+                                "a": 3
+                            }
+                        },
+                        "best": {
+                            "g": 40
+                        },
+                        "sumsBy": {
+                            "g": {
+                                "kills": {
+                                    "a": 6
+                                }
+                            }
+                        },
+                        "achievements": {
+                            "first_game": {
+                                "unlockedAt": 300,
+                                "seen": false,
+                                "reward": 50
+                            }
+                        }
+                    },
+                    "as": "a",
+                    "expect": {
+                        "returns": {
+                            "v": 3
+                        }
+                    }
+                },
+                {
+                    "op": "validate",
+                    "doc": {
+                        "v": 3,
+                        "name": "Bo",
+                        "createdAt": 50,
+                        "lastPlayedAt": 400,
+                        "level": 3,
+                        "longest": 4,
+                        "playDates": [
+                            "2026-08-02",
+                            "2026-08-03"
+                        ],
+                        "xpBy": {
+                            "a": 120,
+                            "b": 90
+                        },
+                        "xpSpentBy": {
+                            "b": 5
+                        },
+                        "gamesBy": {
+                            "b": 2
+                        },
+                        "playsBy": {
+                            "g": {
+                                "b": 2
+                            },
+                            "h": {
+                                "b": 1
+                            }
+                        },
+                        "best": {
+                            "g": 70,
+                            "h": 5
+                        },
+                        "sumsBy": {
+                            "g": {
+                                "kills": {
+                                    "b": 4
+                                }
+                            }
+                        },
+                        "achievements": {
+                            "first_game": {
+                                "unlockedAt": 200,
+                                "seen": true,
+                                "reward": 50
+                            },
+                            "level_5": {
+                                "unlockedAt": 250,
+                                "seen": false,
+                                "reward": 100
+                            }
+                        }
+                    },
+                    "as": "b",
+                    "expect": {
+                        "returns": {
+                            "v": 3
+                        }
+                    }
+                },
+                {
+                    "op": "merge",
+                    "a": "a",
+                    "b": "b",
+                    "as": "ab",
+                    "expect": {
+                        "returns": {
+                            "v": 3
+                        }
+                    }
+                },
+                {
+                    "op": "merge",
+                    "a": "b",
+                    "b": "a",
+                    "as": "ba",
+                    "expect": {
+                        "returns": {
+                            "v": 3
+                        }
+                    }
+                },
+                {
+                    "op": "validate",
+                    "doc": "ab",
+                    "as": "again",
+                    "expect": {
+                        "same": [
+                            [
+                                "ab",
+                                "ba"
+                            ]
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "merge is associative over three devices",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "validate",
+                    "doc": {
+                        "v": 3,
+                        "name": "Ann",
+                        "createdAt": 100,
+                        "lastPlayedAt": 500,
+                        "level": 2,
+                        "longest": 2,
+                        "playDates": [
+                            "2026-08-01",
+                            "2026-08-02"
+                        ],
+                        "xpBy": {
+                            "a": 150
+                        },
+                        "xpSpentBy": {
+                            "a": 10
+                        },
+                        "gamesBy": {
+                            "a": 3
+                        },
+                        "playsBy": {
+                            "g": {
+                                "a": 3
+                            }
+                        },
+                        "best": {
+                            "g": 40
+                        },
+                        "sumsBy": {
+                            "g": {
+                                "kills": {
+                                    "a": 6
+                                }
+                            }
+                        },
+                        "achievements": {
+                            "first_game": {
+                                "unlockedAt": 300,
+                                "seen": false,
+                                "reward": 50
+                            }
+                        }
+                    },
+                    "as": "a",
+                    "expect": {
+                        "returns": {
+                            "v": 3
+                        }
+                    }
+                },
+                {
+                    "op": "validate",
+                    "doc": {
+                        "v": 3,
+                        "name": "Bo",
+                        "createdAt": 50,
+                        "lastPlayedAt": 400,
+                        "level": 3,
+                        "longest": 4,
+                        "playDates": [
+                            "2026-08-02",
+                            "2026-08-03"
+                        ],
+                        "xpBy": {
+                            "a": 120,
+                            "b": 90
+                        },
+                        "xpSpentBy": {
+                            "b": 5
+                        },
+                        "gamesBy": {
+                            "b": 2
+                        },
+                        "playsBy": {
+                            "g": {
+                                "b": 2
+                            },
+                            "h": {
+                                "b": 1
+                            }
+                        },
+                        "best": {
+                            "g": 70,
+                            "h": 5
+                        },
+                        "sumsBy": {
+                            "g": {
+                                "kills": {
+                                    "b": 4
+                                }
+                            }
+                        },
+                        "achievements": {
+                            "first_game": {
+                                "unlockedAt": 200,
+                                "seen": true,
+                                "reward": 50
+                            },
+                            "level_5": {
+                                "unlockedAt": 250,
+                                "seen": false,
+                                "reward": 100
+                            }
+                        }
+                    },
+                    "as": "b",
+                    "expect": {
+                        "returns": {
+                            "v": 3
+                        }
+                    }
+                },
+                {
+                    "op": "validate",
+                    "doc": {
+                        "v": 3,
+                        "name": "Cy",
+                        "createdAt": 70,
+                        "lastPlayedAt": 600,
+                        "level": 1,
+                        "longest": 1,
+                        "playDates": [
+                            "2026-08-05"
+                        ],
+                        "xpBy": {
+                            "c": 30
+                        },
+                        "gamesBy": {
+                            "c": 1
+                        },
+                        "playsBy": {
+                            "g": {
+                                "c": 1
+                            }
+                        },
+                        "best": {
+                            "g": 10
+                        },
+                        "sumsBy": {
+                            "g": {
+                                "kills": {
+                                    "c": 1
+                                },
+                                "wins": {
+                                    "c": 1
+                                }
+                            }
+                        },
+                        "achievements": {
+                            "streak_3": {
+                                "unlockedAt": 100,
+                                "seen": false,
+                                "reward": 100
+                            }
+                        }
+                    },
+                    "as": "c",
+                    "expect": {
+                        "returns": {
+                            "v": 3
+                        }
+                    }
+                },
+                {
+                    "op": "merge",
+                    "a": "a",
+                    "b": "b",
+                    "as": "ab",
+                    "expect": {
+                        "returns": {
+                            "v": 3
+                        }
+                    }
+                },
+                {
+                    "op": "merge",
+                    "a": "ab",
+                    "b": "c",
+                    "as": "left",
+                    "expect": {
+                        "returns": {
+                            "v": 3
+                        }
+                    }
+                },
+                {
+                    "op": "merge",
+                    "a": "b",
+                    "b": "c",
+                    "as": "bc",
+                    "expect": {
+                        "returns": {
+                            "v": 3
+                        }
+                    }
+                },
+                {
+                    "op": "merge",
+                    "a": "a",
+                    "b": "bc",
+                    "as": "right",
+                    "expect": {
+                        "returns": {
+                            "v": 3
+                        }
+                    }
+                },
+                {
+                    "op": "validate",
+                    "doc": "left",
+                    "as": "again",
+                    "expect": {
+                        "same": [
+                            [
+                                "left",
+                                "right"
+                            ]
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "streak across two devices on alternate days",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "note": "Neither device has a streak alone. Merged, the days run unbroken to yesterday.",
+            "steps": [
+                {
+                    "op": "merge",
+                    "a": {
+                        "v": 3,
+                        "playDates": [
+                            "2026-08-01",
+                            "2026-08-03",
+                            "2026-08-05"
+                        ]
+                    },
+                    "b": {
+                        "v": 3,
+                        "playDates": [
+                            "2026-08-02",
+                            "2026-08-04",
+                            "2026-08-06"
+                        ]
+                    },
+                    "as": "m",
+                    "expect": {
+                        "returnsExact": {
+                            "playDates": [
+                                "2026-08-01",
+                                "2026-08-02",
+                                "2026-08-03",
+                                "2026-08-04",
+                                "2026-08-05",
+                                "2026-08-06"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "op": "import",
+                    "from": "m",
+                    "silent": true,
+                    "expect": {
+                        "player": {
+                            "streak": {
+                                "current": 6,
+                                "longest": 6,
+                                "lastPlayDate": "2026-08-06"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "achievement unlocked on both keeps the earliest unlockedAt",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "merge",
+                    "a": {
+                        "v": 3,
+                        "achievements": {
+                            "first_game": {
+                                "unlockedAt": 200,
+                                "seen": false,
+                                "reward": 50
+                            }
+                        }
+                    },
+                    "b": {
+                        "v": 3,
+                        "achievements": {
+                            "first_game": {
+                                "unlockedAt": 100,
+                                "seen": true,
+                                "reward": 50
+                            }
+                        }
+                    },
+                    "as": "m",
+                    "expect": {
+                        "returnsExact": {
+                            "achievements.first_game.unlockedAt": 100,
+                            "achievements.first_game.seen": true
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "twenty devices merge",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "merge",
+                    "a": {
+                        "v": 3,
+                        "xpBy": {
+                            "d00": 1,
+                            "d01": 1,
+                            "d02": 1,
+                            "d03": 1,
+                            "d04": 1,
+                            "d05": 1,
+                            "d06": 1,
+                            "d07": 1,
+                            "d08": 1,
+                            "d09": 1
+                        }
+                    },
+                    "b": {
+                        "v": 3,
+                        "xpBy": {
+                            "d10": 1,
+                            "d11": 1,
+                            "d12": 1,
+                            "d13": 1,
+                            "d14": 1,
+                            "d15": 1,
+                            "d16": 1,
+                            "d17": 1,
+                            "d18": 1,
+                            "d19": 1
+                        }
+                    },
+                    "as": "m",
+                    "expect": {
+                        "returns": {
+                            "v": 3
+                        }
+                    }
+                },
+                {
+                    "op": "import",
+                    "from": "m",
+                    "silent": true,
+                    "expect": {
+                        "player": {
+                            "xp": 20
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "the twenty-first device throws too_many_devices",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "merge",
+                    "a": {
+                        "v": 3,
+                        "xpBy": {
+                            "d00": 1,
+                            "d01": 1,
+                            "d02": 1,
+                            "d03": 1,
+                            "d04": 1,
+                            "d05": 1,
+                            "d06": 1,
+                            "d07": 1,
+                            "d08": 1,
+                            "d09": 1
+                        }
+                    },
+                    "b": {
+                        "v": 3,
+                        "xpBy": {
+                            "d10": 1,
+                            "d11": 1,
+                            "d12": 1,
+                            "d13": 1,
+                            "d14": 1,
+                            "d15": 1,
+                            "d16": 1,
+                            "d17": 1,
+                            "d18": 1,
+                            "d19": 1,
+                            "d20": 1
+                        }
+                    },
+                    "expect": {
+                        "throws": "DopamineError",
+                        "code": "too_many_devices"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "a device in xpSpentBy or playsBy counts toward the limit",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "merge",
+                    "a": {
+                        "v": 3,
+                        "xpBy": {
+                            "d00": 1,
+                            "d01": 1,
+                            "d02": 1,
+                            "d03": 1,
+                            "d04": 1,
+                            "d05": 1,
+                            "d06": 1,
+                            "d07": 1,
+                            "d08": 1,
+                            "d09": 1
+                        }
+                    },
+                    "b": {
+                        "v": 3,
+                        "xpSpentBy": {
+                            "d10": 1,
+                            "d11": 1,
+                            "d12": 1,
+                            "d13": 1,
+                            "d14": 1,
+                            "d15": 1,
+                            "d16": 1,
+                            "d17": 1,
+                            "d18": 1,
+                            "d19": 1,
+                            "d20": 1
+                        }
+                    },
+                    "expect": {
+                        "throws": "DopamineError",
+                        "code": "too_many_devices"
+                    }
+                },
+                {
+                    "op": "merge",
+                    "a": {
+                        "v": 3,
+                        "xpBy": {
+                            "d00": 1,
+                            "d01": 1,
+                            "d02": 1,
+                            "d03": 1,
+                            "d04": 1,
+                            "d05": 1,
+                            "d06": 1,
+                            "d07": 1,
+                            "d08": 1,
+                            "d09": 1
+                        }
+                    },
+                    "b": {
+                        "v": 3,
+                        "playsBy": {
+                            "g": {
+                                "d10": 1,
+                                "d11": 1,
+                                "d12": 1,
+                                "d13": 1,
+                                "d14": 1,
+                                "d15": 1,
+                                "d16": 1,
+                                "d17": 1,
+                                "d18": 1,
+                                "d19": 1,
+                                "d20": 1
+                            }
+                        }
+                    },
+                    "expect": {
+                        "throws": "DopamineError",
+                        "code": "too_many_devices"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "the window is applied on load and import, not by merge",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "merge",
+                    "a": {
+                        "v": 3,
+                        "longest": 5,
+                        "playDates": [
+                            "2025-01-01",
+                            "2025-01-02",
+                            "2025-01-03",
+                            "2025-01-04",
+                            "2025-01-05"
+                        ]
+                    },
+                    "b": {
+                        "v": 3,
+                        "longest": 1,
+                        "playDates": [
+                            "2026-08-06"
+                        ]
+                    },
+                    "as": "m",
+                    "expect": {
+                        "returnsExact": {
+                            "longest": 5,
+                            "playDates": [
+                                "2025-01-01",
+                                "2025-01-02",
+                                "2025-01-03",
+                                "2025-01-04",
+                                "2025-01-05",
+                                "2026-08-06"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "op": "import",
+                    "from": "m",
+                    "silent": true,
+                    "expect": {
+                        "docExact": {
+                            "longest": 5,
+                            "playDates": [
+                                "2026-08-06"
+                            ]
+                        }
+                    }
+                }
+            ],
+            "note": "merge keeps every day. Import trims against today, and longest stays."
+        },
+        {
+            "name": "level never drops below a banked level",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "merge",
+                    "a": {
+                        "v": 3,
+                        "level": 7
+                    },
+                    "b": {
+                        "v": 3,
+                        "xpBy": {
+                            "x": 1000
+                        }
+                    },
+                    "as": "m",
+                    "expect": {
+                        "returnsExact": {
+                            "level": 7
+                        }
+                    }
+                },
+                {
+                    "op": "import",
+                    "from": "m",
+                    "silent": true,
+                    "expect": {
+                        "player": {
+                            "xp": 1000,
+                            "level": 7
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "two devices migrating the same 2.x save merge without doubling",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "note": "Both devices read the same save, so both write the same legacy entries and max leaves them as they are. 2.x progress made separately on two devices before migration merges by max, not by sum.",
+            "steps": [
+                {
+                    "op": "merge",
+                    "a": {
+                        "xp": 500,
+                        "totalGamesPlayed": 4,
+                        "stats": {
+                            "g": {
+                                "totalPlays": 4,
+                                "highScore": 50
+                            }
+                        }
+                    },
+                    "b": {
+                        "xp": 500,
+                        "totalGamesPlayed": 4,
+                        "stats": {
+                            "g": {
+                                "totalPlays": 4,
+                                "highScore": 50
+                            }
+                        }
+                    },
+                    "as": "m",
+                    "expect": {
+                        "returnsExact": {
+                            "xpBy": {
+                                "legacy": 500
+                            },
+                            "gamesBy": {
+                                "legacy": 4
+                            },
+                            "playsBy": {
+                                "g": {
+                                    "legacy": 4
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "op": "import",
+                    "from": "m",
+                    "silent": true,
+                    "expect": {
+                        "player": {
+                            "xp": 500,
+                            "totalGamesPlayed": 4,
+                            "stats": {
+                                "g": {
+                                    "plays": 4,
+                                    "best": 50
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "progress after migration adds under the device id and survives merge with the legacy entry",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "note": "Device me migrates the save and earns 100. Device b migrated the same save and earned 100.",
+            "savedJson": {
+                "xp": 500,
+                "totalGamesPlayed": 4,
+                "stats": {
+                    "g": {
+                        "totalPlays": 4,
+                        "highScore": 50
+                    }
+                }
+            },
+            "steps": [
+                {
+                    "op": "addXP",
+                    "amount": 100,
+                    "reason": "a",
+                    "expect": {
+                        "player": {
+                            "xp": 600
+                        }
+                    }
+                },
+                {
+                    "op": "export",
+                    "as": "a",
+                    "expect": {
+                        "docExact": {
+                            "xpBy": {
+                                "legacy": 500,
+                                "me": 100
+                            }
+                        }
+                    }
+                },
+                {
+                    "op": "merge",
+                    "a": "a",
+                    "b": {
+                        "v": 3,
+                        "xpBy": {
+                            "legacy": 500,
+                            "b": 100
+                        }
+                    },
+                    "as": "m",
+                    "expect": {
+                        "returnsExact": {
+                            "xpBy": {
+                                "legacy": 500,
+                                "me": 100,
+                                "b": 100
+                            }
+                        }
+                    }
+                },
+                {
+                    "op": "import",
+                    "from": "m",
+                    "silent": true,
+                    "expect": {
+                        "player": {
+                            "xp": 700
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "an achievement unlocked offline on two devices counts its reward once",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "merge",
+                    "a": {
+                        "v": 3,
+                        "xpBy": {
+                            "a": 100
+                        },
+                        "achievements": {
+                            "first_game": {
+                                "unlockedAt": 10,
+                                "seen": false,
+                                "reward": 50
+                            }
+                        }
+                    },
+                    "b": {
+                        "v": 3,
+                        "xpBy": {
+                            "b": 100
+                        },
+                        "achievements": {
+                            "first_game": {
+                                "unlockedAt": 20,
+                                "seen": false,
+                                "reward": 50
+                            }
+                        }
+                    },
+                    "as": "m",
+                    "expect": {
+                        "returnsExact": {
+                            "xpBy": {
+                                "a": 100,
+                                "b": 100
+                            },
+                            "achievements.first_game.reward": 50
+                        }
+                    }
+                },
+                {
+                    "op": "import",
+                    "from": "m",
+                    "silent": true,
+                    "expect": {
+                        "player": {
+                            "xp": 250,
+                            "level": 2
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "migrated xp does not count an unlocked achievement reward twice",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "validate",
+                    "doc": {
+                        "xp": 500,
+                        "achievements": {
+                            "first_game": {
+                                "unlockedAt": 1,
+                                "seen": true
+                            }
+                        }
+                    },
+                    "as": "m",
+                    "expect": {
+                        "returns": {
+                            "v": 3
+                        },
+                        "returnsExact": {
+                            "xpBy": {
+                                "legacy": 450
+                            },
+                            "achievements.first_game.reward": 50
+                        }
+                    }
+                },
+                {
+                    "op": "import",
+                    "from": "m",
+                    "silent": true,
+                    "expect": {
+                        "player": {
+                            "xp": 500
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "xp spent on one device survives merge and stays at or above 0",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "merge",
+                    "a": {
+                        "v": 3,
+                        "xpBy": {
+                            "a": 300
+                        },
+                        "xpSpentBy": {
+                            "a": 100
+                        }
+                    },
+                    "b": {
+                        "v": 3,
+                        "xpBy": {
+                            "a": 300
+                        }
+                    },
+                    "as": "m",
+                    "expect": {
+                        "returnsExact": {
+                            "xpSpentBy": {
+                                "a": 100
+                            }
+                        }
+                    }
+                },
+                {
+                    "op": "import",
+                    "from": "m",
+                    "silent": true,
+                    "expect": {
+                        "player": {
+                            "xp": 200
+                        }
+                    }
+                },
+                {
+                    "op": "import",
+                    "doc": {
+                        "v": 3,
+                        "xpBy": {
+                            "c": 20
+                        },
+                        "xpSpentBy": {
+                            "d": 500
+                        }
+                    },
+                    "silent": true,
+                    "expect": {
+                        "player": {
+                            "xp": 0
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "best is a max and plays add up per device",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "merge",
+                    "a": {
+                        "v": 3,
+                        "playsBy": {
+                            "g": {
+                                "a": 3
+                            }
+                        },
+                        "best": {
+                            "g": 50
+                        }
+                    },
+                    "b": {
+                        "v": 3,
+                        "playsBy": {
+                            "g": {
+                                "b": 2
+                            }
+                        },
+                        "best": {
+                            "g": 80
+                        }
+                    },
+                    "as": "m",
+                    "expect": {
+                        "returnsExact": {
+                            "playsBy": {
+                                "g": {
+                                    "a": 3,
+                                    "b": 2
+                                }
+                            },
+                            "best": {
+                                "g": 80
+                            }
+                        }
+                    }
+                },
+                {
+                    "op": "import",
+                    "from": "m",
+                    "silent": true,
+                    "expect": {
+                        "player": {
+                            "stats": {
+                                "g": {
+                                    "plays": 5,
+                                    "best": 80
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "the same device entry takes the larger value",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "merge",
+                    "a": {
+                        "v": 3,
+                        "xpBy": {
+                            "a": 600
+                        }
+                    },
+                    "b": {
+                        "v": 3,
+                        "xpBy": {
+                            "a": 500
+                        }
+                    },
+                    "as": "m",
+                    "expect": {
+                        "returnsExact": {
+                            "xpBy": {
+                                "a": 600
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "name follows the later lastPlayedAt and ties take the larger string",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "merge",
+                    "a": {
+                        "v": 3,
+                        "name": "Ann",
+                        "lastPlayedAt": 100
+                    },
+                    "b": {
+                        "v": 3,
+                        "name": "Bo",
+                        "lastPlayedAt": 200
+                    },
+                    "as": "m",
+                    "expect": {
+                        "returnsExact": {
+                            "name": "Bo",
+                            "lastPlayedAt": 200
+                        }
+                    }
+                },
+                {
+                    "op": "merge",
+                    "a": {
+                        "v": 3,
+                        "name": "Ann",
+                        "lastPlayedAt": 100
+                    },
+                    "b": {
+                        "v": 3,
+                        "name": "Bo",
+                        "lastPlayedAt": 100
+                    },
+                    "as": "t",
+                    "expect": {
+                        "returnsExact": {
+                            "name": "Bo"
+                        }
+                    }
+                },
+                {
+                    "op": "merge",
+                    "a": {
+                        "v": 3,
+                        "name": "Bo",
+                        "lastPlayedAt": 100
+                    },
+                    "b": {
+                        "v": 3,
+                        "name": "Ann",
+                        "lastPlayedAt": 100
+                    },
+                    "as": "u",
+                    "expect": {
+                        "returnsExact": {
+                            "name": "Bo"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "createdAt is the min and lastPlayedAt is the max",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "merge",
+                    "a": {
+                        "v": 3,
+                        "createdAt": 100,
+                        "lastPlayedAt": 900
+                    },
+                    "b": {
+                        "v": 3,
+                        "createdAt": 50,
+                        "lastPlayedAt": 300
+                    },
+                    "as": "m",
+                    "expect": {
+                        "returnsExact": {
+                            "createdAt": 50,
+                            "lastPlayedAt": 900
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "merge refuses a document from a newer version",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "merge",
+                    "a": {
+                        "v": 3
+                    },
+                    "b": {
+                        "v": 4
+                    },
+                    "expect": {
+                        "throws": "DopamineError",
+                        "code": "unsupported_version"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "validate refuses a value that is not an object",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "validate",
+                    "doc": 5,
+                    "expect": {
+                        "throws": "DopamineError",
+                        "code": "invalid_document"
+                    }
+                },
+                {
+                    "op": "validate",
+                    "doc": null,
+                    "expect": {
+                        "throws": "DopamineError",
+                        "code": "invalid_document"
+                    }
+                },
+                {
+                    "op": "validate",
+                    "doc": [
+                        1
+                    ],
+                    "expect": {
+                        "throws": "DopamineError",
+                        "code": "invalid_document"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "import emits the xp, level and achievements that went up",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "import",
+                    "doc": {
+                        "v": 3,
+                        "xpBy": {
+                            "a": 300
+                        },
+                        "achievements": {
+                            "first_game": {
+                                "unlockedAt": 1,
+                                "seen": false,
+                                "reward": 50
+                            }
+                        }
+                    },
+                    "expect": {
+                        "player": {
+                            "xp": 350,
+                            "level": 3
+                        },
+                        "achievements": [
+                            "first_game"
+                        ],
+                        "events": [
+                            {
+                                "event": "xp_gained",
+                                "amount": 350,
+                                "reason": "import",
+                                "leveledUp": true,
+                                "newLevel": 3,
+                                "total": 350
+                            },
+                            {
+                                "event": "level_up",
+                                "oldLevel": 1,
+                                "newLevel": 3,
+                                "totalXP": 350
+                            },
+                            {
+                                "event": "achievement_unlocked",
+                                "id": "first_game"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "import with silent true emits nothing",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "import",
+                    "doc": {
+                        "v": 3,
+                        "xpBy": {
+                            "a": 300
+                        }
+                    },
+                    "silent": true,
+                    "expect": {
+                        "player": {
+                            "xp": 300
+                        },
+                        "events": []
+                    }
+                }
+            ]
+        },
+        {
+            "name": "import of a document with v above 3 is refused",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "import",
+                    "doc": {
+                        "v": 4,
+                        "xpBy": {
+                            "a": 300
+                        }
+                    },
+                    "expect": {
+                        "throws": "DopamineError",
+                        "code": "unsupported_version",
+                        "player": {
+                            "xp": 0
+                        },
+                        "events": []
+                    }
+                }
+            ]
+        },
+        {
+            "name": "a negative XP spent on one device survives merge",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "addXP",
+                    "amount": 100,
+                    "reason": "earn",
+                    "expect": {
+                        "player": {
+                            "xp": 100
+                        }
+                    }
+                },
+                {
+                    "op": "addXP",
+                    "amount": -40,
+                    "reason": "spend",
+                    "expect": {
+                        "player": {
+                            "xp": 60
+                        },
+                        "docExact": {
+                            "xpBy": {
+                                "me": 100
+                            },
+                            "xpSpentBy": {
+                                "me": 40
+                            }
+                        }
+                    }
+                },
+                {
+                    "op": "export",
+                    "as": "a",
+                    "expect": {
+                        "doc": {
+                            "v": 3
+                        }
+                    }
+                },
+                {
+                    "op": "merge",
+                    "a": "a",
+                    "b": {
+                        "v": 3,
+                        "xpBy": {
+                            "me": 100
+                        }
+                    },
+                    "as": "m",
+                    "expect": {
+                        "returnsExact": {
+                            "xpSpentBy": {
+                                "me": 40
+                            }
+                        }
+                    }
+                },
+                {
+                    "op": "import",
+                    "from": "m",
+                    "silent": true,
+                    "expect": {
+                        "player": {
+                            "xp": 60
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "a future date in one save does not push the other save's days out",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "steps": [
+                {
+                    "op": "merge",
+                    "a": {
+                        "v": 3,
+                        "playDates": [
+                            "2025-07-04"
+                        ]
+                    },
+                    "b": {
+                        "v": 3,
+                        "playDates": [
+                            "2099-01-01"
+                        ]
+                    },
+                    "as": "m",
+                    "expect": {
+                        "returnsExact": {
+                            "playDates": [
+                                "2025-07-04",
+                                "2099-01-01"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "op": "import",
+                    "from": "m",
+                    "silent": true,
+                    "expect": {
+                        "docExact": {
+                            "playDates": [
+                                "2025-07-04"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
