@@ -3,6 +3,7 @@ package dev.baryo.dopaminekt
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -23,10 +24,20 @@ import kotlin.test.fail
 class FixtureRunnerTest {
     private val zones = listOf("Asia/Manila", "America/Los_Angeles")
 
+    // File to (run, skipped). Skipped cases need the reward system. A fixture change must update these.
+    private val EXPECTED_COUNTS = mapOf(
+        "achievements.json" to (0 to 7),
+        "levels.json" to (0 to 6),
+        "merge.json" to (11 to 16),
+        "migrate.json" to (33 to 1),
+        "scores.json" to (0 to 13),
+        "streaks.json" to (4 to 13),
+    )
+
     @Test
     fun fixtureRunnerRunsEveryDocumentCase() {
         val failures = mutableListOf<String>()
-        val ran = mutableMapOf<String, Int>()
+        val counts = mutableMapOf<String, Pair<Int, Int>>()
         assertTrue(FixtureData.files.isNotEmpty(), "no fixture files were generated")
 
         for ((file, text) in FixtureData.files.entries.sortedBy { it.key }.map { it.key to it.value }) {
@@ -56,13 +67,12 @@ class FixtureRunnerTest {
                     failures += "$file / $name: ${error.message}"
                 }
             }
-            ran[file] = run
+            counts[file] = run to skipped
             println("fixture runner $file: $run run, $skipped skipped (K3b)")
         }
 
         assertTrue(failures.isEmpty(), failures.joinToString("\n"))
-        assertTrue((ran["merge.json"] ?: 0) > 0, "no merge.json case ran")
-        assertTrue((ran["migrate.json"] ?: 0) > 0, "no migrate.json case ran")
+        assertEquals(EXPECTED_COUNTS, counts, "cases run and skipped per file")
     }
 }
 
@@ -198,6 +208,7 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
     private val registry = HashMap<String, JsonElement>()
     private val loaded: Doc
     private val today: String
+    private var loadFailure: String? = null
 
     init {
         val wall = LocalDateTime.parse(case["clock"].string()!!)
@@ -206,15 +217,27 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
         check(today == case["clock"].string()!!.substring(0, 10)) { "clock day $today is not the wall day" }
         val config = case["config"] as? JsonObject
         val rewards = rewardsOf(config)
-        // Same as init: a value that is not an object, or one the core refuses, starts an empty player.
-        val saved = case["savedJson"]
-        loaded = when {
-            saved !is JsonObject -> emptyDoc(clock.now().toDouble())
-            else -> try {
+        // Same as init: nothing saved, or a value that is not an object, starts an empty player.
+        // Text that does not parse, or a document the core refuses, does too, and load_failed is raised.
+        val raw = case["savedRaw"].string()
+        val saved: JsonElement? = when {
+            raw != null -> try {
+                Json.parseToJsonElement(raw)
+            } catch (error: SerializationException) {
+                loadFailure = "corrupt"
+                null
+            }
+            else -> case["savedJson"]
+        }
+        loaded = if (saved is JsonObject) {
+            try {
                 parseDoc(saved, clock.now(), today, rewards)
             } catch (error: DopamineError) {
+                loadFailure = error.code
                 emptyDoc(clock.now().toDouble())
             }
+        } else {
+            emptyDoc(clock.now().toDouble())
         }
     }
 
@@ -226,7 +249,7 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
 
     fun run() {
         val afterInit = case["afterInit"] as? JsonObject
-        if (afterInit != null) verify(afterInit, "afterInit", null)
+        if (afterInit != null) verify(afterInit, "afterInit", null, listOfNotNull(loadFailure))
         val steps = case["steps"] as? JsonArray ?: JsonArray(emptyList())
         for ((index, element) in steps.withIndex()) {
             val step = element as JsonObject
@@ -248,7 +271,7 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
                 }
             } catch (error: DopamineError) {
                 thrown = error
-            } catch (error: IllegalArgumentException) {
+            } catch (error: ArgumentTypeError) {
                 thrown = error
             }
             val expect = step["expect"] as JsonObject
@@ -261,11 +284,11 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
             } else if (thrown != null) {
                 throw thrown
             }
-            verify(expect, label, returned)
+            verify(expect, label, returned, emptyList())
         }
     }
 
-    private fun verify(expectation: JsonObject, label: String, returned: JsonElement?) {
+    private fun verify(expectation: JsonObject, label: String, returned: JsonElement?, loadFailures: List<String>) {
         assertKeys("$label expect", expectation, EXPECT_KEYS)
         nonEmpty(expectation, "$label expect")
         for (key in listOf("player", "playerExact", "doc", "docExact", "returnsExact")) {
@@ -307,8 +330,10 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
         }
         expectation["returns"]?.let { matchSubset(returned, it, "$label returns") }
         (expectation["events"] as? JsonArray)?.let { events ->
-            // Cases that expect events are skipped before they get here.
-            if (events.isNotEmpty()) fail("$label events: this runner fires none")
+            // The only event this runner can see is load_failed, with the reason the load failed for.
+            val got = loadFailures.map { "load_failed:$it" }
+            val want = events.map { "${(it as JsonObject)["event"].string()}:${it["reason"].string()}" }
+            assertEquals(want, got, "$label events")
         }
     }
 
@@ -359,20 +384,16 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
                 if (op in K3B_OPS) usesReward = true
             }
 
-            val wantsEvents = ((case["afterInit"] as? JsonObject)?.get("events") as? JsonArray)?.isNotEmpty() == true
-            return skipReason(
-                usesReward = usesReward,
-                rawSave = "savedRaw" in case,
-                failingWrites = "storage" in case,
-                wantsEvents = wantsEvents,
-            )
+            // load_failed is raised by loading a save, which the runner can do. Other events need the reward system.
+            val otherEvents = ((case["afterInit"] as? JsonObject)?.get("events") as? JsonArray)
+                ?.any { (it as JsonObject)["event"].string() != "load_failed" } == true
+            return skipReason(usesReward = usesReward, failingWrites = "storage" in case, otherEvents = otherEvents)
         }
 
-        private fun skipReason(usesReward: Boolean, rawSave: Boolean, failingWrites: Boolean, wantsEvents: Boolean): String? = when {
+        private fun skipReason(usesReward: Boolean, failingWrites: Boolean, otherEvents: Boolean): String? = when {
             usesReward -> "K3b"
-            rawSave -> "K3b"
             failingWrites -> "K3b"
-            wantsEvents -> "K3b"
+            otherEvents -> "K3b"
             else -> null
         }
     }
