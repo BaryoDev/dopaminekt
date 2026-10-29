@@ -11,3 +11,12 @@ captures/
 *.gpg
 *.asc
 .npmrc
+
+# Credentials live only in the environment of scripts/publish.sh.
+*.pem
+*.p12
+*.key
+*.pgp
+.env
+.env.*
+secring.*
