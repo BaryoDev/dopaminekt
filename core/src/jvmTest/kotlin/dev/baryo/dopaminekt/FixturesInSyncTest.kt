@@ -24,7 +24,9 @@ class FixturesInSyncTest {
 
         val pinned = lines.first().removePrefix("dopaminejs ")
         val pin = System.getProperty("dopaminekt.fixturePin")
-        if (pin != null && pinned != pin) {
+        if (pin == null) {
+            problems += "system property dopaminekt.fixturePin is not set, so the pin cannot be checked"
+        } else if (pinned != pin) {
             problems += "spec/CHECKSUMS is for dopaminejs $pinned but the pin is $pin"
         }
 
