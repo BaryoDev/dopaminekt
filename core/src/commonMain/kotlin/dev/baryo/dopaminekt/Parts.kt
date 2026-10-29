@@ -1,7 +1,7 @@
 package dev.baryo.dopaminekt
 
 /**
- * Feedback for the player's hands. Where the device cannot vibrate, an implementation does nothing.
+ * Buzzes the device for the player's hands. Where the device cannot vibrate, an implementation does nothing.
  *
  * An override cannot redeclare default parameter values. Calls through the interface use the
  * defaults declared here.

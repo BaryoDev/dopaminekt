@@ -12,6 +12,16 @@ It follows dopaminejs 3.1.0.
 - `levelFor(xp)` and `thresholdFor(level)` give the level curve.
 - `Clock` and `SystemClock(zone)` name the local day. `StoragePort` and `MemoryStorage` hold saved text.
 
+## Plugins and parts
+
+Core defines the contracts a plugin or a part needs and ships no implementation of them.
+
+- Parts: `Haptics`, `SoundPlayer`, `ParticleRenderer`, `RewardUi` and `Parts`, with `PartName`, `BurstKind`, `PopupKind`, `PopupTier` and the value types `Point`, `BurstOptions`, `HudState`, `Popup` and `FloatingText`.
+- Plugins: `DopaminePlugin`, `PluginContext`, `PluginEvents`, `Logger`, `Env` and `Disposer`. `HOST_API` is the plugin API version (3) and `isValidPluginName(name)` checks a plugin name.
+- A plugin sends its own events with `Progress.emit(ProgressEvent.Custom("name:event", data))`. Names without a `:` or with a leading `:` throw `DopamineError("plugin_event")`, so a plugin cannot fake a core event.
+
+An app or caller supplies the parts and runs the plugins. The public API is recorded in `core/api`. `./gradlew :core:updateKotlinAbi` records a change, and `check` fails on one that is not recorded.
+
 ## Use it
 
 ```kotlin

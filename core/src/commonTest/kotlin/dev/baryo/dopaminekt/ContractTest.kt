@@ -44,7 +44,7 @@ class ContractTest {
         override fun destroy() { calls += "ui.destroy" }
     }
 
-    private val parts = object : Parts {
+    private val parts: Parts = object : Parts {
         override val ui: RewardUi = this@ContractTest.ui
         override val particles: ParticleRenderer = this@ContractTest.particles
         override val sound: SoundPlayer = this@ContractTest.sound
