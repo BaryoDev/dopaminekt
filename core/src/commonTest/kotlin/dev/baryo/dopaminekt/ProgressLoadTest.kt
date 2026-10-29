@@ -1,5 +1,9 @@
 package dev.baryo.dopaminekt
 
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
@@ -15,6 +19,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
+@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 class ProgressLoadTest {
     private val log = mutableListOf<String>()
     private val events = mutableListOf<ProgressEvent>()
@@ -301,6 +306,11 @@ class ProgressLoadTest {
         assertFailsWith<IllegalStateException> { progress.unlockAchievement("first_game") }
         assertFailsWith<IllegalStateException> { progress.getXpForNextLevel() }
         assertFailsWith<IllegalStateException> { progress.import(JsonObject(emptyMap())) }
+        assertFailsWith<IllegalStateException> { progress.getUnlockedAchievements() }
+        assertFailsWith<IllegalStateException> { progress.getUnseenAchievements() }
+        assertFailsWith<IllegalStateException> { progress.getStreakMultiplier() }
+        assertFailsWith<IllegalStateException> { progress.checkAchievements() }
+        assertFailsWith<IllegalStateException> { progress.markAchievementsSeen(listOf("first_game")) }
     }
 
     @Test
@@ -439,5 +449,72 @@ class ProgressLoadTest {
         events.clear()
         progress.addXp(5.0)
         assertEquals(listOf("save_failed", "xp_gained"), events.map { it.wireName })
+    }
+
+    // Cancellation
+
+    @Test
+    fun aCancelledFirstInitLeavesNothingSet() = runTest {
+        storage.getDelay = { 100 }
+        val progress = build()
+        val job = launch { progress.init() }
+        runCurrent()
+        job.cancel()
+        advanceUntilIdle()
+        storage.getDelay = { 0 }
+        assertFailsWith<IllegalStateException> { progress.addXp(1.0) }
+        assertFailsWith<IllegalStateException> { progress.snapshot() }
+        assertEquals(emptyList(), log)
+    }
+
+    @Test
+    fun aCancelDuringTheDeviceReadLeavesNothingSet() = runTest {
+        storage.getDelay = { key -> if (key == "dopamine_device") 100 else 0 }
+        val progress = build()
+        val job = launch { progress.init() }
+        runCurrent()
+        job.cancel()
+        advanceUntilIdle()
+        storage.getDelay = { 0 }
+        assertFailsWith<IllegalStateException> { progress.addXp(1.0) }
+        assertFailsWith<IllegalStateException> { progress.record("tap") }
+        progress.init()
+        assertEquals(1, storage.writes("player"))
+    }
+
+    @Test
+    fun aRecordCancelledInsideAHookStillPersists() = runTest {
+        val progress = build()
+        progress.init()
+        progress.use(object : Middleware {
+            override suspend fun afterXp(context: AfterXpContext) {
+                delay(100)
+            }
+        })
+        storage.delayMillis = 5
+        storage.log.clear()
+        val job = launch { progress.record("tap", mapOf("score" to 5.0)) }
+        runCurrent()
+        job.cancel()
+        advanceUntilIdle()
+        assertEquals(1, storage.writes("player"))
+        val saved = Json.parseToJsonElement(storage.values.getValue("dopamine_player")).jsonObject
+        assertEquals(1.0, saved.getValue("gamesBy").jsonObject.values.single().let { (it as JsonPrimitive).content.toDouble() })
+    }
+
+    @Test
+    fun aCancelledSecondInitStillSaves() = runTest {
+        val progress = build()
+        progress.init()
+        storage.getDelay = { key -> if (key == "dopamine_player") 100 else 0 }
+        val job = launch { progress.init() }
+        runCurrent()
+        job.cancel()
+        advanceUntilIdle()
+        storage.getDelay = { 0 }
+        storage.log.clear()
+        progress.addXp(10.0)
+        assertEquals(1, storage.writes("player"))
+        assertFalse(progress.loadFailed)
     }
 }

@@ -18,10 +18,12 @@ internal class TickClock(var day: String = "2026-08-07", var millis: Long = 1_00
 internal class LoggingStorage(val log: MutableList<String> = mutableListOf()) : StoragePort {
     val values = LinkedHashMap<String, String>()
     var delayMillis = 0L
+    var getDelay: (String) -> Long = { 0L }
     var failSet: (String) -> Boolean = { false }
     var failGet: (String) -> Boolean = { false }
 
     override suspend fun get(key: String): String? {
+        getDelay(key).let { if (it > 0) delay(it) }
         if (failGet(key)) throw IllegalStateException("blocked")
         return values[key]
     }
