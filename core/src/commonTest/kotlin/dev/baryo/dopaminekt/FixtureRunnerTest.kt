@@ -67,7 +67,7 @@ class FixtureRunnerTest {
             }
             counts[file] = run
             println("fixture runner $file: $run run")
-            assertEquals(cases.size, run, "$file: every case runs")
+            if (run != cases.size) failures += "$file: only $run of ${cases.size} cases ran"
         }
 
         assertTrue(failures.isEmpty(), failures.joinToString("\n"))
@@ -103,6 +103,16 @@ private fun assertKeys(where: String, obj: JsonObject, allowed: Set<String>) {
     for (key in obj.keys) if (key !in allowed) fail("$where: unknown key \"$key\"")
 }
 
+/** A real boolean. The strings "true" and "false" are not booleans. */
+private fun JsonElement?.bool(): Boolean? =
+    (this as? JsonPrimitive)?.takeIf { it !is JsonNull && !it.isString }?.content?.let {
+        when (it) {
+            "true" -> true
+            "false" -> false
+            else -> null
+        }
+    }
+
 private fun JsonElement?.string(): String? = (this as? JsonPrimitive)?.takeIf { it.isString }?.content
 
 private fun getPath(root: JsonElement?, path: String): JsonElement? {
@@ -113,18 +123,18 @@ private fun getPath(root: JsonElement?, path: String): JsonElement? {
     return node
 }
 
-private fun primitiveEquals(a: JsonPrimitive, b: JsonPrimitive): Boolean {
+private fun primitiveEquals(a: JsonPrimitive, b: JsonPrimitive, strict: Boolean = false): Boolean {
     if (a is JsonNull || b is JsonNull) return a is JsonNull && b is JsonNull
     if (a.isString || b.isString) return a.isString && b.isString && a.content == b.content
     val x = a.finiteNumber()
     val y = b.finiteNumber()
-    return if (x != null && y != null) x == y else a.content == b.content
+    return if (x != null && y != null) (if (strict) x.toRawBits() == y.toRawBits() else x == y) else a.content == b.content
 }
 
-private fun deepEqual(a: JsonElement?, b: JsonElement?): Boolean = when {
-    a is JsonObject && b is JsonObject -> a.keys == b.keys && a.keys.all { deepEqual(a[it], b[it]) }
-    a is JsonArray && b is JsonArray -> a.size == b.size && a.indices.all { deepEqual(a[it], b[it]) }
-    a is JsonPrimitive && b is JsonPrimitive -> primitiveEquals(a, b)
+private fun deepEqual(a: JsonElement?, b: JsonElement?, strict: Boolean = false): Boolean = when {
+    a is JsonObject && b is JsonObject -> a.keys == b.keys && a.keys.all { deepEqual(a[it], b[it], strict) }
+    a is JsonArray && b is JsonArray -> a.size == b.size && a.indices.all { deepEqual(a[it], b[it], strict) }
+    a is JsonPrimitive && b is JsonPrimitive -> primitiveEquals(a, b, strict)
     else -> false
 }
 
@@ -201,10 +211,10 @@ private fun definitionOf(id: String, def: JsonObject): AchievementDefinition {
         }
     }
     return AchievementDefinition(
-        name = def["name"].string() ?: id,
-        description = def["description"].string() ?: "",
-        icon = def["icon"].string() ?: "",
-        xp = def["xp"].finiteNumber() ?: 0.0,
+        name = if ("name" in def) def["name"].string()!! else id,
+        description = if ("description" in def) def["description"].string()!! else "",
+        icon = if ("icon" in def) def["icon"].string()!! else "",
+        xp = if ("xp" in def) def["xp"].finiteNumber()!! else 0.0,
         check = check,
     )
 }
@@ -241,10 +251,10 @@ private val EVENT_NAMES = listOf(
     "streak_updated", "player_reset", "save_failed", "load_failed",
 )
 
-private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
+internal class FixtureCase(private val case: JsonObject, zone: TimeZone) {
     private val clock = FixedClock(zone, case["clock"].string()!!)
     private val registry = HashMap<String, JsonElement>()
-    private val storage = FixtureStorage((case["storage"] as? JsonObject)?.get("failWrites")?.let { (it as JsonPrimitive).content == "true" } == true)
+    private val storage = FixtureStorage((case["storage"] as? JsonObject)?.get("failWrites").bool() == true)
     private val events = mutableListOf<JsonObject>()
     private val config: ProgressConfig
     private lateinit var progress: Progress
@@ -259,14 +269,18 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
         }
         config = ProgressConfig(
             achievements = defs,
-            builtinAchievements = given?.get("builtinAchievements")?.let { (it as JsonPrimitive).content != "false" } ?: true,
+            builtinAchievements = given?.get("builtinAchievements").bool() != false,
             clock = clock,
             streakDays = if (given?.get("streakDays").string() == "record") StreakDays.Record else StreakDays.Any,
         )
-        case["device"].string()?.let { storage.values["dopamine_$DEVICE_KEY"] = JsonPrimitive(it).toString() }
-        val raw = case["savedRaw"].string()
-        if (raw != null) storage.values["dopamine_player"] = raw
-        else case["savedJson"]?.let { storage.values["dopamine_player"] = it.toString() }
+        // Stored as JSON text, like JSON.stringify. savedJson wins over savedRaw.
+        case["device"]?.let { storage.values["dopamine_$DEVICE_KEY"] = it.toString() }
+        val savedJson = case["savedJson"]
+        if (savedJson != null) {
+            storage.values["dopamine_player"] = savedJson.toString()
+        } else if ("savedRaw" in case) {
+            storage.values["dopamine_player"] = case["savedRaw"].string() ?: fail("savedRaw must be a string")
+        }
     }
 
     private suspend fun start() {
@@ -305,8 +319,13 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
             } catch (error: ArgumentTypeError) {
                 thrown = error
             }
-            val expect = step["expect"] as? JsonObject ?: continue
-            val wantThrow = (expect["throws"] as? JsonPrimitive)?.content
+            val expect = step["expect"] as? JsonObject
+            if (expect == null) {
+                // Only setClock may leave expect out.
+                if (thrown != null) throw thrown
+                continue
+            }
+            val wantThrow = expect["throws"].string()
             if (wantThrow != null) {
                 val error = thrown ?: fail("$label: expected $wantThrow, nothing was thrown")
                 val name = if (error is DopamineError) "DopamineError" else "TypeError"
@@ -327,7 +346,7 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
                 null
             }
             "reload" -> {
-                step["device"].string()?.let { storage.values["dopamine_$DEVICE_KEY"] = JsonPrimitive(it).toString() }
+                step["device"]?.let { storage.values["dopamine_$DEVICE_KEY"] = it.toString() }
                 events.clear()
                 start()
                 null
@@ -362,8 +381,8 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
             "export" -> progress.export().also { registry[step["as"].string()!!] = it }
             "import" -> {
                 val from = step["from"].string()
-                val doc = if (from != null) registry[from] ?: fail("$label: no saved document named \"$from\"") else docOf(step["doc"], label)
-                progress.import(doc, silent = step["silent"]?.let { (it as JsonPrimitive).content == "true" } == true)
+                val doc = if (from != null) registry[from] ?: fail("$label: no saved document named \"$from\"") else step["doc"] ?: fail("$label: missing document")
+                progress.import(doc, silent = step["silent"].bool() == true)
             }
             "merge" -> merge(docOf(step["a"], label), docOf(step["b"], label)).also { doc -> step["as"].string()?.let { registry[it] = doc } }
             "validate" -> validate(docOf(step["doc"], label)).also { doc -> step["as"].string()?.let { registry[it] = doc } }
@@ -396,7 +415,7 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
         exact(expectation["docExact"], exported, "$label docExact")
         expectation["returnsExact"]?.let { want ->
             if (want is JsonObject) exact(want, returned, "$label returnsExact")
-            else if (!deepEqual(returned, want)) fail("$label returnsExact: expected $want, got $returned")
+            else if (!deepEqual(returned, want, strict = true)) fail("$label returnsExact: expected $want, got $returned")
         }
         (expectation["same"])?.let { same ->
             val pairs = same as? JsonArray
@@ -428,7 +447,7 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
         val paths = want as? JsonObject ?: return
         for ((path, expected) in paths) {
             val found = getPath(root, path) ?: fail("$label.$path: missing")
-            if (!deepEqual(found, expected)) fail("$label.$path: expected $expected, got $found")
+            if (!deepEqual(found, expected, strict = true)) fail("$label.$path: expected $expected, got $found")
         }
     }
 
@@ -437,6 +456,9 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
         fun inspect(case: JsonObject) {
             assertKeys("case", case, CASE_KEYS)
             if (!CLOCK_SHAPE.matches(case["clock"].string() ?: "")) fail("clock must be YYYY-MM-DDTHH:MM:SS local time")
+            if ("steps" in case && case["steps"] !is JsonArray) fail("steps must be an array")
+            if ("afterInit" in case && case["afterInit"] !is JsonObject) fail("afterInit must be an object")
+            if ("savedRaw" in case && case["savedRaw"].string() == null) fail("savedRaw must be a string")
             val steps = case["steps"] as? JsonArray
             if (case["afterInit"] == null && (steps == null || steps.isEmpty())) fail("case has no afterInit and no steps, so it checks nothing")
             (case["storage"] as? JsonObject)?.let { assertKeys("storage", it, STORAGE_OPTION_KEYS) }
@@ -450,12 +472,16 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
                 for ((id, def) in (config["achievements"] as? JsonObject) ?: JsonObject(emptyMap())) {
                     val obj = def as JsonObject
                     assertKeys("achievement $id", obj, ACHIEVEMENT_KEYS)
+                    for (key in listOf("name", "description", "icon")) {
+                        if (key in obj && obj[key].string() == null) fail("achievement $id: \"$key\" must be a string")
+                    }
+                    if ("xp" in obj && obj["xp"].finiteNumber() == null) fail("achievement $id: \"xp\" must be a number")
                     checkCondition(id, obj["when"])
                 }
             }
 
             for ((index, element) in (steps ?: JsonArray(emptyList())).withIndex()) {
-                val step = element as JsonObject
+                val step = element as? JsonObject ?: fail("step ${index + 1}: expected an object")
                 val op = step["op"].string()
                 val label = "step ${index + 1} ($op)"
                 val allowed = OPS[op] ?: fail("$label: unknown op")
@@ -463,7 +489,8 @@ private class FixtureCase(private val case: JsonObject, zone: TimeZone) {
                 if (op == "merge") listOf("a", "b").forEach { if (it !in step) fail("$label: $it is required") }
                 if (op == "validate" && "doc" !in step) fail("$label: doc is required")
                 if (op == "import" && "doc" !in step && "from" !in step) fail("$label: doc or from is required")
-                if (op != "setClock" && step["expect"] == null) fail("$label: expect is required")
+                if ("expect" in step && step["expect"] !is JsonObject) fail("$label: expect must be an object")
+                if (op != "setClock" && "expect" !in step) fail("$label: expect is required")
                 if (op == "setClock" && !CLOCK_SHAPE.matches(step["at"].string() ?: "")) fail("$label: at must be YYYY-MM-DDTHH:MM:SS local time")
             }
         }
