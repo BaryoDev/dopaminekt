@@ -67,7 +67,7 @@ internal fun shiftDay(text: String, days: Int): String = dayText(dayNum(text) + 
  * Without [today] nothing is dropped.
  */
 internal fun trimDays(days: Collection<String>, today: String?): List<String> {
-    val sorted = days.toSortedSet().toList()
+    val sorted = days.toSet().sorted()
     if (today == null) return sorted
     val floor = dayNum(today) - 399
     val ceiling = dayNum(today) + 1
