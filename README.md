@@ -1,8 +1,13 @@
 # dopaminekt
 
-Kotlin Multiplatform core for dopaminekt. It is the plain Kotlin part that other modules plug into. Targets: JVM, Android, iosArm64, iosSimulatorArm64.
+Kotlin Multiplatform core for dopaminekt. Targets: JVM, Android, iosArm64, iosSimulatorArm64.
 
-This is a skeleton. The core logic is not in yet, so there is nothing to call.
+It follows dopaminejs 3.1.0. What is in so far is the saved player document and the math around it. The reward system itself is not in yet.
+
+- `validate(json)` cleans any JSON value into a version 3 document, migrating a 2.x save. Entries it cannot use are dropped. It throws `DopamineError` with the code `invalid_document`, `unsupported_version` or `too_many_devices`.
+- `merge(a, b)` joins two saves. The result does not depend on argument order.
+- `levelFor(xp)` and `thresholdFor(level)` give the level curve.
+- `Clock` and `SystemClock(zone)` name the local day. `StoragePort` and `MemoryStorage` hold saved text.
 
 ## Use it
 
@@ -25,6 +30,10 @@ The shared test fixtures come from the public [dopaminejs](https://www.npmjs.com
 
 - `./gradlew syncFixtures` runs `npm pack dopaminejs@<pin>` against the public npm registry (your npm config is ignored, no install scripts run), checks the tarball version equals the pin, copies the package's `spec/` into `spec/core/` and rewrites `spec/CHECKSUMS`. It needs network and npm.
 - `./gradlew verifyFixtures` runs offline and fails, naming the file, when `spec/core/` differs from `spec/CHECKSUMS`. `check` runs it.
+
+`./gradlew generateFixtureSources` writes the fixtures and `spec/core/schema.json` into a Kotlin file under `core/build/`, so the JVM, Android and iOS tests read the same data with no file access. The test compile tasks run it. The generated file is not committed.
+
+The fixture runner (`FixtureRunnerTest`) runs each case in Asia/Manila and America/Los_Angeles, with the clock set to the case's local time in that zone. It runs the validate and merge steps and the saved players that only need validate. Cases that need the reward system are skipped, and the run prints how many ran and were skipped per file.
 
 To move to a new dopaminejs version, change the pin, run `syncFixtures` and commit the result.
 
