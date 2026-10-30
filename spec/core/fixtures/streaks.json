@@ -962,6 +962,83 @@
                     }
                 }
             ]
+        },
+        {
+            "name": "reset with overwrite false after a newer version keeps the saved document",
+            "clock": "2026-08-07T09:00:00",
+            "note": "Nothing is written and later writes stay blocked. Reloading proves the v 99 document is still in storage.",
+            "config": {
+                "builtinAchievements": false
+            },
+            "savedJson": {
+                "v": 99,
+                "xpBy": {
+                    "a": 900
+                }
+            },
+            "afterInit": {
+                "player": {
+                    "xp": 0
+                },
+                "events": [
+                    {
+                        "event": "load_failed",
+                        "reason": "unsupported_version"
+                    }
+                ]
+            },
+            "steps": [
+                {
+                    "op": "addXP",
+                    "amount": 30,
+                    "expect": {
+                        "player": {
+                            "xp": 30
+                        }
+                    }
+                },
+                {
+                    "op": "reset",
+                    "overwrite": false,
+                    "expect": {
+                        "player": {
+                            "xp": 0,
+                            "level": 1,
+                            "streak": {
+                                "current": 0
+                            }
+                        },
+                        "events": [
+                            {
+                                "event": "player_reset"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "op": "addXP",
+                    "amount": 10,
+                    "expect": {
+                        "player": {
+                            "xp": 10
+                        }
+                    }
+                },
+                {
+                    "op": "reload",
+                    "expect": {
+                        "player": {
+                            "xp": 0
+                        },
+                        "events": [
+                            {
+                                "event": "load_failed",
+                                "reason": "unsupported_version"
+                            }
+                        ]
+                    }
+                }
+            ]
         }
     ]
 }
