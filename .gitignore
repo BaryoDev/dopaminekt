@@ -12,7 +12,7 @@ captures/
 *.asc
 .npmrc
 
-# Credentials live only in the environment of scripts/publish.sh.
+# Credentials live only in the publish environment (GitHub secrets or scripts/publish.sh).
 *.pem
 *.p12
 *.key

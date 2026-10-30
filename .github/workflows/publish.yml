@@ -1,0 +1,75 @@
+name: Publish
+
+# Publishes core to Maven Central when a v* tag is pushed. Run it by hand with a tag name for a tag
+# pushed before this workflow existed. The maven-central environment holds the secrets and waits
+# for approval before the job starts.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag to publish, for example v0.1.0-alpha02
+        required: true
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    # A hand run starts only from main. The environment's deployment rules are the real gate.
+    if: github.event_name == 'push' || github.ref == 'refs/heads/main'
+    # iOS publications build only on macOS.
+    runs-on: macos-latest
+    environment: maven-central
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: refs/tags/${{ inputs.tag || github.ref_name }}
+          fetch-depth: 0
+          # Later steps run build scripts with the signing key in reach, so no token stays in .git/config.
+          persist-credentials: false
+
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4.9.1
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@748248ddd2a24f49513d8f472f81c3a07d4d50e1 # v4.4.4
+        with:
+          cache-read-only: true
+
+      # The same checks as scripts/publish.sh.
+      - name: Check the version and tag
+        run: |
+          fail() { echo "publish: $*" >&2; exit 1; }
+          count=$(grep -c '^[[:space:]]*VERSION_NAME[[:space:]]*=' gradle.properties || true)
+          [ "$count" = "1" ] || fail "gradle.properties must have exactly one VERSION_NAME line, found $count"
+          version=$(grep '^[[:space:]]*VERSION_NAME[[:space:]]*=' gradle.properties | head -n 1 \
+            | sed -e 's/^[^=]*=//' -e 's/\r//g' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+          case "$version" in
+            ''|*SNAPSHOT*) fail "VERSION_NAME '$version' is empty or a SNAPSHOT. Releases only." ;;
+          esac
+          printf '%s\n' "$version" \
+            | grep -Eq '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[A-Za-z0-9.]+)?$' \
+            || fail "VERSION_NAME '$version' is not MAJOR.MINOR.PATCH with an optional -suffix"
+          [ "$TAG" = "v$version" ] || fail "tag $TAG does not match v$version"
+          git merge-base --is-ancestor HEAD origin/main || fail "$TAG is not on main"
+
+      - name: Test
+        run: ./gradlew check iosSimulatorArm64Test
+
+      # Never add --info or --debug here. They can print properties, including the signing key.
+      - name: Publish
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: ./gradlew publishAndReleaseToMavenCentral

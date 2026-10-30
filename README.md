@@ -60,12 +60,18 @@ CI runs this on Linux in the Asia/Manila and America/Los_Angeles time zones. Lin
 
 ## Release
 
-Releases are published from a Mac, never from CI. Maven Central cannot take a release back, so check the artifacts first.
+Pushing a `v<version>` tag starts the Publish workflow. It runs on macOS in the `maven-central` environment, which holds the secrets and waits for approval before the job starts. Maven Central cannot take a release back, so check the artifacts before approving.
 
 1. Set `VERSION_NAME` in `gradle.properties` to the release version, commit it to `main`, and tag that commit `v<version>`.
 2. Run `./gradlew publishToMavenLocal` and read the artifact list and the POM.
-3. Put these in the environment: `ORG_GRADLE_PROJECT_mavenCentralUsername`, `ORG_GRADLE_PROJECT_mavenCentralPassword`, `ORG_GRADLE_PROJECT_signingInMemoryKey`, `ORG_GRADLE_PROJECT_signingInMemoryKeyPassword`.
-4. Run `scripts/publish.sh`. It refuses unless HEAD carries the tag `v<version>`, the commit is on `main` and all four variables are set. Then it runs `./gradlew check iosSimulatorArm64Test` and `./gradlew publishAndReleaseToMavenCentral`.
+3. Push the tag. The workflow refuses unless the tag matches `v<version>`, the version is not a SNAPSHOT and the commit is on `main`. Then it runs `./gradlew check iosSimulatorArm64Test` and `./gradlew publishAndReleaseToMavenCentral`.
+4. Approve the run in the Actions tab.
+
+For a tag pushed before the workflow existed, run Publish by hand from the Actions tab with the tag name.
+
+The environment allows deployments only from `main` and tags matching `v*`, and needs four secrets: `MAVEN_CENTRAL_USERNAME`, `MAVEN_CENTRAL_PASSWORD` (a Central portal token), `SIGNING_KEY` (the armored private key) and `SIGNING_KEY_PASSWORD`.
+
+To publish from a Mac instead, put `ORG_GRADLE_PROJECT_mavenCentralUsername`, `ORG_GRADLE_PROJECT_mavenCentralPassword`, `ORG_GRADLE_PROJECT_signingInMemoryKey` and `ORG_GRADLE_PROJECT_signingInMemoryKeyPassword` in the environment and run `scripts/publish.sh` from the tagged commit. It makes the same checks.
 
 Without a signing key in the environment, builds and `check` still work. Publications are signed only when `signingInMemoryKey` is set.
 
