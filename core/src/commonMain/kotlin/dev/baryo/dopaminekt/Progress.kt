@@ -350,21 +350,29 @@ public class Progress(storage: StoragePort, config: ProgressConfig = ProgressCon
     }
 
     /**
-     * Replaces the player with a new one and saves it. The device id stays. After the save it
-     * publishes `player_reset`.
+     * Replaces the player with a new one and saves it. The device id stays, so the new player
+     * counts under the same device. After the save it publishes `player_reset`, so wrappers can
+     * refresh.
      *
-     * With [overwrite] true (the default) this is an explicit request, so it also writes when
-     * the last [init] could not read the saved player: the stored player is replaced, without a
-     * backup, and [loadFailed] goes back to false.
+     * This is an explicit request, so it also writes when the last [init] could not read the
+     * saved player: the stored player is replaced, without a backup, and [loadFailed] goes back
+     * to false.
      *
-     * With [overwrite] false and a failed read, the player resets in memory only. Nothing is
-     * written, the stored player stays as it is, [loadFailed] stays true and later writes stay
-     * blocked. `player_reset` is still published. With a good read, [overwrite] makes no
-     * difference.
+     * Pass `overwrite = false` to keep the stored player when the last [init] could not read it
+     * (an unsupported newer version, or a read that keeps failing). The player in memory is
+     * replaced by a new empty one, nothing is written, [loadFailed] stays true so later writes
+     * stay blocked, and `player_reset` is still published. When the last [init] did read the
+     * saved player, `overwrite = false` changes nothing: it saves like a plain `reset()`. A
+     * corrupt save that [init] backed up to `player_corrupt` counts as loaded, so
+     * `overwrite = false` saves like a plain `reset()`. If the backup failed, it counts as a
+     * failed load and nothing is written.
      *
-     * Call it after [init] has finished. A record already in flight when reset runs lands in the
-     * new player. Called from inside a hook, the write happens when the outer record or unlock
-     * finishes.
+     * Timing: call it after [init] has finished, not while it is pending. A record already in
+     * flight when reset runs lands in the new player. Called from inside a hook, the write
+     * happens when the outer record or unlock finishes.
+     *
+     * @param overwrite false keeps the stored player after a failed load.
+     * @return a snapshot of the new player.
      */
     public suspend fun reset(overwrite: Boolean = true): JsonObject {
         requirePlayer()
