@@ -353,16 +353,26 @@ public class Progress(storage: StoragePort, config: ProgressConfig = ProgressCon
      * Replaces the player with a new one and saves it. The device id stays. After the save it
      * publishes `player_reset`.
      *
-     * This is an explicit request, so it also writes when the last [init] could not read the
-     * saved player: the stored player is replaced, without a backup, and [loadFailed] goes back
-     * to false.
+     * With [overwrite] true (the default) this is an explicit request, so it also writes when
+     * the last [init] could not read the saved player: the stored player is replaced, without a
+     * backup, and [loadFailed] goes back to false.
+     *
+     * With [overwrite] false and a failed read, the player resets in memory only. Nothing is
+     * written, the stored player stays as it is, [loadFailed] stays true and later writes stay
+     * blocked. `player_reset` is still published. With a good read, [overwrite] makes no
+     * difference.
      *
      * Call it after [init] has finished. A record already in flight when reset runs lands in the
      * new player. Called from inside a hook, the write happens when the outer record or unlock
      * finishes.
      */
-    public suspend fun reset(): JsonObject {
+    public suspend fun reset(overwrite: Boolean = true): JsonObject {
         requirePlayer()
+        if (!overwrite && readFailed) {
+            doc = emptyDoc(clock.now().toDouble())
+            publish(ProgressEvent.PlayerReset)
+            return snapshot()
+        }
         batch {
             doc = emptyDoc(clock.now().toDouble())
             blocked = false

@@ -520,7 +520,7 @@ final class dev.baryo.dopaminekt/Progress { // dev.baryo.dopaminekt/Progress|nul
     final suspend fun init(): kotlinx.serialization.json/JsonObject // dev.baryo.dopaminekt/Progress.init|init(){}[0]
     final suspend fun markAchievementsSeen(kotlin.collections/Collection<kotlin/String>) // dev.baryo.dopaminekt/Progress.markAchievementsSeen|markAchievementsSeen(kotlin.collections.Collection<kotlin.String>){}[0]
     final suspend fun record(kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/Double> = ...): kotlin/Boolean // dev.baryo.dopaminekt/Progress.record|record(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.Double>){}[0]
-    final suspend fun reset(): kotlinx.serialization.json/JsonObject // dev.baryo.dopaminekt/Progress.reset|reset(){}[0]
+    final suspend fun reset(kotlin/Boolean = ...): kotlinx.serialization.json/JsonObject // dev.baryo.dopaminekt/Progress.reset|reset(kotlin.Boolean){}[0]
     final suspend fun save() // dev.baryo.dopaminekt/Progress.save|save(){}[0]
     final suspend fun unlockAchievement(kotlin/String): kotlin/Boolean // dev.baryo.dopaminekt/Progress.unlockAchievement|unlockAchievement(kotlin.String){}[0]
 }
