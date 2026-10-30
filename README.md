@@ -69,7 +69,7 @@ Pushing a `v<version>` tag starts the Publish workflow. It runs on macOS in the 
 
 For a tag pushed before the workflow existed, run Publish by hand from the Actions tab with the tag name.
 
-The environment needs four secrets: `MAVEN_CENTRAL_USERNAME`, `MAVEN_CENTRAL_PASSWORD` (a Central portal token), `SIGNING_KEY` (the armored private key) and `SIGNING_KEY_PASSWORD`.
+The environment allows deployments only from `main` and tags matching `v*`, and needs four secrets: `MAVEN_CENTRAL_USERNAME`, `MAVEN_CENTRAL_PASSWORD` (a Central portal token), `SIGNING_KEY` (the armored private key) and `SIGNING_KEY_PASSWORD`.
 
 To publish from a Mac instead, put `ORG_GRADLE_PROJECT_mavenCentralUsername`, `ORG_GRADLE_PROJECT_mavenCentralPassword`, `ORG_GRADLE_PROJECT_signingInMemoryKey` and `ORG_GRADLE_PROJECT_signingInMemoryKeyPassword` in the environment and run `scripts/publish.sh` from the tagged commit. It makes the same checks.
 
