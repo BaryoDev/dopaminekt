@@ -368,8 +368,12 @@ internal class FixtureCase(private val case: JsonObject, zone: TimeZone) {
                 null
             }
             "reset" -> {
-                val overwrite = step["overwrite"].bool()
-                if (overwrite == null) progress.reset() else progress.reset(overwrite = overwrite)
+                val raw = step["overwrite"]
+                if (raw == null) {
+                    progress.reset()
+                } else {
+                    progress.reset(overwrite = raw.bool() ?: fail("reset overwrite must be a boolean"))
+                }
             }
             "getXPForNextLevel" -> {
                 val next = progress.getXpForNextLevel()

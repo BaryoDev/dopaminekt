@@ -1,6 +1,8 @@
 package dev.baryo.dopaminekt
 
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -42,8 +44,12 @@ class ResetOverwriteTest {
         val progress = build()
         progress.init()
         assertEquals(50.0, progress.snapshot().num("xp"))
+        events.clear()
         progress.reset(overwrite = false)
         assertFalse(progress.loadFailed)
+        assertEquals(1, resets().size)
+        val stored = Json.parseToJsonElement(storage.values.getValue("dopamine_player")).jsonObject
+        assertTrue(stored.getValue("xpBy").jsonObject.isEmpty())
         assertEquals(0.0, build().also { it.init() }.snapshot().num("xp"))
     }
 
@@ -54,6 +60,7 @@ class ResetOverwriteTest {
         progress.init()
         assertFalse(progress.loadFailed)
         assertEquals("\"{not json\"", storage.values["dopamine_player_corrupt"])
+        log.clear()
         progress.reset(overwrite = false)
         assertTrue(storage.values.getValue("dopamine_player").startsWith("{\"v\":3"))
         assertEquals(1, storage.writes("player"))
