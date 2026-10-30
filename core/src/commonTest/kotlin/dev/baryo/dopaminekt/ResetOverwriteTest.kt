@@ -24,7 +24,7 @@ class ResetOverwriteTest {
 
     @Test
     fun overwriteFalseAfterFailedLoadKeepsStoredDocument() = runTest {
-        val stored = """{"version":99}"""
+        val stored = """{"v":99,"xpBy":{"a":900}}"""
         storage.values["dopamine_player"] = stored
         val progress = build()
         progress.init()
@@ -68,7 +68,7 @@ class ResetOverwriteTest {
 
     @Test
     fun writesStayBlockedAfterOverwriteFalse() = runTest {
-        val stored = """{"version":99}"""
+        val stored = """{"v":99,"xpBy":{"a":900}}"""
         storage.values["dopamine_player"] = stored
         val progress = build()
         progress.init()
