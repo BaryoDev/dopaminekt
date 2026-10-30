@@ -30,7 +30,7 @@ class FixtureRunnerTest {
         "merge.json" to 27,
         "migrate.json" to 34,
         "scores.json" to 13,
-        "streaks.json" to 17,
+        "streaks.json" to 18,
     )
 
     @Test
@@ -90,7 +90,7 @@ private val OPS: Map<String, Set<String>> = mapOf(
     "record" to setOf("activity", "result"),
     "unlockAchievement" to setOf("id"),
     "markAchievementsSeen" to setOf("ids"),
-    "reset" to emptySet(),
+    "reset" to setOf("overwrite"),
     "getXPForNextLevel" to emptySet(),
     "export" to setOf("as"),
     "import" to setOf("doc", "from", "silent"),
@@ -367,7 +367,14 @@ internal class FixtureCase(private val case: JsonObject, zone: TimeZone) {
                 progress.markAchievementsSeen((step["ids"] as JsonArray).map { it.string()!! })
                 null
             }
-            "reset" -> progress.reset()
+            "reset" -> {
+                val raw = step["overwrite"]
+                if (raw == null) {
+                    progress.reset()
+                } else {
+                    progress.reset(overwrite = raw.bool() ?: fail("reset overwrite must be a boolean"))
+                }
+            }
             "getXPForNextLevel" -> {
                 val next = progress.getXpForNextLevel()
                 JsonObject(

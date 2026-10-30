@@ -428,7 +428,8 @@ public final class dev/baryo/dopaminekt/Progress {
 	public final fun on (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lkotlin/jvm/functions/Function0;
 	public final fun record (Ljava/lang/String;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun record$default (Ldev/baryo/dopaminekt/Progress;Ljava/lang/String;Ljava/util/Map;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public final fun reset (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun reset (ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun reset$default (Ldev/baryo/dopaminekt/Progress;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public final fun save (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun snapshot ()Lkotlinx/serialization/json/JsonObject;
 	public final fun unlockAchievement (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
