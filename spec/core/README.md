@@ -147,7 +147,8 @@ Event names: `xp_gained`, `level_up`, `achievement_unlocked`, `personal_best`
 (payload `{ activity, score }`), `streak_updated`, `player_reset` (empty payload), `save_failed` and
 `load_failed`. `load_failed` is covered for a corrupt value and for a document
 the core refuses (`reason` is `corrupt`, `unsupported_version` or
-`too_many_devices`). A read that fails in storage cannot be made by a fixture.
+`too_many_devices`). A saved value that is valid JSON but not an object counts as corrupt, and is kept
+under `player_corrupt`. A read that fails in storage cannot be made by a fixture.
 
 Payloads are frozen copies, and `snapshot()` is a frozen deep copy.
 
@@ -196,7 +197,7 @@ More than 20 devices across the per-device maps is refused with a
 write: `addXP` and `record` leave the stored save alone and publish `load_failed`
 with reason `too_many_devices`. A document with a `v` other than 3 is refused
 with `unsupported_version`. A value that is not an object is `invalid_document`. Counters and sums stop at
-`Number.MAX_SAFE_INTEGER`.
+`Number.MAX_SAFE_INTEGER`. A negative or non-finite value in a map (`xpBy`, `sumsBy` and the rest) is dropped.
 
 ### From 2.x
 

@@ -952,6 +952,49 @@
                 },
                 "events": []
             }
+        },
+        {
+            "name": "a saved player that is an array is kept as corrupt",
+            "clock": "2026-08-07T09:00:00",
+            "savedJson": [
+                1,
+                2
+            ],
+            "note": "Valid JSON that is not an object is treated like unparseable data. The core keeps it under player_corrupt and starts a new player.",
+            "afterInit": {
+                "player": {
+                    "name": "Player",
+                    "xp": 0,
+                    "level": 1
+                },
+                "events": [
+                    {
+                        "event": "load_failed",
+                        "reason": "corrupt",
+                        "backedUp": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "a saved player that is a number is kept as corrupt",
+            "clock": "2026-08-07T09:00:00",
+            "savedJson": 5,
+            "note": "Valid JSON that is not an object is treated like unparseable data. The core keeps it under player_corrupt and starts a new player.",
+            "afterInit": {
+                "player": {
+                    "name": "Player",
+                    "xp": 0,
+                    "level": 1
+                },
+                "events": [
+                    {
+                        "event": "load_failed",
+                        "reason": "corrupt",
+                        "backedUp": true
+                    }
+                ]
+            }
         }
     ]
 }

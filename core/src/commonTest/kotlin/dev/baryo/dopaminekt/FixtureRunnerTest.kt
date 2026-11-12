@@ -27,8 +27,8 @@ class FixtureRunnerTest {
     private val expectedCounts = mapOf(
         "achievements.json" to 7,
         "levels.json" to 6,
-        "merge.json" to 27,
-        "migrate.json" to 34,
+        "merge.json" to 28,
+        "migrate.json" to 36,
         "scores.json" to 13,
         "streaks.json" to 18,
     )

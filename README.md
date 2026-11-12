@@ -2,7 +2,7 @@
 
 Kotlin Multiplatform core for dopaminekt. Targets: JVM, Android, iosArm64, iosSimulatorArm64.
 
-It follows dopaminejs 3.2.0.
+It follows dopaminejs 3.3.0 plus dopaminejs#80 (main at 9dfeee2, until the next npm release).
 
 - `Progress(storage, config)` is one player: XP, levels, streaks, play stats and achievements, saved as a version 3 document. Call `init()` first. `addXp`, `record`, `unlockAchievement`, `import`, `export`, `reset(overwrite)` and `snapshot` work on it.
 - `Progress.on(name, listener)` gives events: `xp_gained`, `level_up`, `achievement_unlocked`, `personal_best`, `streak_updated`, `player_reset`, `save_failed` and `load_failed`.
@@ -39,16 +39,17 @@ The module depends on kotlinx-coroutines-core, kotlinx-serialization-json and ko
 
 ## Fixtures
 
-The shared test fixtures come from the public [dopaminejs](https://www.npmjs.com/package/dopaminejs) npm package, pinned in `gradle/libs.versions.toml` (`dopaminejs`). They are committed in `spec/core/`, with a SHA-256 per file in `spec/CHECKSUMS`.
+The shared test fixtures come from [dopaminejs](https://www.npmjs.com/package/dopaminejs), pinned in `gradle/libs.versions.toml` (`dopaminejs`) to an npm release or to a 40 character commit on BaryoDev/dopaminejs main. The pin is the commit 9dfeee205b1bb9607f0765404f23bee57e7a8a7e until the npm release that carries dopaminejs#80 is out. They are committed in `spec/core/`, with a SHA-256 per file in `spec/CHECKSUMS`.
 
-- `./gradlew syncFixtures` runs `npm pack dopaminejs@<pin>` against the public npm registry (your npm config is ignored, no install scripts run), checks the tarball version equals the pin, copies the package's `spec/` into `spec/core/` and rewrites `spec/CHECKSUMS`. It needs network and npm.
+- `./gradlew syncFixtures` for a commit pin clones BaryoDev/dopaminejs and checks out that commit's `spec/`. For a version pin it runs `npm pack dopaminejs@<pin>` against the public npm registry (your npm config is ignored, no install scripts run), checks the tarball version equals the pin. Either way it copies `spec/` into `spec/core/` and rewrites `spec/CHECKSUMS`. It needs network, and npm for a version pin.
 - `./gradlew verifyFixtures` runs offline and fails, naming the file, when `spec/core/` differs from `spec/CHECKSUMS`. `check` runs it.
+- `./gradlew verifyUpstream` fetches the pinned upstream `spec/` and fails, naming the file, when `spec/core/` is not identical to it. It needs network. CI runs it on every push and pull request.
 
 `./gradlew generateFixtureSources` writes the fixtures and `spec/core/schema.json` into a Kotlin file under `core/build/`, so the JVM, Android and iOS tests read the same data with no file access. The test compile tasks run it. The generated file is not committed.
 
 The fixture runner (`FixtureRunnerTest`) runs every case in every file through `Progress`, in Asia/Manila and America/Los_Angeles, with the clock set to the case's local time in that zone. None are skipped, and the test pins how many cases run per file.
 
-To move to a new dopaminejs version, change the pin, run `syncFixtures` and commit the result.
+To move to a new dopaminejs version or commit, change the pin, run `syncFixtures` and commit the result.
 
 ## Build and check
 

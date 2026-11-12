@@ -192,23 +192,29 @@ public class Progress(storage: StoragePort, config: ProgressConfig = ProgressCon
         blocked = true
         try {
             val saved = data.load(PLAYER_KEY, strict = true)
+            // Valid JSON that is not a player is kept like unreadable text.
+            if (saved != null && saved !is JsonObject) return keepCorrupt(saved)
             blocked = false
             readFailed = false
             return saved
         } catch (e: CancellationException) {
             throw e
         } catch (e: CorruptDataException) {
-            // Keep the unreadable value instead of losing it on the next save.
-            val kept = data.save("player_corrupt", JsonPrimitive(e.raw))
-            if (kept) blocked = false
-            readFailed = !kept
-            publish(ProgressEvent.LoadFailed(PLAYER_KEY, "corrupt", backedUp = kept))
-            return null
+            return keepCorrupt(JsonPrimitive(e.raw))
         } catch (e: Exception) {
             readFailed = true
             publish(ProgressEvent.LoadFailed(PLAYER_KEY, "read", error = e))
             return null
         }
+    }
+
+    // Keep an unreadable value instead of losing it on the next save.
+    private suspend fun keepCorrupt(value: JsonElement): JsonElement? {
+        val kept = data.save("player_corrupt", value)
+        if (kept) blocked = false
+        readFailed = !kept
+        publish(ProgressEvent.LoadFailed(PLAYER_KEY, "corrupt", backedUp = kept))
+        return null
     }
 
     // Saved state is untrusted. A document from a newer version or with too many devices is left
@@ -329,9 +335,9 @@ public class Progress(storage: StoragePort, config: ProgressConfig = ProgressCon
         parseDoc(document, now, today, rewards)
         val merged = parseDoc(merge(render(before), document, now, today, rewards), now, today, rewards)
         merged.level = levelOf(merged)
+        // The view is built first, so a document that cannot be viewed never replaces the player.
+        val after = view(merged, clock.localDate())
         doc = merged
-
-        val after = snapshot()
         save()
         if (silent) return after
 
@@ -598,17 +604,27 @@ public class Progress(storage: StoragePort, config: ProgressConfig = ProgressCon
         return unlockChecked(key)
     }
 
+    private val unlocking: MutableSet<String> = HashSet()
+
     private suspend fun unlockChecked(id: String): Boolean {
         val player = requirePlayer()
         // Already unlocked: paying the XP again would let one call farm levels.
         if (id in player.achievements) return false
+        // A second call for the same id while the hooks run does not unlock it again.
+        if (id in unlocking) return false
         val definition = achievements[id] ?: return false
 
         val reward = rewardsOf(achievements).getValue(id)
-        val context = chain.before(BeforeUnlockContext(id, reward), ::acceptUnlock) { m, c -> m.beforeUnlock(c) }
-            ?: return false
+        unlocking.add(id)
+        val context = try {
+            chain.before(BeforeUnlockContext(id, reward), ::acceptUnlock) { m, c -> m.beforeUnlock(c) }
+        } finally {
+            unlocking.remove(id)
+        } ?: return false
 
         val current = requirePlayer()
+        // A reset or an import during the hooks may have unlocked it already.
+        if (id in current.achievements) return false
         val oldLevel = levelOf(current)
         current.achievements[id] = Achievement(clock.now().toDouble(), false, context.reward)
 
