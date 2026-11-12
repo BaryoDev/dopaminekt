@@ -28,30 +28,72 @@ fun run(dir: File, vararg command: String, cleanNpmEnv: Boolean = false): String
     return output
 }
 
-// Needs network. Always uses the public npm registry, ignores the user's npm config and runs no scripts.
+val commitPin = Regex("[0-9a-f]{40}")
+
+// Needs network. Copies a pinned dopaminejs spec/ into dest. A 40 character pin is a commit on
+// BaryoDev/dopaminejs, anything else is a public npm release. Ignores the user's npm config, runs no scripts.
+fun fetchSpec(dest: File, tmp: File) {
+    tmp.deleteRecursively(); tmp.mkdirs()
+    if (commitPin.matches(fixturePin)) {
+        val repo = File(tmp, "repo")
+        run(tmp, "git", "clone", "--quiet", "--no-checkout", "https://github.com/BaryoDev/dopaminejs.git", repo.absolutePath)
+        run(repo, "git", "checkout", "--quiet", fixturePin, "--", "spec")
+        val packed = File(repo, "spec")
+        check(packed.isDirectory) { "dopaminejs@$fixturePin has no spec/ directory" }
+        dest.deleteRecursively()
+        packed.copyRecursively(dest)
+        return
+    }
+    val out = run(
+        tmp, "npm", "pack", "dopaminejs@$fixturePin",
+        "--registry=https://registry.npmjs.org/", "--userconfig=/dev/null", "--ignore-scripts",
+        "--pack-destination", tmp.absolutePath,
+        cleanNpmEnv = true,
+    )
+    val tarball = File(tmp, out.trim().lines().last())
+    check(tarball.isFile) { "npm pack did not produce a tarball: $out" }
+    run(tmp, "tar", "-xzf", tarball.absolutePath, "package/spec", "package/package.json")
+    val packedVersion = Regex("\"version\"\\s*:\\s*\"([^\"]+)\"").find(File(tmp, "package/package.json").readText())?.groupValues?.get(1)
+    check(packedVersion == fixturePin) { "tarball is dopaminejs@$packedVersion, expected $fixturePin" }
+    val packed = File(tmp, "package/spec")
+    check(packed.isDirectory) { "dopaminejs@$fixturePin has no spec/ directory" }
+    dest.deleteRecursively()
+    packed.copyRecursively(dest)
+}
+
 tasks.register("syncFixtures") {
     group = "dopaminekt"
-    description = "Copies spec/ from the pinned dopaminejs npm tarball into spec/core and writes spec/CHECKSUMS."
+    description = "Copies spec/ from the pinned dopaminejs into spec/core and writes spec/CHECKSUMS."
     doLast {
-        val tmp = File(temporaryDir, "pack").apply { deleteRecursively(); mkdirs() }
-        val out = run(
-            tmp, "npm", "pack", "dopaminejs@$fixturePin",
-            "--registry=https://registry.npmjs.org/", "--userconfig=/dev/null", "--ignore-scripts",
-            "--pack-destination", tmp.absolutePath,
-            cleanNpmEnv = true,
-        )
-        val tarball = File(tmp, out.trim().lines().last())
-        check(tarball.isFile) { "npm pack did not produce a tarball: $out" }
-        run(tmp, "tar", "-xzf", tarball.absolutePath, "package/spec", "package/package.json")
-        val packedVersion = Regex("\"version\"\\s*:\\s*\"([^\"]+)\"").find(File(tmp, "package/package.json").readText())?.groupValues?.get(1)
-        check(packedVersion == fixturePin) { "tarball is dopaminejs@$packedVersion, expected $fixturePin" }
-        val packed = File(tmp, "package/spec")
-        check(packed.isDirectory) { "dopaminejs@$fixturePin has no spec/ directory" }
-        specDir.deleteRecursively()
-        packed.copyRecursively(specDir)
+        fetchSpec(specDir, File(temporaryDir, "pack"))
         val lines = fixtureFiles().map { "${sha256(it)}  ${it.relativeTo(specDir).invariantSeparatorsPath}" }
         checksumsFile.writeText((listOf("dopaminejs $fixturePin") + lines).joinToString("\n") + "\n")
         println("Synced ${lines.size} files from dopaminejs@$fixturePin")
+    }
+}
+
+// Needs network. Fails when spec/core is not byte for byte the spec of the pinned upstream.
+tasks.register("verifyUpstream") {
+    group = "verification"
+    description = "Compares spec/core with the pinned dopaminejs spec/ fetched from upstream."
+    doLast {
+        val fresh = File(temporaryDir, "upstream-spec")
+        fetchSpec(fresh, File(temporaryDir, "fetch"))
+        fun files(dir: File) = dir.walkTopDown().filter { it.isFile }.associate { it.relativeTo(dir).invariantSeparatorsPath to sha256(it) }
+        val upstream = files(fresh)
+        val local = files(specDir)
+        val problems = (upstream.keys + local.keys).sorted().mapNotNull { path ->
+            when {
+                path !in local -> "spec/core/$path is missing, upstream has it"
+                path !in upstream -> "spec/core/$path is not in upstream"
+                local[path] != upstream[path] -> "spec/core/$path differs from upstream"
+                else -> null
+            }
+        }
+        if (problems.isNotEmpty()) {
+            throw GradleException(problems.joinToString("\n") + "\nRun ./gradlew syncFixtures to restore them.")
+        }
+        println("spec/core matches dopaminejs@$fixturePin (${local.size} files)")
     }
 }
 

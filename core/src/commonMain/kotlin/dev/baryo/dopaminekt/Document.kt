@@ -74,15 +74,6 @@ private fun pickCounts(source: JsonElement?): MutableMap<String, Long> {
     return map
 }
 
-private fun pickAnyNumbers(source: JsonElement?): MutableMap<String, Double> {
-    val map = LinkedHashMap<String, Double>()
-    for ((key, value) in objectOrNull(source) ?: return map) {
-        val n = value.finiteNumber()
-        if (isSafeKey(key) && n != null) map[key] = capDouble(n)
-    }
-    return map
-}
-
 private fun pickNestedCounts(source: JsonElement?): MutableMap<String, MutableMap<String, Long>> {
     val map = LinkedHashMap<String, MutableMap<String, Long>>()
     for ((key, value) in objectOrNull(source) ?: return map) {
@@ -97,7 +88,7 @@ private fun pickNestedSums(source: JsonElement?): MutableMap<String, MutableMap<
         if (!isSafeKey(activity)) continue
         val inner = LinkedHashMap<String, MutableMap<String, Double>>()
         for ((key, devices) in objectOrNull(value) ?: JsonObject(emptyMap())) {
-            if (isSafeKey(key)) inner[key] = pickAnyNumbers(devices)
+            if (isSafeKey(key)) inner[key] = pickAmounts(devices)
         }
         map[activity] = inner
     }
@@ -198,7 +189,7 @@ internal fun read2(input: JsonObject, now: Double, rewards: Map<String, Double>,
             doc.sumsBy[activity] = sums
             for ((key, v) in entry) {
                 val n = v.finiteNumber()
-                if (isSafeKey(key) && key != "totalPlays" && key != "highScore" && n != null) {
+                if (isSafeKey(key) && key != "totalPlays" && key != "highScore" && n != null && n >= 0) {
                     sums[key] = linkedMapOf(LEGACY to capDouble(n))
                 }
             }

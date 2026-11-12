@@ -1734,6 +1734,45 @@
                     }
                 }
             ]
+        },
+        {
+            "name": "a negative sum is dropped on validate",
+            "clock": "2026-08-07T09:00:00",
+            "device": "me",
+            "note": "Sums only grow, like the other counters. A negative sum is invalid and dropped, so two huge negatives cannot add to a value that is not a finite number.",
+            "steps": [
+                {
+                    "op": "validate",
+                    "doc": {
+                        "v": 3,
+                        "sumsBy": {
+                            "g": {
+                                "kills": {
+                                    "a": 5,
+                                    "b": -1
+                                },
+                                "time": {
+                                    "a": -1e+308,
+                                    "b": -1e+308
+                                }
+                            }
+                        }
+                    },
+                    "as": "v",
+                    "expect": {
+                        "returnsExact": {
+                            "sumsBy": {
+                                "g": {
+                                    "kills": {
+                                        "a": 5
+                                    },
+                                    "time": {}
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
         }
     ]
 }

@@ -122,8 +122,8 @@ class ProgressLoadTest {
     }
 
     @Test
-    fun valuesThatAreNotRecordsStartEmptySilently() = runTest {
-        for (text in listOf("null", "5", "[1,2]", "\"text\"", "")) {
+    fun nothingSavedStartsEmptySilently() = runTest {
+        for (text in listOf("null", "")) {
             events.clear()
             val store = LoggingStorage()
             store.values["dopamine_player"] = text
@@ -134,6 +134,35 @@ class ProgressLoadTest {
             assertNull(store.values["dopamine_player_corrupt"], text)
             assertEquals(0.0, progress.snapshot().num("xp"))
         }
+    }
+
+    @Test
+    fun validJsonThatIsNotAnObjectIsKeptAsCorrupt() = runTest {
+        for (text in listOf("5", "[1,2]", "\"text\"", "true")) {
+            events.clear()
+            val store = LoggingStorage()
+            store.values["dopamine_player"] = text
+            val progress = build(store)
+            progress.init()
+            assertFalse(progress.loadFailed, text)
+            assertEquals(listOf(ProgressEvent.LoadFailed("player", "corrupt", backedUp = true)), loadFailures(), text)
+            assertEquals(text, store.values["dopamine_player_corrupt"], text)
+            assertEquals(0.0, progress.snapshot().num("xp"))
+        }
+    }
+
+    @Test
+    fun importOfNegativeSumsLeavesThePlayerWorking() = runTest {
+        val progress = build()
+        progress.init()
+        progress.addXp(10.0)
+        val bad = Json.parseToJsonElement(
+            """{"v":3,"sumsBy":{"g":{"t":{"a":-1e308,"b":-1e308}}}}""",
+        ).jsonObject
+        val after = progress.import(bad)
+        assertEquals(10.0, after.num("xp"))
+        assertEquals(10.0, progress.snapshot().num("xp"))
+        assertEquals(JsonObject(emptyMap()), progress.export().getValue("sumsBy").jsonObject.getValue("g").jsonObject.getValue("t"))
     }
 
     @Test

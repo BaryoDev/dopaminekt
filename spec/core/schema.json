@@ -31,7 +31,7 @@
                 "type": "object",
                 "additionalProperties": {
                     "type": "object",
-                    "additionalProperties": { "type": "number" }
+                    "additionalProperties": { "type": "number", "minimum": 0 }
                 }
             }
         },

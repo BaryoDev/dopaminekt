@@ -17,14 +17,17 @@ public interface Clock {
     public fun localDate(millis: Long = now()): String
 }
 
-/** A [Clock] that reads the system time and names days in [zone]. */
+/**
+ * A [Clock] that reads the system time and names days in [zone]. Without a [zone] it reads the
+ * device zone on every call, so a zone change shows up without a restart.
+ */
 public class SystemClock(
-    private val zone: TimeZone = TimeZone.currentSystemDefault(),
+    private val zone: TimeZone? = null,
 ) : Clock {
     override fun now(): Long = kotlin.time.Clock.System.now().toEpochMilliseconds()
 
     override fun localDate(millis: Long): String {
-        val date = Instant.fromEpochMilliseconds(millis).toLocalDateTime(zone).date
+        val date = Instant.fromEpochMilliseconds(millis).toLocalDateTime(zone ?: TimeZone.currentSystemDefault()).date
         return date.year.toString().padStart(4, '0') + "-" +
             date.month.number.toString().padStart(2, '0') + "-" +
             date.day.toString().padStart(2, '0')
