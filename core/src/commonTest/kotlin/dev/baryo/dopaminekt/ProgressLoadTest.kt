@@ -1,5 +1,7 @@
 package dev.baryo.dopaminekt
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -149,6 +151,30 @@ class ProgressLoadTest {
             assertEquals(text, store.values["dopamine_player_corrupt"], text)
             assertEquals(0.0, progress.snapshot().num("xp"))
         }
+    }
+
+    @Test
+    fun twoConcurrentUnlocksOfOneIdUnlockOnce() = runTest {
+        val progress = build()
+        progress.init()
+        var after = 0
+        progress.use(object : Middleware {
+            override suspend fun beforeUnlock(context: BeforeUnlockContext): Verdict<BeforeUnlockContext> {
+                delay(10)
+                return Verdict.Continue
+            }
+            override suspend fun afterUnlock(context: AfterUnlockContext) {
+                after++
+            }
+        })
+        val results = listOf(
+            async { progress.unlockAchievement("first_game") },
+            async { progress.unlockAchievement("first_game") },
+        ).awaitAll()
+        assertEquals(1, results.count { it })
+        assertEquals(1, events.count { it is ProgressEvent.AchievementUnlocked })
+        assertEquals(1, events.count { it is ProgressEvent.XpGained })
+        assertEquals(1, after)
     }
 
     @Test

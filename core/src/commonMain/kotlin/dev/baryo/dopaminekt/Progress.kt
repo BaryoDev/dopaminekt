@@ -604,17 +604,27 @@ public class Progress(storage: StoragePort, config: ProgressConfig = ProgressCon
         return unlockChecked(key)
     }
 
+    private val unlocking: MutableSet<String> = HashSet()
+
     private suspend fun unlockChecked(id: String): Boolean {
         val player = requirePlayer()
         // Already unlocked: paying the XP again would let one call farm levels.
         if (id in player.achievements) return false
+        // A second call for the same id while the hooks run does not unlock it again.
+        if (id in unlocking) return false
         val definition = achievements[id] ?: return false
 
         val reward = rewardsOf(achievements).getValue(id)
-        val context = chain.before(BeforeUnlockContext(id, reward), ::acceptUnlock) { m, c -> m.beforeUnlock(c) }
-            ?: return false
+        unlocking.add(id)
+        val context = try {
+            chain.before(BeforeUnlockContext(id, reward), ::acceptUnlock) { m, c -> m.beforeUnlock(c) }
+        } finally {
+            unlocking.remove(id)
+        } ?: return false
 
         val current = requirePlayer()
+        // A reset or an import during the hooks may have unlocked it already.
+        if (id in current.achievements) return false
         val oldLevel = levelOf(current)
         current.achievements[id] = Achievement(clock.now().toDouble(), false, context.reward)
 
